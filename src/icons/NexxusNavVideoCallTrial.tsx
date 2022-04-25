@@ -1,0 +1,30 @@
+import createSvgIcon from "@material-ui/core/utils/createSvgIcon";
+
+const NexxusNavVideoCallTrial = createSvgIcon(
+  <svg
+    width="100%"
+    height="100%"
+    viewBox="0 0 22 22"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M8 21H14C19 21 21 19 21 14V8C21 3 19 1 14 1H8C3 1 1 3 1 8V14C1 19 3 21 8 21Z"
+      stroke="#292D32"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8.1001 11V9.51999C8.1001 7.60999 9.4501 6.83999 11.1001 7.78999L12.3801 8.52999L13.6601 9.26999C15.3101 10.22 15.3101 11.78 13.6601 12.73L12.3801 13.47L11.1001 14.21C9.4501 15.16 8.1001 14.38 8.1001 12.48V11Z"
+      stroke="#292D32"
+      strokeWidth="1.5"
+      strokeMiterlimit="10"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>,
+  "NexxusNavVideoCallTrial"
+);
+
+export default NexxusNavVideoCallTrial;
