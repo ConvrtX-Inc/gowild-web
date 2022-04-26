@@ -101,7 +101,7 @@ const routes: PartialRouteObject[] = [
         element: <Overview />,
       },
       {
-        path: "/workspace-received",
+        path: "/route-list",
         element: <WorkspaceList />,
       },
       // {

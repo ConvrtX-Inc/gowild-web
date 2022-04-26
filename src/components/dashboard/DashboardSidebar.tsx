@@ -9,12 +9,18 @@ import styled from "styled-components";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import useAuth from "../../hooks/useAuth";
 
-import DashboardIcon from "../../icons/NexxusNavDashboard";
-import WorkspaceReceivedIcon from "../../icons/NexxusNavWorkspaceReceived";
-import JurisdictionsIcon from "../../icons/NexxusNavJurisdictions";
-import SupportIcon from "../../icons/NexxusNavSupport";
-import GuidelinesIcon from "../../icons/NexxusNavGuidelines";
-import VideoCallTrialIcon from "../../icons/NexxusNavVideoCallTrial";
+import HomeIcon from "../../icons/GoWildNavHome";
+import SubAdminsIcon from "../../icons/GoWildNavSubAdmins";
+import CardsIcon from "../../icons/GoWildNavCards";
+import RouteListIcon from "../../icons/GoWildNavRouteList";
+import TreasureChestListIcon from "../../icons/GoWildNavTreasureChestList";
+import UsersIcon from "../../icons/GoWildNavUsers";
+import UsersRouteIcon from "../../icons/GoWildNavUsersRoute";
+import TreasureHuntIcon from "../../icons/GoWildNavTreasureHunt";
+import SupportIcon from "../../icons/GoWildNavSupport";
+import GuidelinesIcon from "../../icons/GoWildNavGuidelines";
+import TreasureHuntEWaiverIcon from "../../icons/GoWildNavTreasureHuntEWaiver";
+
 import NavSection from "../NavSection";
 import Scrollbar from "../Scrollbar";
 
@@ -28,23 +34,48 @@ const sections = [
     id: "General",
     items: [
       {
-        title: "Dashboard",
+        title: "Home",
         path: "/",
-        icon: <DashboardIcon fontSize="small" />,
+        icon: <HomeIcon fontSize="small" />,
       },
       {
-        title: "Workspace Received",
-        path: "/dashboard/workspace-received",
-        icon: <WorkspaceReceivedIcon fontSize="small" />,
+        title: "Sub Admins",
+        path: "/dashboard/sub-admins",
+        icon: <SubAdminsIcon fontSize="small" />,
       },
       {
-        title: "Jurisdictions",
-        path: "/dashboard/jurisdictions",
-        icon: <JurisdictionsIcon fontSize="small" />,
+        title: "Cards",
+        path: "/dashboard/cards",
+        icon: <CardsIcon fontSize="small" />,
+      },
+      {
+        title: "Route List",
+        path: "/dashboard/route-list",
+        icon: <RouteListIcon fontSize="small" />,
+      },
+      {
+        title: "Treasure Chest List",
+        path: "/dashboard/treasure-chest-list",
+        icon: <TreasureChestListIcon fontSize="small" />,
+      },
+      {
+        title: "Users",
+        path: "/dashboard/users-list",
+        icon: <UsersIcon fontSize="small" />,
+      },
+      {
+        title: "Users Route",
+        path: "/dashboard/users-route",
+        icon: <UsersRouteIcon fontSize="small" />,
+      },
+      {
+        title: "Treasure Hunt",
+        path: "/dashboard/treasure-hunt",
+        icon: <TreasureHuntIcon fontSize="small" />,
       },
       {
         title: "Support",
-        path: "/dashboard/chat",
+        path: "/dashboard/support",
         icon: <SupportIcon fontSize="small" />,
       },
       {
@@ -53,9 +84,9 @@ const sections = [
         icon: <GuidelinesIcon fontSize="small" />,
       },
       {
-        title: "Video Call Trial",
-        path: "/dashboard/video-call-trial",
-        icon: <VideoCallTrialIcon fontSize="small" />,
+        title: "Treasure Hunt E Waiver",
+        path: "/dashboard/treasure-hunt-ewaiver",
+        icon: <TreasureHuntEWaiverIcon fontSize="small" />,
       },
     ],
   },
@@ -96,12 +127,12 @@ const DashboardSidebar: FC<DashboardSidebarProps> = (props) => {
         <LogoContainer>
           <RouterLink to="/dashboard/account">
             <CardMedia
-              sx={{ height: "47.91px", width: "47.91px" }}
+              sx={{ height: "101px", width: "91px" }}
               image="/static/logo.svg"
             />
           </RouterLink>
         </LogoContainer>
-        <Box sx={{ p: 2, pr: "23px", pl: "23px" }}>
+        <Box sx={{ p: 2, pr: "10px", pl: "9px" }}>
           {sections.map((section) => (
             <NavSection
               key={section.id}
@@ -118,8 +149,8 @@ const DashboardSidebar: FC<DashboardSidebarProps> = (props) => {
         <Box sx={{ p: 2 }}>
           <Button
             sx={{
-              color: "rgba(9, 17, 14, 0.5)",
-              borderColor: "rgba(9, 17, 14, 0.5)",
+              color: "rgba(255,255,255, 1)",
+              borderColor: "rgba(255,255,255, 1)",
             }}
             fullWidth
             onClick={handleLogout}
@@ -139,11 +170,12 @@ const DashboardSidebar: FC<DashboardSidebarProps> = (props) => {
         open
         PaperProps={{
           sx: {
-            backgroundColor: "background.paper",
+            backgroundColor: "#2995A8",
+            // backgroundColor: "background.paper",
             // height: "calc(100% - 64px) !important",
             minHeight: "920px",
             top: "0px !Important",
-            width: "251px",
+            width: "239px",
             borderRight: 0,
           },
         }}
@@ -162,7 +194,7 @@ const DashboardSidebar: FC<DashboardSidebarProps> = (props) => {
       PaperProps={{
         sx: {
           backgroundColor: "background.paper",
-          width: 251,
+          width: "239px",
         },
       }}
       variant="temporary"
@@ -182,10 +214,10 @@ export default DashboardSidebar;
 const LogoContainer = styled(Box)`
   && {
     align-items: center;
-    background-color: #ffffff;
+    background-color: #2995a8;
     display: flex;
     overflow: hidden;
-    padding: 16px 16px 26px 23px;
-    margin: 43px 0 0 0;
+    padding: 0 74px 0 74px;
+    margin: 50px 0 24.02px 0;
   }
 `;

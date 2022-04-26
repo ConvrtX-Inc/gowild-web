@@ -3,6 +3,7 @@ import type { FC, ReactNode } from "react";
 import { NavLink as RouterLink } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Box, Button, Collapse, ListItem } from "@material-ui/core";
+import styled from "styled-components";
 import type { ListItemProps } from "@material-ui/core";
 import ChevronDownIcon from "../icons/ChevronDown";
 import ChevronRightIcon from "../icons/ChevronRight";
@@ -36,7 +37,7 @@ const NavItem: FC<NavItemProps> = (props) => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  let paddingLeft = 16;
+  let paddingLeft = 22;
 
   if (depth > 0) {
     paddingLeft = 32 + 8 * depth;
@@ -65,11 +66,10 @@ const NavItem: FC<NavItemProps> = (props) => {
           startIcon={icon}
           sx={{
             color: "text.secondary",
-            fontWeight: "fontWeightMedium",
+            // fontWeight: "fontWeightMedium",
             justifyContent: "flex-start",
             pl: `${paddingLeft}px`,
-            pr: "8px",
-            py: "12px",
+            padding: "15px auto 16px",
             textAlign: "left",
             textTransform: "none",
             width: "100%",
@@ -93,28 +93,26 @@ const NavItem: FC<NavItemProps> = (props) => {
         py: 0,
       }}
     >
-      <Button
+      <NavButton
         component={path && RouterLink}
         startIcon={icon}
         sx={{
-          color: "#09110e",
-          fontFamily: "Poppins",
-          fontWeight: "400",
-          fontSize: "0.875rem",
-          lineHeight: "25px",
-          opacity: 0.7,
+          color: "#E8E8E8",
+          fontFamily: "Gilroy-Light",
+          fontSize: "1rem",
+          lineHeight: "19px",
+          letterSpacing: "-0.04em",
           justifyContent: "flex-start",
           textAlign: "left",
-          borderRadius: "8px",
+          borderRadius: "25px",
           pl: `${paddingLeft}px`,
-          pr: "8px",
-          py: "7px",
+          padding: "15px auto 16px",
           textTransform: "none",
           width: "100%",
+          height: "50px",
           ...(active && {
-            opacity: 1,
-            fontWeight: 500,
-            background: "#EFEFEF",
+            color: "#FFFFFF",
+            backgroundColor: "#82BAA7",
             "& svg": {
               color: "#09110e",
             },
@@ -125,7 +123,7 @@ const NavItem: FC<NavItemProps> = (props) => {
       >
         <Box sx={{ flexGrow: 1 }}>{title}</Box>
         {info}
-      </Button>
+      </NavButton>
     </ListItem>
   );
 };
@@ -147,3 +145,11 @@ NavItem.defaultProps = {
 };
 
 export default NavItem;
+
+const NavButton = styled(Button)`
+  && {
+    &:hover {
+      background-color: rgba(130, 186, 167, 0.4);
+    }
+  }
+`;

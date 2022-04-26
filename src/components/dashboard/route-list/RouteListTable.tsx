@@ -31,8 +31,8 @@ import Scrollbar from "../../Scrollbar";
 import formatDate from "../../../utils/formatDate";
 import formatTime from "../../../utils/formatTime";
 
-interface WorkspaceListTableProps {
-  jurisdictions: Jurisdiction[];
+interface RouteListTableProps {
+  normalRoutes: Jurisdiction[];
 }
 
 type Sort = "updatedAt|desc" | "updatedAt|asc";
@@ -54,11 +54,11 @@ const sortOptions: SortOption[] = [
 ];
 
 const applyFilters = (
-  jurisdictions: Jurisdiction[],
+  normalRoutes: Jurisdiction[],
   query: string,
   filters: any
 ): Jurisdiction[] =>
-  jurisdictions.filter((jurisdiction) => {
+  normalRoutes.filter((jurisdiction) => {
     let matches = true;
 
     if (query) {
@@ -125,10 +125,10 @@ const applyFilters = (
   });
 
 const applyPagination = (
-  jurisdictions: Jurisdiction[],
+  normalRoutes: Jurisdiction[],
   page: number,
   limit: number
-): Jurisdiction[] => jurisdictions.slice(page * limit, page * limit + limit);
+): Jurisdiction[] => normalRoutes.slice(page * limit, page * limit + limit);
 
 const descendingComparator = (
   a: Jurisdiction,
@@ -153,12 +153,12 @@ const getComparator = (order: "asc" | "desc", orderBy: string) =>
         -descendingComparator(a, b, orderBy);
 
 const applySort = (
-  jurisdictions: Jurisdiction[],
+  normalRoutes: Jurisdiction[],
   sort: Sort
 ): Jurisdiction[] => {
   const [orderBy, order] = sort.split("|") as [string, "asc" | "desc"];
   const comparator = getComparator(order, orderBy);
-  const stabilizedThis = jurisdictions.map((el, index) => [el, index]);
+  const stabilizedThis = normalRoutes.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
     // @ts-ignore
@@ -176,8 +176,8 @@ const applySort = (
   return stabilizedThis.map((el) => el[0]);
 };
 
-const WorkSpaceListTable: FC<WorkspaceListTableProps> = (props) => {
-  const { jurisdictions, ...other } = props;
+const RouteListTable: FC<RouteListTableProps> = (props) => {
+  const { normalRoutes, ...other } = props;
   const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>(
     []
   );
@@ -221,7 +221,7 @@ const WorkSpaceListTable: FC<WorkspaceListTableProps> = (props) => {
   ): void => {
     setSelectedJurisdictions(
       event.target.checked
-        ? jurisdictions.map((jurisdiction) => jurisdiction.id)
+        ? normalRoutes.map((jurisdiction) => jurisdiction.id)
         : []
     );
   };
@@ -253,7 +253,7 @@ const WorkSpaceListTable: FC<WorkspaceListTableProps> = (props) => {
     setLimit(parseInt(event.target.value, 10));
   };
 
-  const filteredJurisdictions = applyFilters(jurisdictions, query, filters);
+  const filteredJurisdictions = applyFilters(normalRoutes, query, filters);
   const sortedJurisdictions = applySort(filteredJurisdictions, sort);
   const paginatedJurisdictions = applyPagination(
     sortedJurisdictions,
@@ -263,9 +263,9 @@ const WorkSpaceListTable: FC<WorkspaceListTableProps> = (props) => {
   // const enableBulkActions = selectedJurisdictions.length > 0;
   const selectedSomeJurisdictions =
     selectedJurisdictions.length > 0 &&
-    selectedJurisdictions.length < jurisdictions.length;
+    selectedJurisdictions.length < normalRoutes.length;
   const selectedAllJurisdictions =
-    selectedJurisdictions.length === jurisdictions.length;
+    selectedJurisdictions.length === normalRoutes.length;
 
   return (
     <>
@@ -501,11 +501,11 @@ const WorkSpaceListTable: FC<WorkspaceListTableProps> = (props) => {
   );
 };
 
-WorkSpaceListTable.propTypes = {
-  jurisdictions: PropTypes.array.isRequired,
+RouteListTable.propTypes = {
+  normalRoutes: PropTypes.array.isRequired,
 };
 
-export default WorkSpaceListTable;
+export default RouteListTable;
 
 const StyledCard = styled(Card)`
   && {

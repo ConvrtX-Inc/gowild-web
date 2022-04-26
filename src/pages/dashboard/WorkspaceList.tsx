@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import { jurisdictionApi } from "../../__fakeApi__/jurisdictionApi";
-import { WorkSpaceListTable } from "../../components/dashboard/workspace-received";
+import { RouteListTable } from "../../components/dashboard/route-list";
 import useMounted from "../../hooks/useMounted";
 import SearchIcon from "../../icons/Search";
 import NotificationIcon from "../../icons/WorkspaceNotification";
@@ -20,7 +20,7 @@ import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
 import type { Jurisdiction } from "../../types/jurisdiction";
 
-const WorkspaceList: FC = () => {
+const RouteList: FC = () => {
   const mounted = useMounted();
   const { settings } = useSettings();
   const [workspaces, setWorkspaces] = useState<Jurisdiction[]>([]);
@@ -98,7 +98,7 @@ const WorkspaceList: FC = () => {
             </FlexiGrid>
           </Grid>
           <Box sx={{ mt: "27px" }}>
-            <WorkSpaceListTable jurisdictions={workspaces} />
+            <RouteListTable normalRoutes={workspaces} />
           </Box>
         </StyledContainer>
       </Box>
@@ -106,7 +106,7 @@ const WorkspaceList: FC = () => {
   );
 };
 
-export default WorkspaceList;
+export default RouteList;
 
 const StyledContainer = styled(Container)`
   && {
