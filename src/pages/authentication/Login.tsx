@@ -10,6 +10,7 @@ import {
   LoginJWT,
 } from "../../components/authentication/login";
 import styled from "styled-components";
+import SmallWhiteMoonIcon from "../../icons/LoginWhiteMoon";
 import useAuth from "../../hooks/useAuth";
 import gtm from "../../lib/gtm";
 
@@ -32,124 +33,234 @@ const Login: FC = () => {
       <Helmet>
         <title>Login | Go Wild</title>
       </Helmet>
-      <BackgroundImgBox>
-        {/* <BackgroundGradient> */}
-          <StyledContainer maxWidth="sm">
-            <Box sx={{ width: "472px" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  mb: "15.47px",
-                  height: "72px",
-                }}
-              >
+      <BackgroundImg3rdLayer>
+        <BackgroundGradient>
+          <BackgroundImg2ndLayer>
+            <Background1stLineWave>
+              <TopBox>
+                <SmallWhiteMoonIcon />
+              </TopBox>
+              <SecondToTopBox>
+                <SmallWhiteMoonIcon />
+              </SecondToTopBox>
+              <ThirdToTopBox>
+                <SmallWhiteMoonIcon />
+              </ThirdToTopBox>
+              <OpaqueMoonTop src="/static/login/opaque-ellipse.svg" />
+              <OpaqueMoonLeft src="/static/login/opaque-ellipse.svg" />
+              <OpaqueMoonRight src="/static/login/opaque-ellipse.svg" />
+
+              <LogoWrapper>
                 <RouterLink to="/">
                   <img
                     src="/static/login/group-logo.png"
                     alt="nexxus-one-login-logo"
                   />
                 </RouterLink>
-              </Box>
-              <Box
-                sx={{
-                  alignItems: "center",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  mb: "71px",
-                }}
-              >
-                <div>
-                  <LoginTitle>Sign in to manage</LoginTitle>
-                  <SubTitle>Enter your details below</SubTitle>
-                </div>
-
-                {/* ------------------DYNAMIC FORMS------------------ */}
-                {platform !== "JWT" && (
-                  <Box
-                    sx={{
-                      height: 32,
-                      "& > img": {
-                        maxHeight: "100%",
-                        width: "auto",
-                      },
-                    }}
-                  >
-                    <img alt="Auth platform" src={platformIcons[platform]} />
-                  </Box>
-                )}
-              </Box>
-              
-              <Box
-                sx={{
-                  flexGrow: 1,
-                  mt: 3,
-                }}
-              >
-                {platform === "Amplify" && <LoginAmplify />}
-                {platform === "Auth0" && <LoginAuth0 />}
-                {platform === "Firebase" && <LoginFirebase />}
-                {platform === "JWT" && <LoginJWT />}
-              </Box>
-              {platform === "Amplify" && (
-                <Link
-                  color="textSecondary"
-                  component={RouterLink}
-                  sx={{ mt: 1 }}
-                  to="/authentication/password-recovery"
-                  variant="body2"
+              </LogoWrapper>
+              <FormContainer maxWidth="sm">
+                {/* <Box sx={{ width: "382px" }}> */}
+                <Box
+                  sx={{
+                    alignItems: "center",
+                    // display: "flex",
+                    // justifyContent: "flex-start",
+                    // mb: "71px",
+                  }}
                 >
-                  Forgot password
-                </Link>
-              )}
-            </Box>
-          </StyledContainer>
-        {/* </BackgroundGradient> */}
-      </BackgroundImgBox>
+                  <div>
+                    <LoginTitle sx={{ mb: "16px" }}>
+                      Sign in to manage
+                    </LoginTitle>
+                    <SubTitle>Enter your details below</SubTitle>
+                  </div>
+
+                  {/* ------------------DYNAMIC FORMS------------------ */}
+                  {platform !== "JWT" ||
+                    (platform !== "Axios" && (
+                      <Box
+                        sx={{
+                          height: 32,
+                          "& > img": {
+                            maxHeight: "100%",
+                            width: "auto",
+                          },
+                        }}
+                      >
+                        <img
+                          alt="Auth platform"
+                          src={platformIcons[platform]}
+                        />
+                      </Box>
+                    ))}
+                </Box>
+
+                <Box
+                  sx={{
+                    flexGrow: 1,
+                    mt: "54px",
+                  }}
+                >
+                  {platform === "Amplify" && <LoginAmplify />}
+                  {platform === "Auth0" && <LoginAuth0 />}
+                  {platform === "Firebase" && <LoginFirebase />}
+                  {platform === "JWT" && <LoginJWT />}
+                  {platform === "Axios" && <LoginJWT />}
+                </Box>
+                {platform === "Amplify" && (
+                  <Link
+                    color="textSecondary"
+                    component={RouterLink}
+                    sx={{ mt: 1 }}
+                    to="/authentication/password-recovery"
+                    variant="body2"
+                  >
+                    Forgot password
+                  </Link>
+                )}
+                {/* </Box> */}
+              </FormContainer>
+            </Background1stLineWave>
+          </BackgroundImg2ndLayer>
+        </BackgroundGradient>
+      </BackgroundImg3rdLayer>
     </>
   );
 };
 
 export default Login;
 
-const BackgroundImgBox = styled(Box)`
+const Background1stLineWave = styled(Box)`
   && {
-    background-image: url("/static/login/topbackground.png");
+    width: 100%;
+    height: 100%;
+    background-image: url("/static/login/line-wave.png");
     background-repeat: no-repeat;
-    /* background-size: cover; */
+    background-position: bottom;
+    background-size: contain;
+    /* position: relative; */
+    overflow: auto;
+  }
+`;
+
+const BackgroundImg2ndLayer = styled(Box)`
+  && {
+    width: 100%;
+    height: 100%;
+    background-image: url("/static/login/second-layer-background.svg");
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 1080px;
+    /* background-size: contain; */
+  }
+`;
+
+const BackgroundImg3rdLayer = styled(Box)`
+  && {
+    width: 100%;
+    height: 100%;
+    background-image: url("/static/login/third-layer-background.png");
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 `;
 
 const BackgroundGradient = styled(Box)`
   && {
+    height: 100%;
+    width: 100%;
     background: linear-gradient(
-      57.19deg,
-      #282a37 34.14%,
-      rgba(41, 43, 56, 0) 238.39%
+      359.74deg,
+      rgba(0, 117, 94, 0.5) -4.05%,
+      rgba(196, 196, 196, 0) 94.88%
     );
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
   }
 `;
 
-const StyledContainer = styled(Container)`
+const LogoWrapper = styled(Box)`
   && {
-    margin-top: 201px;
-    margin-left: 112px;
+    position: absolute;
+    top: 104px;
+    left: 104px;
+  }
+`;
+
+const TopBox = styled(Box)`
+  && {
+    height: 18px;
+    position: absolute;
+    top: 45px;
+    right: 424px;
+  }
+`;
+
+const SecondToTopBox = styled(Box)`
+  && {
+    height: 18px;
+    position: absolute;
+    top: 201px;
+    left: 622px;
+  }
+`;
+
+const ThirdToTopBox = styled(Box)`
+  && {
+    height: 18px;
+    position: absolute;
+    top: 298px;
+    left: 324.5px;
+  }
+`;
+
+const OpaqueMoonTop = styled.img`
+  && {
+    height: 42px;
+    width: 42px;
+    position: absolute;
+    top: 74px;
+    left: 632px;
+  }
+`;
+
+const OpaqueMoonLeft = styled.img`
+  && {
+    height: 42px;
+    width: 42px;
+    position: absolute;
+    top: 286px;
+    left: 70.5px;
+  }
+`;
+
+const OpaqueMoonRight = styled.img`
+  && {
+    height: 42px;
+    width: 42px;
+    position: absolute;
+    top: 626px;
+    right: 104px;
+  }
+`;
+
+const FormContainer = styled(Container)`
+  && {
+    width: 386px;
     padding: 0 0 0 0;
+    position: absolute;
+    top: 172px;
+    right: 266px;
   }
 `;
 
 const LoginTitle = styled(Box)`
   && {
-    font-family: 'DM Sans';
-font-style: normal;
-font-weight: 500;
-font-size: 48px;
-line-height: 100%;
-letter-spacing: -0.045em;
-color: #FFFFFF;
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 3rem;
+    line-height: 100%;
+    letter-spacing: -0.045em;
+    color: #ffffff;
   }
 `;
 
@@ -158,9 +269,9 @@ const SubTitle = styled(Box)`
     font-family: "Poppins";
     font-style: normal;
     font-weight: 400;
-    font-size: 20px;
-    line-height: 30px;
-    letter-spacing: 1.5px;
+    font-size: 1rem;
+    line-height: 24px;
+    letter-spacing: -0.025em;
     color: #ffffff;
   }
 `;

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import type { FC } from "react";
 import { useRoutes } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import "./i18n";
 import RTL from "./components/RTL";
@@ -37,12 +36,6 @@ const App: FC = () => {
     <ThemeProvider theme={theme}>
       <RTL direction={settings.direction}>
         <CssBaseline />
-        <Toaster
-          toastOptions={{
-            duration: 4000,
-          }}
-          position="bottom-right"
-        />
         {/* <SettingsDrawer /> */}
         {auth.isInitialized ? content : <SplashScreen />}
       </RTL>

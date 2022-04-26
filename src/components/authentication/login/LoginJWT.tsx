@@ -14,6 +14,7 @@ import styled from "styled-components";
 import useAuth from "../../../hooks/useAuth";
 import useMounted from "../../../hooks/useMounted";
 import PasswordIcon from "../../../icons/LoginPadlock";
+import EmailIcon from "../../../icons/LoginEmail";
 
 const LoginJWT: FC = (props) => {
   const mounted = useMounted();
@@ -22,8 +23,8 @@ const LoginJWT: FC = (props) => {
   return (
     <Formik
       initialValues={{
-        // email: "admin@nexxusone.com",
-        // password: "Qwerty123",
+        // email: "test1@example.com",
+        // password: "string",
         email: "",
         password: "",
         submit: null,
@@ -41,21 +42,13 @@ const LoginJWT: FC = (props) => {
       ): Promise<void> => {
         try {
           await login(values.email, values.password);
-          // API REQUEST HERE
-          // const URL = "process.env.REACT_APP_BACKEND_URL" + "api/v1/login";
-          // const BODY = {
-          //   username: email,
-          //   password: password,
-          // };
-          // const apiResponse = await axios.post(URL, BODY)
-          // sessionStorage.setItem("accessToken", apiResponse.data.access_token);
 
           if (mounted.current) {
             setStatus({ success: true });
             setSubmitting(false);
           }
         } catch (err) {
-          if (err.message === "401") {
+          if (err.response.status === 422) {
             err.message = "Invalid credentials";
           }
           console.error("Login JWT Error ", err.message);
@@ -78,15 +71,24 @@ const LoginJWT: FC = (props) => {
         values,
       }): JSX.Element => (
         <StyledForm noValidate onSubmit={handleSubmit} {...props}>
-          <FieldLabel>Email Address</FieldLabel>
+          <FieldLabel sx={{ mb: "16px" }}>Email Address</FieldLabel>
           <StyledTextField
             // autoFocus
             autoComplete="off"
             error={Boolean(touched.email && errors.email)}
             fullWidth
             helperText={touched.email && errors.email}
-            placeholder="type here"
-            // label="Email Address"
+            placeholder="Email"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment
+                  sx={{ pl: "18px", pr: "16px" }}
+                  position="start"
+                >
+                  <EmailIcon fontSize="medium" />
+                </InputAdornment>
+              ),
+            }}
             margin="normal"
             name="email"
             onBlur={handleBlur}
@@ -97,7 +99,7 @@ const LoginJWT: FC = (props) => {
             size="small"
           />
           <RowBox>
-            <FieldLabel>Password</FieldLabel>
+            <FieldLabel sx={{ mb: "5px" }}>Password</FieldLabel>
             <StyledLink
               component={RouterLink}
               to="/authentication/password-recovery"
@@ -109,15 +111,17 @@ const LoginJWT: FC = (props) => {
             error={Boolean(touched.password && errors.password)}
             fullWidth
             helperText={touched.password && errors.password}
-            placeholder="type here"
+            placeholder="Password"
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">
+                <InputAdornment
+                  sx={{ pl: "18px", pr: "16px" }}
+                  position="start"
+                >
                   <PasswordIcon fontSize="small" />
                 </InputAdornment>
               ),
             }}
-            // label="Password"
             margin="normal"
             name="password"
             onBlur={handleBlur}
@@ -130,7 +134,6 @@ const LoginJWT: FC = (props) => {
           {errors.submit && (
             <FormHelperText error>{errors.submit}</FormHelperText>
           )}
-          <SubmitHelperText>{errors.submit}</SubmitHelperText>
           <Box>
             <LoginButton
               disabled={isSubmitting}
@@ -138,7 +141,7 @@ const LoginJWT: FC = (props) => {
               type="submit"
               variant="contained"
             >
-              Login
+              Log In
             </LoginButton>
           </Box>
         </StyledForm>
@@ -159,39 +162,29 @@ const StyledForm = styled.form`
   }
 `;
 
-const SubmitHelperText = styled(FormHelperText)`
-  && {
-    position: absolute;
-    top: 645px;
-    left: 303px;
-    color: #f44336;
-  }
-`;
-
 const LoginButton = styled(Button)`
   && {
-    height: 50px;
-    padding: 17px 0;
-    background: #021f3d;
-    border-radius: 16px;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 0.875rem;
-    line-height: 16px;
-    color: rgba(255, 255, 255, 1);
+    height: 57px;
+    padding: 21px auto 17px auto;
+    background-image: url("/static/login/login-btn.webp");
+    background-color: #00755e;
+    border-radius: 10px;
+    font-family: "Gilroy-Bold";
+    font-size: 1rem;
+    line-height: 19px;
     text-align: center;
-    letter-spacing: 0.5px;
+    color: #ffffff;
   }
 `;
 
 const FieldLabel = styled(Box)`
   && {
-    font-family: "Poppins";
+    font-family: "DM Sans";
     font-style: normal;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 20px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 99.33%;
+    letter-spacing: -0.025em;
     color: #ffffff;
   }
 `;
@@ -200,11 +193,12 @@ const ActionTypography = styled(Box)`
   && {
     font-family: "Poppins";
     font-style: normal;
-    font-weight: 300;
-    font-size: 1.125rem;
-    line-height: 20px;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 24px;
     text-align: right;
-    color: #ffffff;
+    letter-spacing: -0.025em;
+    color: #eeeef3;
   }
 `;
 
@@ -220,23 +214,18 @@ const RowBox = styled(Box)`
 const StyledLink = styled(Link)`
   && {
     text-decoration: none;
-    margin: 0 0 0 auto;
+    margin: 0 0 12px auto;
   }
 `;
 
 const StyledTextField = styled(TextField)`
   && {
-    margin-top: 15px;
-    margin-bottom: 25px;
-    background: rgba(50, 54, 69, 1);
-    background: linear-gradient(
-      270deg,
-      rgba(50, 54, 69, 0.4) 0%,
-      rgba(50, 54, 69, 1) 90%
-    );
-    border-radius: 10px;
+    margin-top: 0;
+    margin-bottom: 38px;
+    background: #ffffff;
+    border-radius: 16px;
 
-    color: #8a8a8a;
+    color: #292930;
     font-family: "Poppins";
     font-style: normal;
     font-weight: 400;
@@ -248,15 +237,16 @@ const StyledTextField = styled(TextField)`
       border-style: solid;
     }
     && input {
-      color: #8a8a8a;
+      height: 55px;
       font-family: "Poppins";
       font-style: normal;
       font-weight: 400;
-      font-size: 18px;
-      line-height: 27px;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: -0.025em;
+      color: #292930;
       display: flex;
       align-items: center;
-      opacity: 1;
       border: 0;
       &::placeholder {
         font-family: "Poppins";
@@ -272,7 +262,7 @@ const StyledTextField = styled(TextField)`
     }
     && fieldset {
       border-style: hidden;
-      border-radius: 10px;
+      border-radius: 16px;
       /* border: 0; */
     }
   }
