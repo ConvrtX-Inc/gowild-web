@@ -1,3 +1,4 @@
+import "dotenv/config";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "react-quill/dist/quill.snow.css";
