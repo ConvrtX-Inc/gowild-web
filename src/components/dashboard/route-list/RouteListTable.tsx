@@ -9,27 +9,24 @@ import {
   Button,
   Card,
   Checkbox,
-  InputAdornment,
+  // InputAdornment,
   Popover,
   // Link,
+  IconButton,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TablePagination,
   TableRow,
-  TextField,
+  // TextField,
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import SearchIcon from "../../../icons/Search";
-import FilterIcon from "../../../icons/Filter";
-import DownloadCSVIcon from "../../../icons/DownloadCSV";
+import ThreeDotsIcon from "../../../icons/ThreeDots";
 import type { Jurisdiction } from "../../../types/jurisdiction";
-// import getInitials from "../../../utils/getInitials";
 import Scrollbar from "../../Scrollbar";
 import formatDate from "../../../utils/formatDate";
-import formatTime from "../../../utils/formatTime";
 
 interface RouteListTableProps {
   normalRoutes: Jurisdiction[];
@@ -183,17 +180,23 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   );
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(6);
-  const [query, setQuery] = useState<string>("");
-  const [sort, setSort] = useState<Sort>(sortOptions[1].value);
+  const [
+    query,
+    // setQuery
+  ] = useState<string>("");
+  const [
+    sort,
+    // setSort
+  ] = useState<Sort>(sortOptions[1].value);
   const [filters] = useState<any>({
     hasAcceptedMarketing: null,
     isProspect: null,
     isReturning: null,
   });
 
-  const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setQuery(event.target.value);
-  };
+  // const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  //   setQuery(event.target.value);
+  // };
 
   // const handleSortChange = (event: ChangeEvent<HTMLInputElement>): void => {
   //   setSort(event.target.value as Sort);
@@ -203,10 +206,10 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     null
   );
 
-  const handleSortChange = (event: any): void => {
-    setSort(event.target.value as Sort);
-    setAnchorEl(null);
-  };
+  // const handleSortChange = (event: any): void => {
+  //   setSort(event.target.value as Sort);
+  //   setAnchorEl(null);
+  // };
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -276,77 +279,17 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
             display: "flex",
             flexWrap: "wrap",
             m: 0,
-            padding: "31px 32px 30px 36px",
+            padding: "33px 16px 13px 66px",
           }}
         >
           <ToolbarBox>
-            <Box
-              sx={{
-                mr: "10px",
-              }}
-            >
-              <FilterButton
-                aria-describedby={id}
-                variant="contained"
-                onClick={handleClick}
-                disableElevation
-              >
-                <Box sx={{ mr: "10.35px" }}>
-                  <FilterIcon fontSize="small" />
-                </Box>
-                Filter
-              </FilterButton>
-              <StyledPopOver
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-              >
-                <PopOverTitle>Filter By</PopOverTitle>
-                {sortOptions.map((option) => (
-                  <StyledOption
-                    onClick={handleSortChange}
-                    key={option.value}
-                    value={option.value}
-                  >
-                    {option.label}
-                  </StyledOption>
-                ))}
-              </StyledPopOver>
-            </Box>
-            <Box
-              sx={{
-                maxWidth: "100%",
-                width: "377px",
-              }}
-            >
-              <SearchField
-                autoComplete="off"
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={handleQueryChange}
-                placeholder="Search"
-                value={query}
-                variant="outlined"
-              />
+            <Box>
+              <TableTitle>Route Lists</TableTitle>
             </Box>
             <Box sx={{ ml: "auto" }}>
-              <DownloadCSVButton variant="contained" disableElevation>
-                <Box sx={{ mr: "13.77px" }}>
-                  <DownloadCSVIcon />
-                </Box>
-                Download CSV
-              </DownloadCSVButton>
+              <CreateNormalRouteButton variant="contained" disableElevation>
+                Create
+              </CreateNormalRouteButton>
             </Box>
           </ToolbarBox>
         </Box>
@@ -363,23 +306,21 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                     />
                   </HeaderCheckbox>
                   <TableHeaderCell sx={{ width: "146px" }}>
-                    Jurisdiction
+                    NAME
                   </TableHeaderCell>
                   <TableHeaderCell sx={{ width: "209px" }}>
-                    Name/Email
+                    DATE CREATED
                   </TableHeaderCell>
                   <TableHeaderCell sx={{ width: "127px" }}>
-                    Case ID No.
+                    STARTING POINT LONG/LAT
                   </TableHeaderCell>
                   <TableHeaderCell sx={{ width: "144px" }}>
-                    Title
+                    ENDPOINT LONG/LAT
                   </TableHeaderCell>
-                  <TableHeaderCell sx={{ width: "170px" }}>
-                    Date Posted
-                  </TableHeaderCell>
-                  <TableHeaderCell align="left" sx={{ width: "161px" }}>
-                    Action
-                  </TableHeaderCell>
+                  <TableHeaderCell
+                    align="left"
+                    sx={{ width: "161px" }}
+                  ></TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -407,53 +348,46 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                         <Typography500>{`${jurisdiction.jurisdiction}`}</Typography500>
                       </TableCellStyled>
                       <TableCellStyled>
-                        <Box
-                          sx={{
-                            alignItems: "center",
-                            display: "flex",
-                          }}
-                        >
-                          {/* <Avatar
-                          src={jurisdiction.avatar}
-                          sx={{
-                            height: 42,
-                            width: 42,
-                          }}
-                        >
-                          {getInitials(jurisdiction.name)}
-                        </Avatar> */}
-                          <Box sx={{ ml: 1 }}>
-                            <Typography500>{jurisdiction.name}</Typography500>
-                            <Typography400>{jurisdiction.email}</Typography400>
-                          </Box>
-                        </Box>
-                      </TableCellStyled>
-                      <TableCellStyled>
-                        <Typography400>{jurisdiction.caseIdNo}</Typography400>
-                      </TableCellStyled>
-                      <TableCellStyled>
-                        <Typography600
-                          sx={{
-                            width: "max-content",
-                            maxWidth: "95px",
-                            px: 0,
-                          }}
-                        >
-                          {jurisdiction.caseTitle}
-                        </Typography600>
-                      </TableCellStyled>
-                      <TableCellStyled>
                         <Typography400>
                           {formatDate(jurisdiction.updatedAt)}
                         </Typography400>
-                        <Typography400>
-                          {formatTime(jurisdiction.updatedAt)}
-                        </Typography400>
                       </TableCellStyled>
-                      <TableCellStyled align="left">
-                        <CheckInfoButton variant="contained">
-                          Check Info
-                        </CheckInfoButton>
+                      <TableCellStyled>
+                        <Typography400>32.4832°/12.4233°</Typography400>
+                      </TableCellStyled>
+                      <TableCellStyled>
+                        <Typography400>65.5234°/12.4233°</Typography400>
+                      </TableCellStyled>
+                      <TableCellStyled align="right">
+                        <Box>
+                          <IconButton
+                            aria-describedby={id}
+                            onClick={handleClick}
+                          >
+                            <ThreeDotsIcon />
+                          </IconButton>
+                          <StyledPopOver
+                            id={id}
+                            open={open}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "left",
+                            }}
+                          >
+                            <PopOverTitle>Filter By</PopOverTitle>
+                            {sortOptions.map((option) => (
+                              <StyledOption
+                                // onClick={handleSortChange}
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </StyledOption>
+                            ))}
+                          </StyledPopOver>
+                        </Box>
                       </TableCellStyled>
                     </StyledTableRow>
                   );
@@ -474,7 +408,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
         />
       </StyledCard>
       <Box sx={{ display: "flex", position: "relative" }}>
-        <Box
+        {/* <Box
           sx={{
             mt: "23px",
             position: "relative",
@@ -482,20 +416,14 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
             mr: "89px",
             zIndex: 2,
           }}
-        >
-          <HiddenCheckBox
-            checked={selectedAllJurisdictions}
-            color="primary"
-            indeterminate={selectedSomeJurisdictions}
-            onChange={handleSelectAllJurisdictions}
-          />
-          <SendJurisdictionButton color="primary" variant="outlined">
-            Send To All Jurisdiction
-          </SendJurisdictionButton>
-          <SendFBIButton color="primary" variant="outlined">
-            Send To FBI
-          </SendFBIButton>
-        </Box>
+        > */}
+        <HiddenCheckBox
+          checked={selectedAllJurisdictions}
+          color="primary"
+          indeterminate={selectedSomeJurisdictions}
+          onChange={handleSelectAllJurisdictions}
+        />
+        {/* </Box> */}
       </Box>
     </>
   );
@@ -526,26 +454,22 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `;
 
+const TableTitle = styled(Box)`
+  && {
+    font-family: "Samsung Sharp Sans";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.875rem;
+    line-height: 38px;
+    color: #000000;
+  }
+`;
+
 const StyledTableRow = styled(TableRow)`
   && {
     &.Mui-selected {
       background-color: rgba(41, 85, 160, 0.08);
     }
-  }
-`;
-
-const CheckInfoButton = styled(Button)`
-  && {
-    padding: 11px 12px 10px 11px;
-    background: #021f3d;
-    border-radius: 12px;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 0.875rem;
-    line-height: 18px;
-    text-align: center;
-    color: #ffffff;
   }
 `;
 
@@ -556,21 +480,6 @@ const ToolbarBox = styled(Box)`
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-  }
-`;
-
-const FilterButton = styled(Button)`
-  && {
-    height: 44px;
-    padding: 13px 39px 13px 43px;
-    background: #f1f3f6;
-    border-radius: 10px;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 0.875rem;
-    line-height: 18px;
-    color: #09110e;
   }
 `;
 
@@ -608,44 +517,6 @@ const StyledOption = styled.option`
     color: #09110e;
     &:hover {
       background: #e5e7eb;
-    }
-  }
-`;
-
-const SearchField = styled(TextField)`
-  && {
-    background: #f1f3f6;
-    border-radius: 10px;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
-    color: #09110e;
-    && .Mui-focused fieldset {
-      border-width: 0 !important;
-    }
-    && input {
-      padding: 12px 0 12px 0;
-      font-family: "Poppins";
-      font-style: normal;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 20px;
-      color: #09110e;
-      &::placeholder {
-        font-family: "Poppins";
-        font-style: normal;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        color: #09110e;
-      }
-    }
-    && fieldset {
-      border-style: hidden;
-      border-radius: 10px;
-      /* border: 0; */
     }
   }
 `;
@@ -691,15 +562,6 @@ const TableCellStyled = styled(TableCell)`
   }
 `;
 
-const Typography600 = styled(Typography)`
-  && {
-    font-family: "Poppins";
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 18px;
-    color: #4f4f4f;
-  }
-`;
 const Typography500 = styled(Typography)`
   && {
     font-family: "Poppins";
@@ -719,18 +581,21 @@ const Typography400 = styled(Typography)`
   }
 `;
 
-const DownloadCSVButton = styled(Button)`
+const CreateNormalRouteButton = styled(Button)`
   && {
-    height: 44px;
-    background: #f1f3f6;
+    width: 76px;
+    height: 40px;
+    background-image: url("/static/route-list/create-btn.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #00755e;
     border-radius: 10px;
-    padding: 13px 18px 12.67px 18px;
-    /* font-family: "Inter"; */
-    font-style: normal;
-    font-weight: 500;
+    padding: 13px 15px 13px 16px;
+    font-family: "Gilroy-Bold";
     font-size: 14px;
-    line-height: 20px;
-    color: #313131;
+    line-height: 16px;
+    text-align: center;
+    color: #ffffff;
   }
 `;
 
@@ -786,39 +651,6 @@ const StyledTablePagination = styled(TablePagination)`
         height: 100%;
       }
     }
-  }
-`;
-
-const SendJurisdictionButton = styled(Button)`
-  && {
-    padding: 17px 31px;
-    background: #021f3d;
-    border-radius: 16px;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 0.875rem;
-    line-height: 16px;
-    text-align: center;
-    letter-spacing: 0.5px;
-    color: #ffffff;
-  }
-`;
-
-const SendFBIButton = styled(Button)`
-  && {
-    padding: 17px 40px;
-    margin-left: 38px;
-    background: #021f3d;
-    border-radius: 16px;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 0.875rem;
-    line-height: 16px;
-    text-align: center;
-    letter-spacing: 0.5px;
-    color: #ffffff;
   }
 `;
 

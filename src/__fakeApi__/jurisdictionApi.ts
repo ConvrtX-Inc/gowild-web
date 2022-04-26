@@ -6,7 +6,7 @@ class JurisdictionApi {
       {
         id: "5e887ac47eed253091be10cb",
         avatar: "/static/mock-images/avatars/adrian-wallace.png",
-        jurisdiction: "Jurisdiction01",
+        jurisdiction: "First On The List",
         email: "adrianwallace.mail.com",
         hasAcceptedMarketing: true,
         isProspect: false,

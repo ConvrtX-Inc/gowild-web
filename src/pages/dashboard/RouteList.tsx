@@ -2,19 +2,17 @@ import { useState, useEffect, useCallback } from "react";
 import type { FC } from "react";
 import { Helmet } from "react-helmet-async";
 import {
+  Avatar,
   Box,
   Container,
   Grid,
   IconButton,
-  TextField,
   Typography,
-  InputAdornment,
 } from "@mui/material";
 import styled from "styled-components";
 import { jurisdictionApi } from "../../__fakeApi__/jurisdictionApi";
 import { RouteListTable } from "../../components/dashboard/route-list";
 import useMounted from "../../hooks/useMounted";
-import SearchIcon from "../../icons/Search";
 import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
@@ -53,10 +51,10 @@ const RouteList: FC = () => {
       <Box
         sx={{
           // backgroundColor: "background.default",
-          backgroundColor: "#FAFBFC",
+          backgroundColor: "#1D140C",
           minHeight: "100%",
-          pt: "49px",
-          pb: "30px",
+          pt: "55px",
+          pb: "61px",
         }}
       >
         <StyledContainer
@@ -65,36 +63,20 @@ const RouteList: FC = () => {
         >
           <Grid container justifyContent="space-between">
             <Grid item>
-              <ContentTitleTypography>
-                Workspace Received
-              </ContentTitleTypography>
+              <ContentTitleTypography>Normal Route</ContentTitleTypography>
             </Grid>
             <FlexiGrid item>
-              <Box sx={{}}>
-                <StyledTextField
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment
-                        sx={{ pl: "11px", pr: "15px" }}
-                        position="start"
-                      >
-                        <SearchIcon fontSize="small" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  // onChange={handleQueryChange}
-                  placeholder="Search"
-                  // value={query}
-                  variant="outlined"
-                />
-              </Box>
-
               <IconBox>
                 <IconButton>
                   <NotificationIcon />
                 </IconButton>
               </IconBox>
+              <Box>
+                <Avatar
+                  src="/static/mock-images/avatars/gowild.png"
+                  sx={{ width: 44, height: 44 }}
+                />
+              </Box>
             </FlexiGrid>
           </Grid>
           <Box sx={{ mt: "27px" }}>
@@ -117,15 +99,13 @@ const StyledContainer = styled(Container)`
 
 const ContentTitleTypography = styled(Typography)`
   && {
-    font-family: "Poppins";
+    font-family: "Samsung Sharp Sans Bold";
     font-style: normal;
-    font-weight: 600;
-    font-size: 50px;
-    line-height: 75px;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 50px;
 
-    letter-spacing: -3px;
-
-    color: #09110e;
+    color: #ffffff;
   }
 `;
 
@@ -141,46 +121,6 @@ const FlexiGrid = styled(Grid)`
   }
 `;
 
-const StyledTextField = styled(TextField)`
-  && {
-    width: 283px;
-    background: #ffffff;
-    border-radius: 10px;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
-    color: #09110e;
-    && .Mui-focused fieldset {
-      border-width: 0 !important;
-    }
-    && input {
-      padding: 14px 0 14px 0;
-      font-family: "Poppins";
-      font-style: normal;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 20px;
-      color: #09110e;
-      &::placeholder {
-        font-family: "Poppins";
-        font-style: normal;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        color: #09110e;
-        opacity: 0.5;
-      }
-    }
-    && fieldset {
-      border-style: hidden;
-      border-radius: 10px;
-      /* border: 0; */
-    }
-  }
-`;
-
 const IconBox = styled(Box)`
   && {
     width: 48px;
@@ -189,6 +129,7 @@ const IconBox = styled(Box)`
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.03);
     border-radius: 10px;
     margin-left: auto;
+    margin-right: 71px;
     display: flex;
     align-items: center;
     justify-content: center;
