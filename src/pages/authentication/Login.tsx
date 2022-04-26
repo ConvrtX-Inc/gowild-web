@@ -59,15 +59,7 @@ const Login: FC = () => {
                 </RouterLink>
               </LogoWrapper>
               <FormContainer maxWidth="sm">
-                {/* <Box sx={{ width: "382px" }}> */}
-                <Box
-                  sx={{
-                    alignItems: "center",
-                    // display: "flex",
-                    // justifyContent: "flex-start",
-                    // mb: "71px",
-                  }}
-                >
+                <Box sx={{ alignItems: "center" }}>
                   <div>
                     <LoginTitle sx={{ mb: "16px" }}>
                       Sign in to manage
@@ -76,23 +68,19 @@ const Login: FC = () => {
                   </div>
 
                   {/* ------------------DYNAMIC FORMS------------------ */}
-                  {platform !== "JWT" ||
-                    (platform !== "Axios" && (
-                      <Box
-                        sx={{
-                          height: 32,
-                          "& > img": {
-                            maxHeight: "100%",
-                            width: "auto",
-                          },
-                        }}
-                      >
-                        <img
-                          alt="Auth platform"
-                          src={platformIcons[platform]}
-                        />
-                      </Box>
-                    ))}
+                  {platform !== "JWT" && platform !== "Axios" && (
+                    <Box
+                      sx={{
+                        height: 32,
+                        "& > img": {
+                          maxHeight: "100%",
+                          width: "auto",
+                        },
+                      }}
+                    >
+                      <img alt="Auth platform" src={platformIcons[platform]} />
+                    </Box>
+                  )}
                 </Box>
 
                 <Box
@@ -118,7 +106,6 @@ const Login: FC = () => {
                     Forgot password
                   </Link>
                 )}
-                {/* </Box> */}
               </FormContainer>
             </Background1stLineWave>
           </BackgroundImg2ndLayer>
