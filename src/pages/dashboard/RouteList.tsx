@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { FC } from "react";
 import { Helmet } from "react-helmet-async";
+import axios from "axios";
 import {
   Avatar,
   Box,
@@ -10,29 +11,36 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { jurisdictionApi } from "../../__fakeApi__/jurisdictionApi";
 import { RouteListTable } from "../../components/dashboard/route-list";
 import useMounted from "../../hooks/useMounted";
 import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
-import type { Jurisdiction } from "../../types/jurisdiction";
+import type { NormalRoute } from "../../types/route-lists";
 
 const RouteList: FC = () => {
   const mounted = useMounted();
   const { settings } = useSettings();
-  const [workspaces, setWorkspaces] = useState<Jurisdiction[]>([]);
+  const [routeLists, setRouteLists] = useState<NormalRoute[]>([]);
 
   useEffect(() => {
     gtm.push({ event: "page_view" });
   }, []);
 
-  const getWorkspaces = useCallback(async () => {
+  const getRouteLists = useCallback(async () => {
     try {
-      const data = await jurisdictionApi.getWorkspaces();
+      const token = sessionStorage.getItem("token");
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route`;
+      const CONFIG = {
+        headers: {
+          Authorization: `bearer ${token}`,
+        },
+      };
+      const apiResponse = await axios.get(URL, CONFIG);
+      console.log("Route Lists", apiResponse.data);
 
       if (mounted.current) {
-        setWorkspaces(data);
+        setRouteLists(apiResponse.data);
       }
     } catch (err) {
       console.error(err);
@@ -40,8 +48,8 @@ const RouteList: FC = () => {
   }, [mounted]);
 
   useEffect(() => {
-    getWorkspaces();
-  }, [getWorkspaces]);
+    getRouteLists();
+  }, [getRouteLists]);
 
   return (
     <>
@@ -59,7 +67,7 @@ const RouteList: FC = () => {
       >
         <StyledContainer
           maxWidth={settings.compact ? "xl" : false}
-          sx={{ pl: "70px !important", pr: "60px !important" }}
+          sx={{ pl: "28px !important", pr: "89px !important" }}
         >
           <Grid container justifyContent="space-between">
             <Grid item>
@@ -80,7 +88,7 @@ const RouteList: FC = () => {
             </FlexiGrid>
           </Grid>
           <Box sx={{ mt: "27px" }}>
-            <RouteListTable normalRoutes={workspaces} />
+            <RouteListTable normalRoutes={routeLists} />
           </Box>
         </StyledContainer>
       </Box>
@@ -104,8 +112,8 @@ const ContentTitleTypography = styled(Typography)`
     font-weight: 700;
     font-size: 40px;
     line-height: 50px;
-
     color: #ffffff;
+    margin-left: 38px;
   }
 `;
 

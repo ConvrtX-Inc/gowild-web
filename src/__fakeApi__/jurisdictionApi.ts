@@ -1,8 +1,8 @@
-import type { Jurisdiction } from "../types/jurisdiction";
+// import type { any } from "../types/route-lists";
 
 class JurisdictionApi {
-  getWorkspaces(): Promise<Jurisdiction[]> {
-    const jurisdictions: Jurisdiction[] = [
+  getWorkspaces(): Promise<any[]> {
+    const jurisdictions: any[] = [
       {
         id: "5e887ac47eed253091be10cb",
         avatar: "/static/mock-images/avatars/adrian-wallace.png",
@@ -138,8 +138,8 @@ class JurisdictionApi {
     return Promise.resolve(jurisdictions);
   }
 
-  getJurisdiction(): Promise<Jurisdiction> {
-    const jurisdiction: Jurisdiction = {
+  getJurisdiction(): Promise<any> {
+    const jurisdiction: any = {
       id: "5e86805e2bafd54f66cc95c3",
       address1: "Street John Wick, no. 7",
       address2: "House #25",
