@@ -106,6 +106,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     const initialize = async (): Promise<void> => {
       try {
         const token = window.sessionStorage.getItem("token");
+        const initiateUser = [];
         console.log("INITIALIZED AUTHENTICATION");
         console.log("You must login to get a token");
 
@@ -117,25 +118,9 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
             },
           };
           const apiResponse = await axios.get(URL, CONFIG);
-          console.log(apiResponse);
-
-          // initiateUser.push(apiResponse.data.user);
-          console.log("INITIALIZE AUTH TOKEN TRIGGERED");
-
-          const initiateUser = {
-            address_line1: null,
-            address_line2: null,
-            created_date: "2022-04-19T16:32:36.206Z",
-            deleted_date: null,
-            email: "admin@convrtx.com",
-            full_name: "Admin",
-            id: "50764a56-6d09-4907-91dd-06a4abcdbabd",
-            phone_no: null,
-            profile_photo: "",
-            updated_date: "2022-04-19T16:32:36.206Z",
-            username: "admin",
-            __entity: "User",
-          };
+          initiateUser.push(apiResponse.data.user);
+          console.log("INITIALIZE-AUTH-TOKEN TRIGGERED");
+          console.log("Login-thru-token Successfully");
 
           dispatch({
             type: "INITIALIZE",
