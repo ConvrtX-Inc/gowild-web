@@ -24,12 +24,13 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import ThreeDotsIcon from "../../../icons/ThreeDots";
-import type { Jurisdiction } from "../../../types/jurisdiction";
+import type { NormalRoute } from "../../../types/route-lists";
 import Scrollbar from "../../Scrollbar";
 import formatDate from "../../../utils/formatDate";
 
 interface RouteListTableProps {
-  normalRoutes: Jurisdiction[];
+  // normalRoutes: NormalRoute[];
+  normalRoutes: NormalRoute[];
 }
 
 type Sort = "updatedAt|desc" | "updatedAt|asc";
@@ -51,55 +52,32 @@ const sortOptions: SortOption[] = [
 ];
 
 const applyFilters = (
-  normalRoutes: Jurisdiction[],
+  normalRoutes: any[],
   query: string,
   filters: any
-): Jurisdiction[] =>
-  normalRoutes.filter((jurisdiction) => {
+): NormalRoute[] =>
+  normalRoutes.filter((normalRoute) => {
     let matches = true;
 
     if (query) {
-      const properties = [
-        "email",
-        "name",
-        "caseIdNo",
-        "caseTitle",
-        "jurisdiction",
-        "updatedAt",
-      ];
+      const properties = ["route_name"];
       let containsQuery = false;
 
       if (typeof query === "string") {
         console.log("Query is string");
         properties.forEach((property) => {
-          console.log(property);
-          if (property !== "caseIdNo") {
-            //Query Date with dateStyle: medium
-            // if (jurisdiction["updatedAt"])
-            console.log(jurisdiction["updatedAt"]);
-
-            //Query all Strings
-            if (
-              jurisdiction[property].toLowerCase().includes(query.toLowerCase())
-            ) {
-              containsQuery = true;
-            }
-          }
-          // Query the number value of property
-          if (typeof jurisdiction["caseIdNo"] === "number") {
-            console.log("Query is number");
-            if (
-              jurisdiction["caseIdNo"].toString().includes(query.toString())
-            ) {
-              containsQuery = true;
-            }
+          //Query all Strings
+          if (
+            normalRoute[property].toLowerCase().includes(query.toLowerCase())
+          ) {
+            containsQuery = true;
           }
         });
       }
       // properties.forEach((property) => {
-      //   console.log(jurisdiction["caseTitle"]);
+      //   console.log(normalRoute["caseTitle"]);
       //   if (
-      //     jurisdiction[property].toLowerCase().includes(query.toLowerCase())
+      //     normalRoute[property].toLowerCase().includes(query.toLowerCase())
       //   ) {
       //     containsQuery = true;
       //   }
@@ -113,7 +91,7 @@ const applyFilters = (
     Object.keys(filters).forEach((key) => {
       const value = filters[key];
 
-      if (value && jurisdiction[key] !== value) {
+      if (value && normalRoute[key] !== value) {
         matches = false;
       }
     });
@@ -122,16 +100,12 @@ const applyFilters = (
   });
 
 const applyPagination = (
-  normalRoutes: Jurisdiction[],
+  normalRoutes: any[],
   page: number,
   limit: number
-): Jurisdiction[] => normalRoutes.slice(page * limit, page * limit + limit);
+): any[] => normalRoutes.slice(page * limit, page * limit + limit);
 
-const descendingComparator = (
-  a: Jurisdiction,
-  b: Jurisdiction,
-  orderBy: string
-): number => {
+const descendingComparator = (a: any, b: any, orderBy: string): number => {
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -145,14 +119,10 @@ const descendingComparator = (
 
 const getComparator = (order: "asc" | "desc", orderBy: string) =>
   order === "desc"
-    ? (a: Jurisdiction, b: Jurisdiction) => descendingComparator(a, b, orderBy)
-    : (a: Jurisdiction, b: Jurisdiction) =>
-        -descendingComparator(a, b, orderBy);
+    ? (a: NormalRoute, b: NormalRoute) => descendingComparator(a, b, orderBy)
+    : (a: NormalRoute, b: NormalRoute) => -descendingComparator(a, b, orderBy);
 
-const applySort = (
-  normalRoutes: Jurisdiction[],
-  sort: Sort
-): Jurisdiction[] => {
+const applySort = (normalRoutes: NormalRoute[], sort: Sort): NormalRoute[] => {
   const [orderBy, order] = sort.split("|") as [string, "asc" | "desc"];
   const comparator = getComparator(order, orderBy);
   const stabilizedThis = normalRoutes.map((el, index) => [el, index]);
@@ -175,7 +145,7 @@ const applySort = (
 
 const RouteListTable: FC<RouteListTableProps> = (props) => {
   const { normalRoutes, ...other } = props;
-  const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>(
+  const [selectedNormalRoutes, setSelectedNormalRoutes] = useState<string[]>(
     []
   );
   const [page, setPage] = useState<number>(0);
@@ -219,28 +189,28 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-  const handleSelectAllJurisdictions = (
+  const handleSelectAllNormalRoutes = (
     event: ChangeEvent<HTMLInputElement>
   ): void => {
-    setSelectedJurisdictions(
+    setSelectedNormalRoutes(
       event.target.checked
-        ? normalRoutes.map((jurisdiction) => jurisdiction.id)
+        ? normalRoutes.map((normalRoute) => normalRoute.id)
         : []
     );
   };
 
-  const handleSelectOneJurisdiction = (
+  const handleSelectOneNormalRoute = (
     event: ChangeEvent<HTMLInputElement>,
-    jurisdictionId: string
+    normalRouteId: string
   ): void => {
-    if (!selectedJurisdictions.includes(jurisdictionId)) {
-      setSelectedJurisdictions((prevSelected) => [
+    if (!selectedNormalRoutes.includes(normalRouteId)) {
+      setSelectedNormalRoutes((prevSelected) => [
         ...prevSelected,
-        jurisdictionId,
+        normalRouteId,
       ]);
     } else {
-      setSelectedJurisdictions((prevSelected) =>
-        prevSelected.filter((id) => id !== jurisdictionId)
+      setSelectedNormalRoutes((prevSelected) =>
+        prevSelected.filter((id) => id !== normalRouteId)
       );
     }
   };
@@ -256,19 +226,19 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     setLimit(parseInt(event.target.value, 10));
   };
 
-  const filteredJurisdictions = applyFilters(normalRoutes, query, filters);
-  const sortedJurisdictions = applySort(filteredJurisdictions, sort);
-  const paginatedJurisdictions = applyPagination(
-    sortedJurisdictions,
+  const filteredNormalRoutes = applyFilters(normalRoutes, query, filters);
+  const sortedNormalRoutes = applySort(filteredNormalRoutes, sort);
+  const paginatedNormalRoutes = applyPagination(
+    sortedNormalRoutes,
     page,
     limit
   );
-  // const enableBulkActions = selectedJurisdictions.length > 0;
-  const selectedSomeJurisdictions =
-    selectedJurisdictions.length > 0 &&
-    selectedJurisdictions.length < normalRoutes.length;
-  const selectedAllJurisdictions =
-    selectedJurisdictions.length === normalRoutes.length;
+  // const enableBulkActions = selectedNormalRoutes.length > 0;
+  const selectedSomeNormalRoutes =
+    selectedNormalRoutes.length > 0 &&
+    selectedNormalRoutes.length < normalRoutes.length;
+  const selectedAllNormalRoutes =
+    selectedNormalRoutes.length === normalRoutes.length;
 
   return (
     <>
@@ -283,9 +253,9 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
           }}
         >
           <ToolbarBox>
-            <Box>
+            <TableTitleWrapper>
               <TableTitle>Route Lists</TableTitle>
-            </Box>
+            </TableTitleWrapper>
             <Box sx={{ ml: "auto" }}>
               <CreateNormalRouteButton variant="contained" disableElevation>
                 Create
@@ -294,27 +264,27 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
           </ToolbarBox>
         </Box>
         <Scrollbar>
-          <Box sx={{ minWidth: 700, pl: "36px", pr: "32px" }}>
+          <Box>
             <Table>
-              <TableHead sx={{ borderTop: "1px solid #EFEFEF" }}>
+              <TableHead>
                 <TableRow>
-                  <HeaderCheckbox padding="checkbox" sx={{ width: "34px" }}>
+                  <HeaderCheckbox padding="checkbox">
                     <StyledCheckbox
-                      checked={selectedAllJurisdictions}
-                      indeterminate={selectedSomeJurisdictions}
-                      onChange={handleSelectAllJurisdictions}
+                      checked={selectedAllNormalRoutes}
+                      indeterminate={selectedSomeNormalRoutes}
+                      onChange={handleSelectAllNormalRoutes}
                     />
                   </HeaderCheckbox>
-                  <TableHeaderCell sx={{ width: "146px" }}>
+                  <TableHeaderCell sx={{ width: "340px" }}>
                     NAME
                   </TableHeaderCell>
-                  <TableHeaderCell sx={{ width: "209px" }}>
+                  <TableHeaderCell sx={{ width: "140px" }}>
                     DATE CREATED
                   </TableHeaderCell>
-                  <TableHeaderCell sx={{ width: "127px" }}>
+                  <TableHeaderCell sx={{ width: "234px" }}>
                     STARTING POINT LONG/LAT
                   </TableHeaderCell>
-                  <TableHeaderCell sx={{ width: "144px" }}>
+                  <TableHeaderCell sx={{ width: "166px" }}>
                     ENDPOINT LONG/LAT
                   </TableHeaderCell>
                   <TableHeaderCell
@@ -324,39 +294,39 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedJurisdictions.map((jurisdiction) => {
-                  const isJurisdictionSelected = selectedJurisdictions.includes(
-                    jurisdiction.id
+                {paginatedNormalRoutes.map((normalRoute) => {
+                  const isNormalRouteselected = selectedNormalRoutes.includes(
+                    normalRoute.id
                   );
 
                   return (
                     <StyledTableRow
                       hover
-                      key={jurisdiction.id}
-                      selected={isJurisdictionSelected}
+                      key={normalRoute.id}
+                      selected={isNormalRouteselected}
                     >
                       <TableCellStyled padding="checkbox">
                         <StyledCheckbox
-                          checked={isJurisdictionSelected}
+                          checked={isNormalRouteselected}
                           onChange={(event) =>
-                            handleSelectOneJurisdiction(event, jurisdiction.id)
+                            handleSelectOneNormalRoute(event, normalRoute.id)
                           }
-                          value={isJurisdictionSelected}
+                          value={isNormalRouteselected}
                         />
                       </TableCellStyled>
                       <TableCellStyled>
-                        <Typography500>{`${jurisdiction.jurisdiction}`}</Typography500>
+                        <Typography500>{`${normalRoute.route_name}`}</Typography500>
                       </TableCellStyled>
                       <TableCellStyled>
                         <Typography400>
-                          {formatDate(jurisdiction.updatedAt)}
+                          {formatDate(normalRoute.created_date)}
                         </Typography400>
                       </TableCellStyled>
                       <TableCellStyled>
-                        <Typography400>32.4832°/12.4233°</Typography400>
+                        <Typography400>{`${normalRoute.start_point_long}/${normalRoute.start_point_lat}`}</Typography400>
                       </TableCellStyled>
                       <TableCellStyled>
-                        <Typography400>65.5234°/12.4233°</Typography400>
+                        <Typography400>{`${normalRoute.stop_point_long}/${normalRoute.stop_point_lat}`}</Typography400>
                       </TableCellStyled>
                       <TableCellStyled align="right">
                         <Box>
@@ -399,7 +369,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
 
         <StyledTablePagination
           component="div"
-          count={filteredJurisdictions.length}
+          count={filteredNormalRoutes.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}
@@ -418,10 +388,10 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
           }}
         > */}
         <HiddenCheckBox
-          checked={selectedAllJurisdictions}
+          checked={selectedAllNormalRoutes}
           color="primary"
-          indeterminate={selectedSomeJurisdictions}
-          onChange={handleSelectAllJurisdictions}
+          indeterminate={selectedSomeNormalRoutes}
+          onChange={handleSelectAllNormalRoutes}
         />
         {/* </Box> */}
       </Box>
@@ -444,31 +414,13 @@ const StyledCard = styled(Card)`
 
 const StyledCheckbox = styled(Checkbox)`
   && {
+    padding: 0;
     color: rgba(9, 17, 14, 0.5);
     &.Mui-checked {
       color: #2955a0;
     }
     &.MuiCheckbox-indeterminate {
       color: #2955a0;
-    }
-  }
-`;
-
-const TableTitle = styled(Box)`
-  && {
-    font-family: "Samsung Sharp Sans";
-    font-style: normal;
-    font-weight: 700;
-    font-size: 1.875rem;
-    line-height: 38px;
-    color: #000000;
-  }
-`;
-
-const StyledTableRow = styled(TableRow)`
-  && {
-    &.Mui-selected {
-      background-color: rgba(41, 85, 160, 0.08);
     }
   }
 `;
@@ -480,6 +432,32 @@ const ToolbarBox = styled(Box)`
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    position: relative;
+  }
+`;
+
+const TableTitleWrapper = styled(Box)`
+  && {
+    position: absolute;
+    top: 13px;
+    left: 0;
+  }
+`;
+
+const TableTitle = styled(Box)`
+  && {
+    font-family: "Samsung Sharp Sans Bold";
+    font-size: 1.875rem;
+    line-height: 38px;
+    color: #000000;
+  }
+`;
+
+const StyledTableRow = styled(TableRow)`
+  && {
+    &.Mui-selected {
+      background-color: rgba(41, 85, 160, 0.08);
+    }
   }
 `;
 
@@ -523,33 +501,29 @@ const StyledOption = styled.option`
 
 const HeaderCheckbox = styled(TableCell)`
   && {
-    border-color: #efefef;
-    padding-top: 26px;
-    padding-bottom: 26px;
+    width: 66px;
+    height: 45px;
+    background-color: #ff7851;
+    padding-top: 13px;
+    padding-bottom: 12px;
     padding-left: 0;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 18px;
-    color: #09110e;
-    /* opacity: 0.4; */
+    display: flex;
+    justify-content: center;
   }
 `;
 
 const TableHeaderCell = styled(TableCell)`
   && {
-    border-color: #efefef;
-    padding-top: 26px;
-    padding-bottom: 26px;
+    background-color: #ff7851;
+    padding-top: 15px;
+    padding-bottom: 15px;
     padding-left: 0;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 18px;
-    color: #09110e;
-    opacity: 0.4;
+    font-family: "Inter";
+    font-weight: 600;
+    font-size: 0.75rem;
+    line-height: 15px;
+    letter-spacing: 0.05em;
+    color: #ffffff;
   }
 `;
 
@@ -603,7 +577,7 @@ const StyledTablePagination = styled(TablePagination)`
   && {
     /* padding: 0 0 0 0; */
     height: 43px;
-    background: #2955a0;
+    background: #ff7851;
     border-radius: 0px 0px 20px 20px;
     display: flex;
     justify-content: flex-end;
