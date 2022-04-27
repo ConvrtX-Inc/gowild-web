@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { ChangeEvent, FC, MouseEvent } from "react";
+import { useNavigate } from "react-router-dom";
 // import { Link as RouterLink } from "react-router-dom";
 // import numeral from "numeral";
 import PropTypes from "prop-types";
@@ -24,6 +25,9 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import ThreeDotsIcon from "../../../icons/ThreeDots";
+import ViewIcon from "../../../icons/RouteListView";
+import EditIcon from "../../../icons/RouteListEdit";
+import DeleteIcon from "../../../icons/RouteListDelete";
 import type { NormalRoute } from "../../../types/route-lists";
 import Scrollbar from "../../Scrollbar";
 import formatDate from "../../../utils/formatDate";
@@ -38,16 +42,24 @@ type Sort = "updatedAt|desc" | "updatedAt|asc";
 interface SortOption {
   value: Sort;
   label: string;
+  icon: any;
 }
 
 const sortOptions: SortOption[] = [
   {
-    label: "Date posted (oldest)",
+    label: "View",
     value: "updatedAt|asc",
+    icon: <ViewIcon />,
   },
   {
-    label: "Date posted (newest)",
+    label: "Edit",
     value: "updatedAt|desc",
+    icon: <EditIcon />,
+  },
+  {
+    label: "Delete",
+    value: "updatedAt|desc",
+    icon: <DeleteIcon />,
   },
 ];
 
@@ -144,6 +156,7 @@ const applySort = (normalRoutes: NormalRoute[], sort: Sort): NormalRoute[] => {
 };
 
 const RouteListTable: FC<RouteListTableProps> = (props) => {
+  const navigate = useNavigate();
   const { normalRoutes, ...other } = props;
   const [selectedNormalRoutes, setSelectedNormalRoutes] = useState<string[]>(
     []
@@ -164,6 +177,9 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     isReturning: null,
   });
 
+  const handleRedirectPath = () => {
+    navigate("/dashboard/route-list/new");
+  };
   // const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
   //   setQuery(event.target.value);
   // };
@@ -257,7 +273,11 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
               <TableTitle>Route Lists</TableTitle>
             </TableTitleWrapper>
             <Box sx={{ ml: "auto" }}>
-              <CreateNormalRouteButton variant="contained" disableElevation>
+              <CreateNormalRouteButton
+                onClick={handleRedirectPath}
+                variant="contained"
+                disableElevation
+              >
                 Create
               </CreateNormalRouteButton>
             </Box>
@@ -343,18 +363,23 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                             onClose={handleClose}
                             anchorOrigin={{
                               vertical: "bottom",
-                              horizontal: "left",
+                              horizontal: "center",
+                            }}
+                            transformOrigin={{
+                              vertical: "top",
+                              horizontal: "right",
                             }}
                           >
-                            <PopOverTitle>Filter By</PopOverTitle>
                             {sortOptions.map((option) => (
-                              <StyledOption
-                                // onClick={handleSortChange}
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </StyledOption>
+                              <OptionsBox key={option.value}>
+                                {option.icon}
+                                <StyledOption
+                                  // onClick={handleSortChange}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </StyledOption>
+                              </OptionsBox>
                             ))}
                           </StyledPopOver>
                         </Box>
@@ -461,25 +486,22 @@ const StyledTableRow = styled(TableRow)`
   }
 `;
 
-const StyledPopOver = styled(Popover)`
-  && .MuiPopover-paper {
-    background: #f1f3f6;
-    border: 1px solid #2955a0;
-    border-radius: 10px;
+const OptionsBox = styled(Box)`
+  && {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
   }
 `;
 
-const PopOverTitle = styled(Box)`
-  && {
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 0.875rem;
-    line-height: 18px;
-    color: #09110e;
-    margin-top: 15px;
-    margin-bottom: 7px;
-    margin-left: 19px;
+const StyledPopOver = styled(Popover)`
+  && .MuiPopover-paper {
+    padding: 15px 4px 0 10px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 0;
   }
 `;
 

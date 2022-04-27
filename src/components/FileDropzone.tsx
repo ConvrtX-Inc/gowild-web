@@ -6,14 +6,13 @@ import {
   Box,
   Button,
   IconButton,
-  Link,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Tooltip,
-  Typography,
 } from "@mui/material";
+import styled from "styled-components";
 import DuplicateIcon from "../icons/Duplicate";
 import XIcon from "../icons/X";
 import bytesToSize from "../utils/bytesToSize";
@@ -64,22 +63,22 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
       <Box
         sx={{
           alignItems: "center",
-          border: 1,
+          border: 0,
           borderRadius: 1,
           borderColor: "divider",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
           outline: "none",
-          p: 6,
+          p: 0,
           ...(isDragActive && {
             backgroundColor: "action.active",
             opacity: 0.5,
           }),
           "&:hover": {
-            backgroundColor: "action.hover",
+            // backgroundColor: "action.hover",
             cursor: "pointer",
-            opacity: 0.5,
+            // opacity: 0.5,
           },
         }}
         {...getRootProps()}
@@ -87,14 +86,25 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
         <input {...getInputProps()} />
         <Box
           sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            mb: "20px",
             "& img": {
               width: 100,
             },
           }}
         >
-          <img alt="Select file" src="/static/add_file.png" />
+          <img
+            width="53.92px"
+            height="38.56px"
+            alt="Select file"
+            src="/static/add_file.svg"
+          />
+          <CaptionTypo>Attach images of thumbnail</CaptionTypo>
         </Box>
-        <Box sx={{ p: 2 }}>
+        {/* <Box sx={{ p: 2 }}>
           <Typography color="textPrimary" variant="h6">
             {`Select file${maxFiles && maxFiles === 1 ? "" : "s"}`}
           </Typography>
@@ -107,7 +117,7 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
               through your machine
             </Typography>
           </Box>
-        </Box>
+        </Box> */}
       </Box>
       {files.length > 0 && (
         <Box sx={{ mt: 2 }}>
@@ -209,3 +219,16 @@ FileDropzone.defaultProps = {
 };
 
 export default FileDropzone;
+
+const CaptionTypo = styled(Box)`
+  && {
+    margin-top: 15.45px;
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 16px;
+    letter-spacing: 0.5px;
+    color: rgba(0, 0, 0, 0.2);
+  }
+`;
