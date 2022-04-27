@@ -98,16 +98,16 @@ const RouteCreateForm: FC = (props) => {
                   <RowBox>
                     <Box sx={{ width: "293px", mr: "18px" }}>
                       <LegendBox>
-                        <FlexiBox sx={{ mt: "28.67px", mb: "17px" }}>
-                          <StartingPtIcon />
+                        <FlexiBox sx={{ mb: "17px" }}>
+                          <StartingPtIcon fontSize="small" />
                           <LegendItem>Starting Point</LegendItem>
                         </FlexiBox>
                         <FlexiBox sx={{ mb: "17px" }}>
-                          <FinishingPtIcon />
+                          <FinishingPtIcon fontSize="small" />
                           <LegendItem>Finishing Point</LegendItem>
                         </FlexiBox>
                         <FlexiBox>
-                          <HistoricalEventIcon />
+                          <HistoricalEventIcon fontSize="small" />
                           <LegendItem>Historical Event</LegendItem>
                         </FlexiBox>
                       </LegendBox>
@@ -197,7 +197,7 @@ const RouteCreateForm: FC = (props) => {
                         variant="outlined"
                       />
                     </Box>
-                    <Box>
+                    <Box sx={{ height: "982px" }}>
                       <img
                         src="/static/route-list/sample-map.png"
                         alt="sample-map"
@@ -264,6 +264,7 @@ export default RouteCreateForm;
 
 const LegendBox = styled(Box)`
   && {
+    margin-top: 28.67px;
     padding-left: 27px;
     display: flex;
     flex-direction: column;
@@ -285,6 +286,7 @@ const LegendItem = styled(Box)`
 
 const FlexiBox = styled(Box)`
   && {
+    height: 14px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -329,12 +331,15 @@ const StyledTextField = styled(TextField)`
     font-family: "Gilroy-Medium";
     font-size: 18px;
     line-height: 27px;
+    border-radius: 22.1951px;
     && .Mui-focused fieldset {
-      border-width: 1px !important;
+      height: 67px;
+      border-width: 2px !important;
       border-color: #2995a8;
       border-style: solid;
     }
     && input {
+      height: 67px;
       padding: 20px 33px 20px 33px;
       font-family: "Gilroy Semibold";
       font-size: 16px;
@@ -343,6 +348,7 @@ const StyledTextField = styled(TextField)`
       color: rgba(0, 0, 0, 0.4);
       display: flex;
       align-items: center;
+      box-sizing: border-box;
       border: 2px solid #f3f3f3;
       border-radius: 22.1951px;
       &::placeholder {
@@ -357,6 +363,8 @@ const StyledTextField = styled(TextField)`
       }
     }
     && fieldset {
+      height: 67px;
+      margin-top: 2px;
       border-style: hidden;
       border-radius: 22.1951px;
       /* border: 0; */
@@ -367,19 +375,21 @@ const StyledTextField = styled(TextField)`
 const StyledMultiTextField = styled(TextField)`
   && {
     margin-top: 6px;
-    margin-bottom: 20px;
     background: #ffffff;
     color: #22333b;
     font-family: "Gilroy-Medium";
-    font-size: 18px;
-    line-height: 27px;
+    font-size: 16px;
+    line-height: 24px;
+    border-radius: 22.1951px;
     && .MuiInputBase-multiline {
       padding: 0;
     }
     && .Mui-focused fieldset {
-      border-width: 1px !important;
+      height: 100%;
+      border-width: 2px !important;
       border-color: #2995a8;
       border-style: solid;
+      border-radius: 22.1951px;
     }
     && textarea {
       padding: 20px 13px 19px 33px;
@@ -404,6 +414,7 @@ const StyledMultiTextField = styled(TextField)`
       }
     }
     && fieldset {
+      margin-top: 2px;
       border-style: hidden;
       border-radius: 22.1951px;
       /* border: 0; */

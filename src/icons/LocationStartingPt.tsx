@@ -4,7 +4,7 @@ const LocationStartingPt = createSvgIcon(
   <svg
     width="100%"
     height="100%"
-    viewBox="0 0 12 15"
+    viewBox="0 -2 12 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >

@@ -90,6 +90,7 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
+            mb: "20px",
             "& img": {
               width: 100,
             },
@@ -222,7 +223,6 @@ export default FileDropzone;
 const CaptionTypo = styled(Box)`
   && {
     margin-top: 15.45px;
-    margin-bottom: 20px;
     font-family: "Gilroy";
     font-style: normal;
     font-weight: 500;
