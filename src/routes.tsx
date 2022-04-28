@@ -31,9 +31,12 @@ const VerifyCode = Loadable(
 // Dashboard pages
 const Overview = Loadable(lazy(() => import("./pages/dashboard/Overview")));
 const RouteList = Loadable(lazy(() => import("./pages/dashboard/RouteList")));
+
 const RouteListCreate = Loadable(
   lazy(() => import("./pages/dashboard/RouteListCreate"))
 );
+
+const Guidelines = Loadable(lazy(() => import("./pages/dashboard/Guidelines")));
 
 // const Chat = Loadable(lazy(() => import("./pages/dashboard/Chat")));
 
@@ -117,6 +120,10 @@ const routes: PartialRouteObject[] = [
             element: <RouteListCreate />,
           },
         ],
+      },
+      {
+        path: "/guidelines",
+        element: <Guidelines />,
       },
       // {
       //   path: "chat",
