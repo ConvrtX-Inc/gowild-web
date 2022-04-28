@@ -19,27 +19,29 @@ const SlashScreen: FC = () => (
       zIndex: 2000,
     }}
   >
-    <CircularProgress
-      size={120}
-      sx={{
-        color: "#82BAA7",
-        position: "absolute",
-        top: "455px",
-        left: "660px",
-      }}
-    />
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#2995A8",
-        width: "100px",
-        height: "100px",
-        borderRadius: "50%",
-      }}
-    >
-      <Logo />
+    <Box sx={{ position: "relative" }}>
+      <CircularProgress
+        size={120}
+        sx={{
+          color: "#82BAA7",
+          position: "absolute",
+          top: "-10px",
+          left: "-10px",
+        }}
+      />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#2995A8",
+          width: "100px",
+          height: "100px",
+          borderRadius: "50%",
+        }}
+      >
+        <Logo />
+      </Box>
     </Box>
   </Box>
 );
