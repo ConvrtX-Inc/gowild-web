@@ -6,26 +6,26 @@ import {
   Box,
   // Button,
   IconButton,
-  // List,
-  // ListItem,
+  List,
+  ListItem,
   // ListItemIcon,
   // ListItemText,
   // Tooltip,
 } from "@mui/material";
 import styled from "styled-components";
-import CrossIcon from "../icons/RouteListCross";
 // import DuplicateIcon from "../icons/Duplicate";
+import CrossIcon from "../icons/RouteListCross";
 // import XIcon from "../icons/X";
-import bytesToSize from "../utils/bytesToSize";
+// import bytesToSize from "../utils/bytesToSize";
 
-interface FileDropzoneProps extends DropzoneOptions {
+interface FileDropzoneHistoricalProps extends DropzoneOptions {
   files?: any[];
   onRemove?: (file: any) => void;
   onRemoveAll?: () => void;
   onUpload?: () => void;
 }
 
-const FileDropzone: FC<FileDropzoneProps> = (props) => {
+const FileDropzoneHistorical: FC<FileDropzoneHistoricalProps> = (props) => {
   const {
     accept,
     disabled,
@@ -60,9 +60,10 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
   });
 
   return (
-    <div {...other}>
+    <Box {...other} sx={{ ml: "auto" }}>
       <Box
         sx={{
+          mr: "30px",
           alignItems: "center",
           border: 0,
           borderRadius: 1,
@@ -78,13 +79,13 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
           }),
           "&:hover": {
             // backgroundColor: "action.hover",
-            cursor: `${files.length < 1 ? "pointer" : "auto"}`,
+            cursor: "pointer",
             // opacity: 0.5,
           },
         }}
         {...getRootProps()}
       >
-        {files.length < 1 && <input {...getInputProps()} />}
+        <input {...getInputProps()} />
         <Box
           sx={{
             display: "flex",
@@ -97,37 +98,13 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
             },
           }}
         >
-          {files.length > 0 ? (
-            <Box sx={{ position: "relative" }}>
-              <IconButton
-                sx={{ position: "absolute", right: "-21px", top: "-20px" }}
-                onClick={() => onRemove && onRemove(files[0])}
-              >
-                <CrossIcon fontSize="medium" />
-              </IconButton>
-              <img
-                height="90px"
-                width="90px"
-                src={files.length > 0 ? URL.createObjectURL(files[0]) : ""}
-                alt="sample"
-              />
-              <ImageSize
-                sx={{ position: "absolute", top: "30px", right: "-80px" }}
-              >
-                {bytesToSize(files[0].size)}
-              </ImageSize>
-            </Box>
-          ) : (
-            <>
-              <img
-                width="53.92px"
-                height="38.56px"
-                alt="Select file"
-                src="/static/add_file.svg"
-              />
-              <CaptionTypo>Attach images of thumbnail</CaptionTypo>
-            </>
-          )}
+          <img
+            width="53.92px"
+            height="38.56px"
+            alt="Select file"
+            src="/static/add_file.svg"
+          />
+          <CaptionTypo>Attach images</CaptionTypo>
         </Box>
         {/* <Box sx={{ p: 2 }}>
           <Typography color="textPrimary" variant="h6">
@@ -144,8 +121,29 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
           </Box>
         </Box> */}
       </Box>
+
+      <Box>
+        <List>
+          {files.map((file) => (
+            <ListItem key={file.path} sx={{ position: "relative" }}>
+              <IconButton
+                sx={{ position: "absolute", right: "23px", top: "-15px" }}
+                onClick={() => onRemove && onRemove(file)}
+              >
+                <CrossIcon fontSize="medium" />
+              </IconButton>
+              <img
+                height="157.17px"
+                width="234"
+                src={URL.createObjectURL(file)}
+                alt="sample"
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
       {/* {files.length > 0 && (
-        <Box sx={{ mt: 2 }}>
+        <Box>
           <List>
             {files.map((file) => (
               <ListItem
@@ -210,11 +208,11 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
           </Box>
         </Box>
       )} */}
-    </div>
+    </Box>
   );
 };
 
-FileDropzone.propTypes = {
+FileDropzoneHistorical.propTypes = {
   accept: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
@@ -239,11 +237,11 @@ FileDropzone.propTypes = {
   preventDropOnDocument: PropTypes.bool,
 };
 
-FileDropzone.defaultProps = {
+FileDropzoneHistorical.defaultProps = {
   files: [],
 };
 
-export default FileDropzone;
+export default FileDropzoneHistorical;
 
 const CaptionTypo = styled(Box)`
   && {
@@ -254,16 +252,5 @@ const CaptionTypo = styled(Box)`
     line-height: 16px;
     letter-spacing: 0.5px;
     color: rgba(0, 0, 0, 0.2);
-  }
-`;
-
-const ImageSize = styled(Box)`
-  && {
-    font-family: "Gilroy";
-    font-style: normal;
-    font-weight: 500;
-    line-height: 27px;
-    color: #000000;
-    opacity: 0.4;
   }
 `;

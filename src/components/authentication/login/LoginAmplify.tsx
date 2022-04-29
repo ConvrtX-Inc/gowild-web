@@ -20,8 +20,8 @@ const LoginAmplify: FC = (props) => {
   return (
     <Formik
       initialValues={{
-        email: "admin@nexxusone.com",
-        password: "Qwerty123",
+        email: "admin@gowild.com",
+        password: "qwerty123",
         submit: null,
       }}
       validationSchema={Yup.object().shape({
@@ -118,8 +118,8 @@ const LoginAmplify: FC = (props) => {
           <Box sx={{ mt: 3 }}>
             <Alert severity="info">
               <div>
-                You can use <b>admin@nexxusone.com</b> and password{" "}
-                <b>Qwerty123</b>
+                You can use <b>email</b> and password{" "}
+                <b>qwerty</b>
               </div>
             </Alert>
           </Box>

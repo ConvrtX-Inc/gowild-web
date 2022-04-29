@@ -170,6 +170,8 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     };
     const apiResponse = await axios.post(URL, BODY, CONFIG);
     sessionStorage.setItem("token", apiResponse.data.token);
+    sessionStorage.setItem("user_id", apiResponse.data.user.id);
+    sessionStorage.setItem("user", apiResponse.data.user);
     user.push(apiResponse.data.user);
 
     dispatch({
@@ -182,6 +184,8 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
 
   const logout = async (): Promise<void> => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("user");
     sessionStorage.clear();
     dispatch({ type: "LOGOUT" });
   };
