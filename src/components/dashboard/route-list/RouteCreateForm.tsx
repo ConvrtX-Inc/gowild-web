@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { FC } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -9,20 +10,24 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   FormHelperText,
   Grid,
   TextField,
 } from "@mui/material";
 import styled from "styled-components";
+import Scrollbar from "../../Scrollbar";
+import Map from "./Map";
 import FileDropzone from "../../FileDropzone";
+import FileDropzoneHistorical from "../../FileDropzoneHistorical";
 import StartingPtIcon from "../../../icons/LocationStartingPt";
 import FinishingPtIcon from "../../../icons/LocationFinishingPt";
 import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
+import AddHistoricalIcon from "../../../icons/RouteListAddHistorical";
 
 const RouteCreateForm: FC = (props) => {
   const navigate = useNavigate();
   const [files, setFiles] = useState<any[]>([]);
+  const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
 
   const handleDrop = (newFiles: any): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
@@ -38,6 +43,51 @@ const RouteCreateForm: FC = (props) => {
     setFiles([]);
   };
 
+  const handleHistoricalDrop = (newFiles: any): void => {
+    setHistoricalFiles((prevFiles) => [...prevFiles, ...newFiles]);
+  };
+
+  const handleHistoricalRemove = (file): void => {
+    setHistoricalFiles((prevFiles) =>
+      prevFiles.filter((_file) => _file.path !== file.path)
+    );
+  };
+
+  const handleHistoricalRemoveAll = (): void => {
+    setHistoricalFiles([]);
+  };
+
+  const handleAddHistorical = async (
+    histoLong,
+    histoLat,
+    histoTitle,
+    histoSubTitle,
+    histoDescription
+  ) => {
+    console.log(histoTitle);
+    const accessToken = sessionStorage.getItem("token");
+    const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-clues`;
+    const DATA = {
+      route_id: "40955c8f-fe20-4d06-adb6-ae7564089026",
+      location_point_long: 32.4832,
+      location_point_lat: 32.4832,
+      clue_point_long: Number(histoLong),
+      clue_point_lat: Number(histoLat),
+      clue_title: histoTitle,
+      description: histoDescription,
+      clue_img: historicalFiles,
+      video_url: "video",
+      ar_clue: "augmented reality",
+    };
+    const CONFIG = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    const apiResponse = await axios.post(URL, DATA, CONFIG);
+    console.log(apiResponse);
+  };
+
   return (
     <Formik
       initialValues={{
@@ -49,6 +99,10 @@ const RouteCreateForm: FC = (props) => {
         raceTitle: "",
         description: "",
         histoLong: "",
+        histoLat: "",
+        histoTitle: "",
+        histoSubTitle: "",
+        histoDescription: "",
         submit: null,
       }}
       validationSchema={Yup.object().shape({
@@ -58,8 +112,12 @@ const RouteCreateForm: FC = (props) => {
         endPtLong: Yup.string().max(80).required(),
         endPtLat: Yup.string().max(80).required(),
         raceTitle: Yup.string().max(80).required(),
-        description: Yup.string().max(80).required(),
-        histoLong: Yup.number().min(0),
+        description: Yup.string().max(255).required(),
+        histoLong: Yup.string().max(80),
+        histoLat: Yup.string().max(80),
+        histoTitle: Yup.string().max(80),
+        histoSubTitle: Yup.string().max(80),
+        histoDescription: Yup.string().max(80),
       })}
       onSubmit={async (
         values,
@@ -67,6 +125,25 @@ const RouteCreateForm: FC = (props) => {
       ): Promise<void> => {
         try {
           // NOTE: Make API request
+          const accessToken = sessionStorage.getItem("token");
+          const userId = sessionStorage.getItem("user_id");
+          const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route`;
+          const DATA = {
+            user_id: userId,
+            route_name: values.raceTitle,
+            start_point_long: values.startPtLong,
+            start_point_lat: values.startPtLat,
+            stop_point_long: values.endPtLong,
+            stop_point_lat: values.endPtLat,
+          };
+          const CONFIG = {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          };
+          const apiResponse = await axios.post(URL, DATA, CONFIG);
+          console.log(apiResponse);
+
           setStatus({ success: true });
           setSubmitting(false);
           toast.success("Route created!");
@@ -133,7 +210,10 @@ const RouteCreateForm: FC = (props) => {
                         placeholder="Latitude"
                         name="startPtLat"
                         onBlur={handleBlur}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          handleChange(e);
+                          console.log("Text Field Value", values.startPtLat);
+                        }}
                         value={values.startPtLat}
                         variant="outlined"
                       />
@@ -161,13 +241,15 @@ const RouteCreateForm: FC = (props) => {
                         value={values.endPtLat}
                         variant="outlined"
                       />
-                      <FileDropzone
-                        accept="image/*"
-                        files={files}
-                        onDrop={handleDrop}
-                        onRemove={handleRemove}
-                        onRemoveAll={handleRemoveAll}
-                      />
+                      <Box sx={{ width: "289px", height: "89.98px" }}>
+                        <FileDropzone
+                          accept="image/*"
+                          files={files}
+                          onDrop={handleDrop}
+                          onRemove={handleRemove}
+                          onRemoveAll={handleRemoveAll}
+                        />
+                      </Box>
                       <FieldLabel>Title</FieldLabel>
                       <StyledTextField
                         error={Boolean(touched.raceTitle && errors.raceTitle)}
@@ -197,61 +279,197 @@ const RouteCreateForm: FC = (props) => {
                         variant="outlined"
                       />
                     </Box>
-                    <Box sx={{ height: "982px" }}>
-                      <img
-                        src="/static/route-list/sample-map.png"
-                        alt="sample-map"
+                    <Box
+                      sx={{
+                        height: "982px",
+                        width: "100%",
+                        borderRadius: "20px",
+                      }}
+                    >
+                      <Map
+                        startPt={(lat, long) => {
+                          console.log("StartPt props", lat, long);
+                          setFieldValue("startPtLat", lat.toFixed(4));
+                          setFieldValue("startPtLong", long.toFixed(4));
+                        }}
+                        endPt={(lat, long) => {
+                          console.log("EndPt props", lat, long);
+                          setFieldValue("endPtLat", lat.toFixed(4));
+                          setFieldValue("endPtLong", long.toFixed(4));
+                        }}
                       />
                     </Box>
                   </RowBox>
+                  {/* -----------------------------HISTORICAL------------------------------------- */}
+                  <HistoricalBox>
+                    <ToolbarBox>
+                      <Title>Historical</Title>
+                      <OrangeBorder></OrangeBorder>
+                      <Box sx={{ ml: "auto", mb: "20px" }}>
+                        <AddHistoricalButton
+                          color="primary"
+                          disabled={isSubmitting}
+                          variant="contained"
+                          onClick={() =>
+                            handleAddHistorical(
+                              values.histoLong,
+                              values.histoLat,
+                              values.histoTitle,
+                              values.histoSubTitle,
+                              values.histoDescription
+                            )
+                          }
+                        >
+                          <Box sx={{ mr: "3px" }}>
+                            <AddHistoricalIcon fontSize="small" />
+                          </Box>
+                          Add Historical
+                        </AddHistoricalButton>
+                      </Box>
+                    </ToolbarBox>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        position: "relative",
+                      }}
+                    >
+                      <RowBox sx={{ width: "688.31px" }}>
+                        <ColumnBox>
+                          <Box sx={{ width: "293px", pl: "13px" }}>
+                            <FieldLabel>Historical Event</FieldLabel>
+                            <StyledTextField
+                              sx={{ mb: "35px !important" }}
+                              error={Boolean(
+                                touched.histoLong && errors.histoLong
+                              )}
+                              fullWidth
+                              helperText={touched.histoLong && errors.histoLong}
+                              placeholder="Longitude"
+                              name="histoLong"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              value={values.histoLong}
+                              variant="outlined"
+                            />
+                            <StyledTextField
+                              sx={{ mt: 0 }}
+                              error={Boolean(
+                                touched.histoLat && errors.histoLat
+                              )}
+                              fullWidth
+                              helperText={touched.histoLat && errors.histoLong}
+                              placeholder="Latitude"
+                              name="histoLat"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              value={values.histoLat}
+                              variant="outlined"
+                            />
+                          </Box>
+                          <Box sx={{ width: "293px", ml: "39px" }}>
+                            <FieldLabel>Title</FieldLabel>
+                            <StyledTextField
+                              error={Boolean(
+                                touched.histoTitle && errors.histoTitle
+                              )}
+                              fullWidth
+                              helperText={
+                                touched.histoTitle && errors.histoTitle
+                              }
+                              placeholder="Historical Item"
+                              name="histoTitle"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              value={values.histoTitle}
+                              variant="outlined"
+                            />
+                            <FieldLabel>Sub-Title</FieldLabel>
+                            <StyledTextField
+                              sx={{ mt: 0 }}
+                              error={Boolean(
+                                touched.histoSubTitle && errors.histoSubTitle
+                              )}
+                              fullWidth
+                              helperText={
+                                touched.histoSubTitle && errors.histoSubTitle
+                              }
+                              placeholder="Write something here..."
+                              name="histoSubTitle"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              value={values.histoSubTitle}
+                              variant="outlined"
+                            />
+                          </Box>
+                        </ColumnBox>
+                      </RowBox>
+
+                      <Box
+                        sx={{
+                          width: "296px",
+                          height: "470px",
+                          position: "absolute",
+                          right: "0",
+                          top: "0",
+                        }}
+                      >
+                        <Scrollbar>
+                          <FileDropzoneHistorical
+                            accept="image/*"
+                            files={historicalFiles}
+                            onDrop={handleHistoricalDrop}
+                            onRemove={handleHistoricalRemove}
+                            onRemoveAll={handleHistoricalRemoveAll}
+                          />
+                        </Scrollbar>
+                      </Box>
+                    </Box>
+                    <Box sx={{ width: "622px", pl: "16px" }}>
+                      <FieldLabel>Description</FieldLabel>
+                      <StyledMultiTextField
+                        error={Boolean(
+                          touched.histoDescription && errors.histoDescription
+                        )}
+                        fullWidth
+                        multiline
+                        rows={7}
+                        helperText={
+                          touched.histoDescription && errors.histoDescription
+                        }
+                        placeholder="Write something here..."
+                        name="histoDescription"
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.histoDescription}
+                        variant="outlined"
+                      />
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        mt: "50px",
+                      }}
+                    >
+                      <SaveButton
+                        disabled={isSubmitting}
+                        type="submit"
+                        variant="contained"
+                      >
+                        Save
+                      </SaveButton>
+                    </Box>
+                    {errors.submit && (
+                      <Box sx={{ mt: 3 }}>
+                        <FormHelperText error>{errors.submit}</FormHelperText>
+                      </Box>
+                    )}
+                  </HistoricalBox>
                 </CardContent>
               </Card>
-              <Box sx={{ mt: 3 }}>
-                <Card>
-                  <CardHeader title="Historical" />
-                  <CardContent>
-                    <Grid container spacing={3}>
-                      <Grid item lg={12} md={6} xs={12}>
-                        <TextField
-                          error={Boolean(touched.histoLong && errors.histoLong)}
-                          fullWidth
-                          helperText={touched.histoLong && errors.histoLong}
-                          label="Longitude"
-                          name="histoLong"
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          type="number"
-                          value={values.histoLong}
-                          variant="outlined"
-                        />
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            mt: 3,
-                          }}
-                        >
-                          <Button
-                            color="primary"
-                            disabled={isSubmitting}
-                            type="submit"
-                            variant="contained"
-                          >
-                            Save
-                          </Button>
-                        </Box>
-                        {errors.submit && (
-                          <Box sx={{ mt: 3 }}>
-                            <FormHelperText error>
-                              {errors.submit}
-                            </FormHelperText>
-                          </Box>
-                        )}
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Box>
             </Grid>
           </Grid>
         </StyledForm>
@@ -328,8 +546,9 @@ const StyledTextField = styled(TextField)`
     margin-bottom: 20px;
     background: #ffffff;
     color: #22333b;
-    font-family: "Gilroy-Medium";
-    font-size: 18px;
+    font-family: "Gilroy Light";
+    font-weight: bold;
+    font-size: 1.11rem;
     line-height: 27px;
     border-radius: 22.1951px;
     && .Mui-focused fieldset {
@@ -341,10 +560,10 @@ const StyledTextField = styled(TextField)`
     && input {
       height: 67px;
       padding: 20px 33px 20px 33px;
-      font-family: "Gilroy Semibold";
-      font-size: 16px;
-      line-height: 24px;
-      letter-spacing: -0.025em;
+      font-family: "Gilroy Light";
+      font-weight: bold;
+      font-size: 1.11rem;
+      line-height: 27px;
       color: rgba(0, 0, 0, 0.4);
       display: flex;
       align-items: center;
@@ -352,9 +571,9 @@ const StyledTextField = styled(TextField)`
       border: 2px solid #f3f3f3;
       border-radius: 22.1951px;
       &::placeholder {
-        font-family: "Gilroy Semibold";
-        font-weight: 500;
-        font-size: 17.7561px;
+        font-family: "Gilroy Light";
+        font-weight: bold;
+        font-size: 1.11rem;
         line-height: 27px;
         color: #000000;
         opacity: 0.4;
@@ -377,35 +596,35 @@ const StyledMultiTextField = styled(TextField)`
     margin-top: 6px;
     background: #ffffff;
     color: #22333b;
-    font-family: "Gilroy-Medium";
-    font-size: 16px;
-    line-height: 24px;
+    font-family: "Gilroy Light";
+    font-weight: bold;
+    font-size: 1.11rem;
+    line-height: 27px;
     border-radius: 22.1951px;
     && .MuiInputBase-multiline {
       padding: 0;
     }
     && .Mui-focused fieldset {
-      height: 100%;
       border-width: 2px !important;
       border-color: #2995a8;
       border-style: solid;
       border-radius: 22.1951px;
     }
     && textarea {
-      padding: 20px 13px 19px 33px;
-      font-family: "Gilroy Semibold";
-      font-size: 16px;
-      line-height: 24px;
-      letter-spacing: -0.025em;
+      padding: 20px 13px 12px 33px;
+      font-family: "Gilroy Light";
+      font-weight: bold;
+      font-size: 1.11rem;
+      line-height: 25px;
       color: rgba(0, 0, 0, 0.4);
       display: flex;
       align-items: center;
       border: 2px solid #f3f3f3;
       border-radius: 22.1951px;
       &::placeholder {
-        font-family: "Gilroy Semibold";
-        font-weight: 500;
-        font-size: 17.7561px;
+        font-family: "Gilroy Light";
+        font-weight: bold;
+        font-size: 1.11rem;
         line-height: 27px;
         color: #000000;
         opacity: 0.4;
@@ -419,5 +638,89 @@ const StyledMultiTextField = styled(TextField)`
       border-radius: 22.1951px;
       /* border: 0; */
     }
+  }
+`;
+
+const HistoricalBox = styled(Box)`
+  && {
+    margin-top: 46px;
+  }
+`;
+
+const Title = styled(Box)`
+  && {
+    margin-left: 128px;
+    margin-bottom: 21px;
+    font-family: "Circular Std Bold";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 38px;
+    letter-spacing: -0.04em;
+    color: #000000;
+  }
+`;
+
+const ToolbarBox = styled(Box)`
+  && {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom: 3px solid #d4e0f1;
+    position: relative;
+    margin-bottom: 44px;
+  }
+`;
+
+const OrangeBorder = styled(Box)`
+  && {
+    width: 298px;
+    border-bottom: 7px solid #e4572e;
+    position: absolute;
+    bottom: -4px;
+    left: 42px;
+  }
+`;
+
+const ColumnBox = styled(Box)`
+  && {
+    width: 688.31px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+`;
+
+const AddHistoricalButton = styled(Button)`
+  && {
+    background: #0e5753;
+    border-radius: 13.6667px;
+    padding: 10px 16.21px 11px 22px;
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    color: #ffffff;
+  }
+`;
+
+const SaveButton = styled(Button)`
+  && {
+    height: 60px;
+    width: 303px;
+    padding: 20px auto 20px;
+    background-image: url("/static/route-list/save-btn.png");
+    background-color: #00755e;
+    border-radius: 10px;
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 19px;
+    text-align: center;
+    color: #ffffff;
   }
 `;

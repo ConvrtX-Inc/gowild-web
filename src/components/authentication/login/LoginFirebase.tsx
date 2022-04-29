@@ -68,8 +68,8 @@ const LoginFirebase: FC = (props) => {
       </Box>
       <Formik
         initialValues={{
-          email: "admin@nexxusone.com",
-          password: "Qwerty123",
+          email: "admin@gowild.com",
+          password: "qwerty123",
           submit: null,
         }}
         validationSchema={Yup.object().shape({
@@ -156,8 +156,8 @@ const LoginFirebase: FC = (props) => {
             <Box sx={{ mt: 2 }}>
               <Alert severity="info">
                 <div>
-                  You can use <b>admin@nexxusone.com</b> and password{" "}
-                  <b>Qwerty123</b>
+                  You can use <b>email</b> and password{" "}
+                  <b>qwerty123</b>
                 </div>
               </Alert>
             </Box>
