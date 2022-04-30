@@ -399,7 +399,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
           onRowsPerPageChange={handleLimitChange}
           page={page}
           rowsPerPage={limit}
-          rowsPerPageOptions={[6, 10, 25]}
+          rowsPerPageOptions={[10, 30, 50]}
         />
       </StyledCard>
       <Box sx={{ display: "flex", position: "relative" }}>

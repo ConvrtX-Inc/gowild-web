@@ -1,9 +1,9 @@
 import "dotenv/config";
 import React from "react";
 import GoogleMapReact from "google-map-react";
-import { Box } from "@mui/material";
+// import { Box } from "@mui/material";
 import styled from "styled-components";
-import StartingPtIcon from "../../../icons/RouteListStartPt";
+// import StartingPtIcon from "../../../icons/RouteListStartPt";
 // import { Icon } from "@iconify/react";
 // import locationIcon from "@iconify/icons-mdi/map-marker";
 
@@ -48,15 +48,15 @@ const Map = (props) => {
   const { startPt, endPt } = props;
   const location = {
     address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
-    lat: 54.065708,
-    lng: -128.644333,
+    lat: 54.06291864840513,
+    lng: -128.6423159788208,
   };
   // console.log(process.env.REACT_APP_GOOGLE_KEY);
   return (
     <GoogleMapReactCore
       bootstrapURLKeys={{ key: `${process.env.REACT_APP_GOOGLE_KEY}` }}
       defaultCenter={location}
-      defaultZoom={17}
+      defaultZoom={16}
       yesIWantToUseGoogleMapApiInternals
       onGoogleApiLoaded={({ map, maps }) =>
         apiIsLoaded(map, maps, startPt, endPt)

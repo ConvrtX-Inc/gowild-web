@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FC } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
@@ -25,13 +25,17 @@ import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
 import AddHistoricalIcon from "../../../icons/RouteListAddHistorical";
 
 const RouteCreateForm: FC = (props) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [files, setFiles] = useState<any[]>([]);
   const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
 
   const handleDrop = (newFiles: any): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
+
+  if (files.length > 0) {
+    console.log(files[0].size);
+  }
 
   const handleRemove = (file): void => {
     setFiles((prevFiles) =>
@@ -147,7 +151,6 @@ const RouteCreateForm: FC = (props) => {
           setStatus({ success: true });
           setSubmitting(false);
           toast.success("Route created!");
-          navigate("/dashboard/route-list");
         } catch (err) {
           console.error(err);
           toast.error("Something went wrong!");
@@ -190,6 +193,7 @@ const RouteCreateForm: FC = (props) => {
                       </LegendBox>
                       <FieldLabel>Starting Point</FieldLabel>
                       <StyledTextField
+                        autoComplete="off"
                         error={Boolean(
                           touched.startPtLong && errors.startPtLong
                         )}
@@ -203,6 +207,7 @@ const RouteCreateForm: FC = (props) => {
                         variant="outlined"
                       />
                       <StyledTextField
+                        autoComplete="off"
                         sx={{ mt: "0 !important" }}
                         error={Boolean(touched.startPtLat && errors.startPtLat)}
                         fullWidth
@@ -219,6 +224,7 @@ const RouteCreateForm: FC = (props) => {
                       />
                       <FieldLabel>End Point</FieldLabel>
                       <StyledTextField
+                        autoComplete="off"
                         error={Boolean(touched.endPtLong && errors.endPtLong)}
                         fullWidth
                         helperText={touched.endPtLong && errors.endPtLong}
@@ -230,6 +236,7 @@ const RouteCreateForm: FC = (props) => {
                         variant="outlined"
                       />
                       <StyledTextField
+                        autoComplete="off"
                         sx={{ mt: "0 !important" }}
                         error={Boolean(touched.endPtLat && errors.endPtLat)}
                         fullWidth
@@ -243,7 +250,8 @@ const RouteCreateForm: FC = (props) => {
                       />
                       <Box sx={{ width: "289px", height: "89.98px" }}>
                         <FileDropzone
-                          accept="image/*"
+                          accept={["image/png", ".jpg", "image/gif"]}
+                          maxFiles={1}
                           files={files}
                           onDrop={handleDrop}
                           onRemove={handleRemove}
@@ -252,6 +260,7 @@ const RouteCreateForm: FC = (props) => {
                       </Box>
                       <FieldLabel>Title</FieldLabel>
                       <StyledTextField
+                        autoComplete="off"
                         error={Boolean(touched.raceTitle && errors.raceTitle)}
                         fullWidth
                         helperText={touched.raceTitle && errors.raceTitle}
@@ -264,12 +273,13 @@ const RouteCreateForm: FC = (props) => {
                       />
                       <FieldLabel>Description</FieldLabel>
                       <StyledMultiTextField
+                        autoComplete="off"
                         error={Boolean(
                           touched.description && errors.description
                         )}
                         fullWidth
                         multiline
-                        rows={7}
+                        rows={4}
                         helperText={touched.description && errors.description}
                         placeholder="Write something here..."
                         name="description"
@@ -278,7 +288,28 @@ const RouteCreateForm: FC = (props) => {
                         value={values.description}
                         variant="outlined"
                       />
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          mt: "16px",
+                        }}
+                      >
+                        <SaveButton
+                          disabled={isSubmitting}
+                          type="submit"
+                          variant="contained"
+                        >
+                          Save
+                        </SaveButton>
+                      </Box>
+                      {errors.submit && (
+                        <Box sx={{ mt: 3 }}>
+                          <FormHelperText error>{errors.submit}</FormHelperText>
+                        </Box>
+                      )}
                     </Box>
+
                     <Box
                       sx={{
                         height: "982px",
@@ -446,27 +477,6 @@ const RouteCreateForm: FC = (props) => {
                         variant="outlined"
                       />
                     </Box>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        mt: "50px",
-                      }}
-                    >
-                      <SaveButton
-                        disabled={isSubmitting}
-                        type="submit"
-                        variant="contained"
-                      >
-                        Save
-                      </SaveButton>
-                    </Box>
-                    {errors.submit && (
-                      <Box sx={{ mt: 3 }}>
-                        <FormHelperText error>{errors.submit}</FormHelperText>
-                      </Box>
-                    )}
                   </HistoricalBox>
                 </CardContent>
               </Card>
@@ -516,7 +526,7 @@ const StyledForm = styled.form`
   && {
     && p.Mui-error {
       position: absolute;
-      bottom: -20px;
+      bottom: -15px;
     }
   }
 `;
