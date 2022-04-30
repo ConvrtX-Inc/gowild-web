@@ -38,7 +38,7 @@ interface RouteListTableProps {
   normalRoutes: NormalRoute[];
 }
 
-type Sort = "updatedAt|desc" | "updatedAt|asc";
+type Sort = "updatedAt|desc" | "updatedAt|asc" | "deleteAt|asc";
 
 interface SortOption {
   value: Sort;
@@ -59,7 +59,7 @@ const sortOptions: SortOption[] = [
   },
   {
     label: "Delete",
-    value: "updatedAt|desc",
+    value: "deleteAt|asc",
     icon: <DeleteIcon />,
   },
 ];

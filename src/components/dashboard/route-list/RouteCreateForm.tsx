@@ -38,12 +38,12 @@ const RouteCreateForm: FC = (props) => {
   const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
   const scrollRef = useRef<HTMLSpanElement>();
   const scrollToEvents = useRef<HTMLSpanElement>();
-  
+
   useLayoutEffect(() => {
     if (scrollRef?.current) {
       scrollRef.current.scrollIntoView();
     }
-  },[]);
+  }, []);
 
   const scrollToHistoricalEvents = () => {
     scrollToEvents.current.scrollIntoView();
