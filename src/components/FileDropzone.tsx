@@ -4,18 +4,11 @@ import { useDropzone } from "react-dropzone";
 import type { DropzoneOptions } from "react-dropzone";
 import {
   Box,
-  // Button,
+  Button,
   IconButton,
-  // List,
-  // ListItem,
-  // ListItemIcon,
-  // ListItemText,
-  // Tooltip,
 } from "@mui/material";
 import styled from "styled-components";
 import CrossIcon from "../icons/RouteListCross";
-// import DuplicateIcon from "../icons/Duplicate";
-// import XIcon from "../icons/X";
 import bytesToSize from "../utils/bytesToSize";
 
 interface FileDropzoneProps extends DropzoneOptions {
@@ -48,8 +41,7 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
     preventDropOnDocument,
     ...other
   } = props;
-
-  // We did not add the remaining props to avoid component complexity
+  // I did not add the remaining props to avoid component complexity
   // but you can simply add it if you need to.
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept,
@@ -99,23 +91,39 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
         >
           {files.length > 0 ? (
             <Box sx={{ position: "relative" }}>
-              <IconButton
-                sx={{ position: "absolute", right: "-21px", top: "-20px" }}
-                onClick={() => onRemove && onRemove(files[0])}
-              >
-                <CrossIcon fontSize="medium" />
-              </IconButton>
-              <img
-                height="90px"
-                width="90px"
-                src={files.length > 0 ? URL.createObjectURL(files[0]) : ""}
-                alt="sample"
-              />
-              <ImageSize
-                sx={{ position: "absolute", top: "30px", right: "-80px" }}
-              >
-                {bytesToSize(files[0].size)}
-              </ImageSize>
+              {files[0].size > 1000000 ? (
+                <ImgBoxError>
+                  <ErrorMsg>File must be 1MB size or less</ErrorMsg>
+                  <TryAgainButton
+                    sx={{ mt: 1 }}
+                    onClick={() => onRemove && onRemove(files[0])}
+                    variant="outlined"
+                  >
+                    Try again
+                  </TryAgainButton>
+                </ImgBoxError>
+              ) : (
+                <>
+                  <IconButton
+                    sx={{ position: "absolute", right: "-21px", top: "-20px" }}
+                    onClick={() => onRemove && onRemove(files[0])}
+                  >
+                    <CrossIcon fontSize="medium" />
+                  </IconButton>
+
+                  <img
+                    height="90px"
+                    width="90px"
+                    src={files.length > 0 ? URL.createObjectURL(files[0]) : ""}
+                    alt="sample"
+                  />
+                  <ImageSize
+                    sx={{ position: "absolute", top: "30px", right: "-80px" }}
+                  >
+                    {bytesToSize(files[0].size)}
+                  </ImageSize>
+                </>
+              )}
             </Box>
           ) : (
             <>
@@ -129,87 +137,7 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
             </>
           )}
         </Box>
-        {/* <Box sx={{ p: 2 }}>
-          <Typography color="textPrimary" variant="h6">
-            {`Select file${maxFiles && maxFiles === 1 ? "" : "s"}`}
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            <Typography color="textPrimary" variant="body1">
-              {`Drop file${maxFiles && maxFiles === 1 ? "" : "s"}`}{" "}
-              <Link color="primary" underline="always">
-                browse
-              </Link>{" "}
-              through your machine
-            </Typography>
-          </Box>
-        </Box> */}
       </Box>
-      {/* {files.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          <List>
-            {files.map((file) => (
-              <ListItem
-                key={file.path}
-                sx={{
-                  border: 1,
-                  borderColor: "divider",
-                  borderRadius: 1,
-                  "& + &": {
-                    mt: 1,
-                  },
-                }}
-              >
-                <ListItemIcon>
-                  <DuplicateIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={file.name}
-                  primaryTypographyProps={{
-                    color: "textPrimary",
-                    variant: "subtitle2",
-                  }}
-                  secondary={bytesToSize(file.size)}
-                />
-                <Tooltip title="Remove">
-                  <IconButton
-                    edge="end"
-                    onClick={() => onRemove && onRemove(file)}
-                  >
-                    <XIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </ListItem>
-            ))}
-          </List>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              mt: 2,
-            }}
-          >
-            <Button
-              color="primary"
-              onClick={onRemoveAll}
-              size="small"
-              type="button"
-              variant="text"
-            >
-              Remove All
-            </Button>
-            <Button
-              color="primary"
-              onClick={onUpload}
-              size="small"
-              sx={{ ml: 2 }}
-              type="button"
-              variant="contained"
-            >
-              Upload
-            </Button>
-          </Box>
-        </Box>
-      )} */}
     </div>
   );
 };
@@ -265,5 +193,33 @@ const ImageSize = styled(Box)`
     line-height: 27px;
     color: #000000;
     opacity: 0.4;
+  }
+`;
+
+const ImgBoxError = styled(Box)`
+  && {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const ErrorMsg = styled(Box)`
+  && {
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.5px;
+    color: #f44336;
+  }
+`;
+
+const TryAgainButton = styled(Button)`
+  && {
+    color: #f44336;
+    border-color: #f44336;
   }
 `;
