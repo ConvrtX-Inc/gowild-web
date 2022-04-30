@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import type { FC } from "react";
 // import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,13 +6,18 @@ import toast from "react-hot-toast";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Box,
   Button,
   Card,
   CardContent,
+  CircularProgress,
   FormHelperText,
   Grid,
   TextField,
+  Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import Scrollbar from "../../Scrollbar";
@@ -23,18 +28,49 @@ import StartingPtIcon from "../../../icons/LocationStartingPt";
 import FinishingPtIcon from "../../../icons/LocationFinishingPt";
 import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
 import AddHistoricalIcon from "../../../icons/RouteListAddHistorical";
+import ExpandMoreIcon from "../../../icons/ExpandAccordion";
 
 const RouteCreateForm: FC = (props) => {
   // const navigate = useNavigate();
+  const [b64files, setB64files] = useState<any>("");
   const [files, setFiles] = useState<any[]>([]);
+  // const [b64historicalFiles, setB64historicalFiles] = useState<any[]>([""]);
   const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
+  const scrollRef = useRef<HTMLSpanElement>();
+  const scrollToEvents = useRef<HTMLSpanElement>();
+  
+  useLayoutEffect(() => {
+    if (scrollRef?.current) {
+      scrollRef.current.scrollIntoView();
+    }
+  },[]);
+
+  const scrollToHistoricalEvents = () => {
+    scrollToEvents.current.scrollIntoView();
+  };
+
+  const scrollToHistoricalForm = () => {
+    scrollRef.current.scrollIntoView();
+  };
 
   const handleDrop = (newFiles: any): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    const file = newFiles.find((f) => f);
+    console.log(file);
+
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      console.log("OBJ SRC & DATA ", {
+        src: file.preview,
+        data: reader.result,
+      });
+      setB64files(reader.result);
+    };
   };
 
   if (files.length > 0) {
-    console.log(files[0].size);
+    console.log("Base 64 ", b64files);
   }
 
   const handleRemove = (file): void => {
@@ -125,7 +161,7 @@ const RouteCreateForm: FC = (props) => {
       })}
       onSubmit={async (
         values,
-        { setErrors, setStatus, setSubmitting }
+        { setErrors, setStatus, setSubmitting, resetForm }
       ): Promise<void> => {
         try {
           // NOTE: Make API request
@@ -135,6 +171,7 @@ const RouteCreateForm: FC = (props) => {
           const DATA = {
             user_id: userId,
             route_name: values.raceTitle,
+            route_photo: b64files,
             start_point_long: values.startPtLong,
             start_point_lat: values.startPtLat,
             stop_point_long: values.endPtLong,
@@ -143,16 +180,28 @@ const RouteCreateForm: FC = (props) => {
           const CONFIG = {
             headers: {
               Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
             },
           };
           const apiResponse = await axios.post(URL, DATA, CONFIG);
           console.log(apiResponse);
 
           setStatus({ success: true });
+          resetForm();
+          setFiles([]);
+          setHistoricalFiles([]);
+          setB64files("");
           setSubmitting(false);
           toast.success("Route created!");
         } catch (err) {
           console.error(err);
+          if (err.response.status === 413) {
+            err.message = `Image ${err.response.statusText} (${err.response.status})`;
+          }
+          if (err.response.status === 500) {
+            err.message = `${err.response.statusText} (${err.response.status})`;
+          }
+
           toast.error("Something went wrong!");
           setStatus({ success: false });
           setErrors({ submit: err.message });
@@ -300,11 +349,24 @@ const RouteCreateForm: FC = (props) => {
                           type="submit"
                           variant="contained"
                         >
-                          Save
+                          {isSubmitting ? (
+                            <>
+                              <CircularProgress
+                                sx={{
+                                  color: "#FBF1DA",
+                                  position: "absolute",
+                                  right: "60px",
+                                }}
+                              />
+                              Saving
+                            </>
+                          ) : (
+                            "Save"
+                          )}
                         </SaveButton>
                       </Box>
                       {errors.submit && (
-                        <Box sx={{ mt: 3 }}>
+                        <Box sx={{ mt: 3, position: "relative" }}>
                           <FormHelperText error>{errors.submit}</FormHelperText>
                         </Box>
                       )}
@@ -332,10 +394,20 @@ const RouteCreateForm: FC = (props) => {
                     </Box>
                   </RowBox>
                   {/* -----------------------------HISTORICAL------------------------------------- */}
+
                   <HistoricalBox>
                     <ToolbarBox>
-                      <Title>Historical</Title>
+                      <Title sx={{ cursor: "pointer" }}>Historical</Title>
                       <OrangeBorder></OrangeBorder>
+                      <Box
+                        sx={{ ml: "auto" }}
+                        onClick={scrollToHistoricalEvents}
+                      >
+                        <Button variant="outlined">🔺 Scroll to Events</Button>
+                      </Box>
+                      <Box sx={{ ml: "20px" }} onClick={scrollToHistoricalForm}>
+                        <Button variant="outlined">🔻 Scroll to Form</Button>
+                      </Box>
                       <Box sx={{ ml: "auto", mb: "20px" }}>
                         <AddHistoricalButton
                           color="primary"
@@ -358,124 +430,196 @@ const RouteCreateForm: FC = (props) => {
                         </AddHistoricalButton>
                       </Box>
                     </ToolbarBox>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "flex-start",
-                        position: "relative",
-                      }}
-                    >
-                      <RowBox sx={{ width: "688.31px" }}>
-                        <ColumnBox>
-                          <Box sx={{ width: "293px", pl: "13px" }}>
-                            <FieldLabel>Historical Event</FieldLabel>
-                            <StyledTextField
-                              sx={{ mb: "35px !important" }}
-                              error={Boolean(
-                                touched.histoLong && errors.histoLong
-                              )}
-                              fullWidth
-                              helperText={touched.histoLong && errors.histoLong}
-                              placeholder="Longitude"
-                              name="histoLong"
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              value={values.histoLong}
-                              variant="outlined"
-                            />
-                            <StyledTextField
-                              sx={{ mt: 0 }}
-                              error={Boolean(
-                                touched.histoLat && errors.histoLat
-                              )}
-                              fullWidth
-                              helperText={touched.histoLat && errors.histoLong}
-                              placeholder="Latitude"
-                              name="histoLat"
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              value={values.histoLat}
-                              variant="outlined"
-                            />
-                          </Box>
-                          <Box sx={{ width: "293px", ml: "39px" }}>
-                            <FieldLabel>Title</FieldLabel>
-                            <StyledTextField
-                              error={Boolean(
-                                touched.histoTitle && errors.histoTitle
-                              )}
-                              fullWidth
-                              helperText={
-                                touched.histoTitle && errors.histoTitle
-                              }
-                              placeholder="Historical Item"
-                              name="histoTitle"
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              value={values.histoTitle}
-                              variant="outlined"
-                            />
-                            <FieldLabel>Sub-Title</FieldLabel>
-                            <StyledTextField
-                              sx={{ mt: 0 }}
-                              error={Boolean(
-                                touched.histoSubTitle && errors.histoSubTitle
-                              )}
-                              fullWidth
-                              helperText={
-                                touched.histoSubTitle && errors.histoSubTitle
-                              }
-                              placeholder="Write something here..."
-                              name="histoSubTitle"
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              value={values.histoSubTitle}
-                              variant="outlined"
-                            />
-                          </Box>
-                        </ColumnBox>
-                      </RowBox>
+                    <Box sx={{ height: "457px" }}>
+                      <Scrollbar>
+                        {/* ---------------------------------------------------------------- ACCORDION */}
+                        <span ref={scrollToEvents} />
+                        {[1, 2, 3, 4, 5].map((item, index) => (
+                          <Accordion
+                            key={index}
+                            sx={{ backgroundColor: "#F7F7F7" }}
+                          >
+                            <AccordionSummary
+                              expandIcon={<ExpandMoreIcon />}
+                              aria-controls="panel1a-content"
+                              id="panel1a-header"
+                            >
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                }}
+                              >
+                                <Typography>Historical Event</Typography>
+                                <Box sx={{ display: "flex" }}>
+                                  <Typography sx={{ color: "text.secondary" }}>
+                                    51.5074°
+                                  </Typography>
+                                  <Typography sx={{ color: "text.secondary" }}>
+                                    65.5234°
+                                  </Typography>
+                                </Box>
+                              </Box>
+                              <Typography sx={{ color: "text.secondary" }}>
+                                clue_title
+                              </Typography>
+                              <Typography sx={{ color: "text.secondary" }}>
+                                clue_subtitle
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              <StyledMultiTextField
+                                autoComplete="off"
+                                error={Boolean(
+                                  touched.description && errors.description
+                                )}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                helperText={
+                                  touched.description && errors.description
+                                }
+                                placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris, Lorem ipsum dolor sit amet,"
+                                name="description"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.description}
+                                variant="outlined"
+                              />
+                            </AccordionDetails>
+                          </Accordion>
+                        ))}
+                        {/* ----------------------------------------------------------------------- ACCORDION END */}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-start",
+                            position: "relative",
+                            mt: "56px",
+                          }}
+                        >
+                          <span ref={scrollRef} />
+                          <RowBox sx={{ width: "688.31px" }}>
+                            <ColumnBox>
+                              <Box sx={{ width: "293px", pl: "13px" }}>
+                                <FieldLabel>Historical Event</FieldLabel>
+                                <StyledTextField
+                                  sx={{ mb: "35px !important" }}
+                                  error={Boolean(
+                                    touched.histoLong && errors.histoLong
+                                  )}
+                                  fullWidth
+                                  helperText={
+                                    touched.histoLong && errors.histoLong
+                                  }
+                                  placeholder="Longitude"
+                                  name="histoLong"
+                                  onBlur={handleBlur}
+                                  onChange={handleChange}
+                                  value={values.histoLong}
+                                  variant="outlined"
+                                />
+                                <StyledTextField
+                                  sx={{ mt: 0 }}
+                                  error={Boolean(
+                                    touched.histoLat && errors.histoLat
+                                  )}
+                                  fullWidth
+                                  helperText={
+                                    touched.histoLat && errors.histoLong
+                                  }
+                                  placeholder="Latitude"
+                                  name="histoLat"
+                                  onBlur={handleBlur}
+                                  onChange={handleChange}
+                                  value={values.histoLat}
+                                  variant="outlined"
+                                />
+                              </Box>
+                              <Box sx={{ width: "293px", ml: "39px" }}>
+                                <FieldLabel>Title</FieldLabel>
+                                <StyledTextField
+                                  error={Boolean(
+                                    touched.histoTitle && errors.histoTitle
+                                  )}
+                                  fullWidth
+                                  helperText={
+                                    touched.histoTitle && errors.histoTitle
+                                  }
+                                  placeholder="Historical Item"
+                                  name="histoTitle"
+                                  onBlur={handleBlur}
+                                  onChange={handleChange}
+                                  value={values.histoTitle}
+                                  variant="outlined"
+                                />
+                                <FieldLabel>Sub-Title</FieldLabel>
+                                <StyledTextField
+                                  sx={{ mt: 0 }}
+                                  error={Boolean(
+                                    touched.histoSubTitle &&
+                                      errors.histoSubTitle
+                                  )}
+                                  fullWidth
+                                  helperText={
+                                    touched.histoSubTitle &&
+                                    errors.histoSubTitle
+                                  }
+                                  placeholder="Write something here..."
+                                  name="histoSubTitle"
+                                  onBlur={handleBlur}
+                                  onChange={handleChange}
+                                  value={values.histoSubTitle}
+                                  variant="outlined"
+                                />
+                              </Box>
+                            </ColumnBox>
+                          </RowBox>
 
-                      <Box
-                        sx={{
-                          width: "296px",
-                          height: "470px",
-                          position: "absolute",
-                          right: "0",
-                          top: "0",
-                        }}
-                      >
-                        <Scrollbar>
-                          <FileDropzoneHistorical
-                            accept="image/*"
-                            files={historicalFiles}
-                            onDrop={handleHistoricalDrop}
-                            onRemove={handleHistoricalRemove}
-                            onRemoveAll={handleHistoricalRemoveAll}
+                          <Box
+                            sx={{
+                              width: "296px",
+                              height: "470px",
+                              position: "absolute",
+                              right: "0",
+                              top: "0",
+                            }}
+                          >
+                            <Scrollbar>
+                              <FileDropzoneHistorical
+                                accept="image/*"
+                                files={historicalFiles}
+                                onDrop={handleHistoricalDrop}
+                                onRemove={handleHistoricalRemove}
+                                onRemoveAll={handleHistoricalRemoveAll}
+                              />
+                            </Scrollbar>
+                          </Box>
+                        </Box>
+                        <Box sx={{ width: "622px", pl: "16px" }}>
+                          <FieldLabel>Description</FieldLabel>
+                          <StyledMultiTextField
+                            error={Boolean(
+                              touched.histoDescription &&
+                                errors.histoDescription
+                            )}
+                            fullWidth
+                            multiline
+                            rows={7}
+                            helperText={
+                              touched.histoDescription &&
+                              errors.histoDescription
+                            }
+                            placeholder="Write something here..."
+                            name="histoDescription"
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            value={values.histoDescription}
+                            variant="outlined"
                           />
-                        </Scrollbar>
-                      </Box>
-                    </Box>
-                    <Box sx={{ width: "622px", pl: "16px" }}>
-                      <FieldLabel>Description</FieldLabel>
-                      <StyledMultiTextField
-                        error={Boolean(
-                          touched.histoDescription && errors.histoDescription
-                        )}
-                        fullWidth
-                        multiline
-                        rows={7}
-                        helperText={
-                          touched.histoDescription && errors.histoDescription
-                        }
-                        placeholder="Write something here..."
-                        name="histoDescription"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.histoDescription}
-                        variant="outlined"
-                      />
+                        </Box>
+                      </Scrollbar>
                     </Box>
                   </HistoricalBox>
                 </CardContent>

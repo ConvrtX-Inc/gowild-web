@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Card,
+  CardMedia,
   Checkbox,
   // InputAdornment,
   Popover,
@@ -162,7 +163,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     []
   );
   const [page, setPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(6);
+  const [limit, setLimit] = useState<number>(10);
   const [
     query,
     // setQuery
@@ -325,8 +326,9 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       key={normalRoute.id}
                       selected={isNormalRouteselected}
                     >
-                      <TableCellStyled padding="checkbox">
+                      <TableCellStyled>
                         <StyledCheckbox
+                          sx={{ ml: "20px" }}
                           checked={isNormalRouteselected}
                           onChange={(event) =>
                             handleSelectOneNormalRoute(event, normalRoute.id)
@@ -335,7 +337,20 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                         />
                       </TableCellStyled>
                       <TableCellStyled>
-                        <Typography500>{`${normalRoute.route_name}`}</Typography500>
+                        <GroupBox>
+                          <CardMedia
+                            sx={{
+                              width: "85px",
+                              height: "96.01px",
+                              mr: "26px",
+                              borderRadius: "20px",
+                              border: "0.2px solid rgba(0, 0, 0, 0.2)",
+                              boxSizing: "border-box",
+                            }}
+                            image={normalRoute.route_photo}
+                          />
+                          <Typography500>{`${normalRoute.route_name}`}</Typography500>
+                        </GroupBox>
                       </TableCellStyled>
                       <TableCellStyled>
                         <Typography400>
@@ -440,7 +455,7 @@ const StyledCard = styled(Card)`
 const StyledCheckbox = styled(Checkbox)`
   && {
     padding: 0;
-    color: rgba(9, 17, 14, 0.5);
+    color: rgba(255, 228, 220, 1);
     &.Mui-checked {
       color: #2955a0;
     }
@@ -551,10 +566,19 @@ const TableHeaderCell = styled(TableCell)`
 
 const TableCellStyled = styled(TableCell)`
   && {
-    border-color: #efefef;
-    padding-top: 42.5px;
-    padding-bottom: 49.5px;
+    border-color: rgba(255, 120, 81, 1);
+    padding-top: 23px;
+    padding-bottom: 23px;
     padding-left: 0;
+  }
+`;
+
+const GroupBox = styled(Box)`
+  && {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
   }
 `;
 
