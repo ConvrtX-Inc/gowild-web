@@ -4,8 +4,7 @@ import GoogleMapReact from "google-map-react";
 // import { Box } from "@mui/material";
 import styled from "styled-components";
 // import StartingPtIcon from "../../../icons/RouteListStartPt";
-// import { Icon } from "@iconify/react";
-// import locationIcon from "@iconify/icons-mdi/map-marker";
+// import StartPtImg from "/static/route-list/start-pt.png";
 
 // const LocationPin = ({ text }) => (
 //   <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -13,18 +12,27 @@ import styled from "styled-components";
 //     <p>{text}</p>
 //   </Box>
 // );
-
 let startingPt;
 let finishingPt;
-const apiIsLoaded = (map, maps, startPt, endPt) => {
+let histoEventPt;
+const apiIsLoaded = (map, maps, startPt, endPt, historicalEventPt) => {
   startingPt = new maps.Marker({
     position: { lat: 54.06547503649533, lng: -128.64594232540892 },
+    icon: "/static/route-list/start-pt.png",
     map,
     draggable: true,
   });
 
   finishingPt = new maps.Marker({
     position: { lat: 54.06459354113623, lng: -128.64242326718139 },
+    icon: "/static/route-list/finish-pt.png",
+    map,
+    draggable: true,
+  });
+
+  histoEventPt = new maps.Marker({
+    position: { lat: 54.06262899845068, lng: -128.64484798413085 },
+    icon: "/static/route-list/event-pt.png",
     map,
     draggable: true,
   });
@@ -33,19 +41,26 @@ const apiIsLoaded = (map, maps, startPt, endPt) => {
     const lat = startingPt.getPosition().lat();
     const long = startingPt.getPosition().lng();
     startPt(lat, long);
-    console.log("START PT ", lat, long);
+    console.log("Normal Route Start Pt: ", lat, long);
   });
 
   finishingPt.addListener("dragend", () => {
     const lat = finishingPt.getPosition().lat();
     const long = finishingPt.getPosition().lng();
     endPt(lat, long);
-    console.log("END PT ", lat, long);
+    console.log("Normal Route End Pt: ", lat, long);
+  });
+
+  histoEventPt.addListener("dragend", () => {
+    const lat = histoEventPt.getPosition().lat();
+    const long = histoEventPt.getPosition().lng();
+    historicalEventPt(lat, long);
+    console.log("Historical Event Pt ", lat, long);
   });
 };
 
 const Map = (props) => {
-  const { startPt, endPt } = props;
+  const { startPt, endPt, historicalEventPt } = props;
   const location = {
     address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
     lat: 54.06291864840513,
@@ -59,7 +74,7 @@ const Map = (props) => {
       defaultZoom={16}
       yesIWantToUseGoogleMapApiInternals
       onGoogleApiLoaded={({ map, maps }) =>
-        apiIsLoaded(map, maps, startPt, endPt)
+        apiIsLoaded(map, maps, startPt, endPt, historicalEventPt)
       }
       options={{ scrollwheel: true }}
     >

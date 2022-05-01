@@ -1,4 +1,10 @@
-import { useState, useLayoutEffect, useRef } from "react";
+import {
+  useState,
+  useCallback,
+  useLayoutEffect,
+  useEffect,
+  useRef,
+} from "react";
 import type { FC } from "react";
 // import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -17,7 +23,6 @@ import {
   FormHelperText,
   Grid,
   TextField,
-  Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import Scrollbar from "../../Scrollbar";
@@ -34,8 +39,10 @@ const RouteCreateForm: FC = (props) => {
   // const navigate = useNavigate();
   const [b64files, setB64files] = useState<any>("");
   const [files, setFiles] = useState<any[]>([]);
-  // const [b64historicalFiles, setB64historicalFiles] = useState<any[]>([""]);
+  const [b64historicalFiles, setB64historicalFiles] = useState<any>("");
   const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
+  const [routeId, setRouteId] = useState<string>("");
+  const [historicalEvents, setHistoricalEvents] = useState([]);
   const scrollRef = useRef<HTMLSpanElement>();
   const scrollToEvents = useRef<HTMLSpanElement>();
 
@@ -85,6 +92,18 @@ const RouteCreateForm: FC = (props) => {
 
   const handleHistoricalDrop = (newFiles: any): void => {
     setHistoricalFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    const file = newFiles.find((f) => f);
+    console.log("Historical Img Drop ", file);
+
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      console.log("OBJ SRC & DATA ", {
+        src: file.preview,
+        data: reader.result,
+      });
+      setB64historicalFiles(reader.result);
+    };
   };
 
   const handleHistoricalRemove = (file): void => {
@@ -104,29 +123,57 @@ const RouteCreateForm: FC = (props) => {
     histoSubTitle,
     histoDescription
   ) => {
-    console.log(histoTitle);
+    console.log("Add Historical route_id", routeId);
     const accessToken = sessionStorage.getItem("token");
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-clues`;
     const DATA = {
-      route_id: "40955c8f-fe20-4d06-adb6-ae7564089026",
+      route_id: routeId,
       location_point_long: 32.4832,
       location_point_lat: 32.4832,
       clue_point_long: Number(histoLong),
       clue_point_lat: Number(histoLat),
       clue_title: histoTitle,
       description: histoDescription,
-      clue_img: historicalFiles,
+      clue_img: {
+        type: "Buffer",
+        data: [b64historicalFiles],
+      },
       video_url: "video",
       ar_clue: "augmented reality",
     };
     const CONFIG = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
       },
     };
     const apiResponse = await axios.post(URL, DATA, CONFIG);
-    console.log(apiResponse);
+    console.log("Add Historical Event response: ", apiResponse);
+    getHistoricalEvents();
+    scrollToHistoricalEvents();
+    setHistoricalFiles([]);
+    setB64historicalFiles("");
   };
+
+  const getHistoricalEvents = useCallback(async () => {
+    console.log("Get Historical Events by ID loaded: ", routeId);
+    const accessToken = sessionStorage.getItem("token");
+    const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-clues/all-clues/${routeId}`;
+    const CONFIG = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    const apiResponse = await axios.get(URL, CONFIG);
+    console.log("GET Historical Events", apiResponse.data);
+    setHistoricalEvents(apiResponse.data);
+  }, [routeId]);
+
+  useEffect(() => {
+    if (routeId) {
+      getHistoricalEvents();
+    }
+  }, [routeId, getHistoricalEvents]);
 
   return (
     <Formik
@@ -184,7 +231,8 @@ const RouteCreateForm: FC = (props) => {
             },
           };
           const apiResponse = await axios.post(URL, DATA, CONFIG);
-          console.log(apiResponse);
+          console.log(apiResponse.data.id);
+          setRouteId(apiResponse.data.id);
 
           setStatus({ success: true });
           resetForm();
@@ -216,6 +264,8 @@ const RouteCreateForm: FC = (props) => {
         handleSubmit,
         isSubmitting,
         setFieldValue,
+        setFieldError,
+        setFieldTouched,
         touched,
         values,
       }): JSX.Element => (
@@ -390,6 +440,11 @@ const RouteCreateForm: FC = (props) => {
                           setFieldValue("endPtLat", lat.toFixed(4));
                           setFieldValue("endPtLong", long.toFixed(4));
                         }}
+                        historicalEventPt={(lat, long) => {
+                          console.log("Event Pt props", lat, long);
+                          setFieldValue("histoLat", lat.toFixed(4));
+                          setFieldValue("histoLong", long.toFixed(4));
+                        }}
                       />
                     </Box>
                   </RowBox>
@@ -403,25 +458,69 @@ const RouteCreateForm: FC = (props) => {
                         sx={{ ml: "auto" }}
                         onClick={scrollToHistoricalEvents}
                       >
-                        <Button variant="outlined">🔺 Scroll to Events</Button>
+                        <Button
+                          sx={{ color: "#0E5753", borderColor: "#0E5753" }}
+                          variant="outlined"
+                        >
+                          🔺 Scroll to Events
+                        </Button>
                       </Box>
                       <Box sx={{ ml: "20px" }} onClick={scrollToHistoricalForm}>
-                        <Button variant="outlined">🔻 Scroll to Form</Button>
+                        <Button
+                          sx={{ color: "#0E5753", borderColor: "#0E5753" }}
+                          variant="outlined"
+                        >
+                          🔻 Scroll to Form
+                        </Button>
                       </Box>
                       <Box sx={{ ml: "auto", mb: "20px" }}>
                         <AddHistoricalButton
-                          color="primary"
-                          disabled={isSubmitting}
-                          variant="contained"
-                          onClick={() =>
-                            handleAddHistorical(
-                              values.histoLong,
-                              values.histoLat,
-                              values.histoTitle,
-                              values.histoSubTitle,
+                          sx={{
+                            opacity: `${
+                              values.histoLong &&
+                              values.histoLat &&
+                              values.histoTitle &&
+                              values.histoSubTitle &&
                               values.histoDescription
-                            )
+                                ? 1
+                                : "0.2"
+                            }`,
+                          }}
+                          disabled={
+                            values.histoLong &&
+                            values.histoLat &&
+                            values.histoTitle &&
+                            values.histoSubTitle &&
+                            values.histoDescription
+                              ? false
+                              : true
                           }
+                          variant="contained"
+                          onClick={() => {
+                            if (
+                              !values.histoLong ||
+                              !values.histoLat ||
+                              !values.histoTitle ||
+                              !values.histoSubTitle ||
+                              !values.histoDescription
+                            ) {
+                              console.log("No values added");
+                            } else {
+                              handleAddHistorical(
+                                values.histoLong,
+                                values.histoLat,
+                                values.histoTitle,
+                                values.histoSubTitle,
+                                values.histoDescription
+                              );
+                            }
+
+                            setFieldValue("histoLong", "");
+                            setFieldValue("histoLat", "");
+                            setFieldValue("histoTitle", "");
+                            setFieldValue("histoSubTitle", "");
+                            setFieldValue("histoDescription", "");
+                          }}
                         >
                           <Box sx={{ mr: "3px" }}>
                             <AddHistoricalIcon fontSize="small" />
@@ -434,61 +533,86 @@ const RouteCreateForm: FC = (props) => {
                       <Scrollbar>
                         {/* ---------------------------------------------------------------- ACCORDION */}
                         <span ref={scrollToEvents} />
-                        {[1, 2, 3, 4, 5].map((item, index) => (
-                          <Accordion
-                            key={index}
-                            sx={{ backgroundColor: "#F7F7F7" }}
-                          >
-                            <AccordionSummary
-                              expandIcon={<ExpandMoreIcon />}
-                              aria-controls="panel1a-content"
-                              id="panel1a-header"
-                            >
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                }}
+                        {historicalEvents.length > 0 &&
+                          historicalEvents.map((historical, index) => (
+                            <StyledAccordion square={true} key={index}>
+                              <AccordionSummary
+                                sx={{ pl: "36px" }}
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
                               >
-                                <Typography>Historical Event</Typography>
-                                <Box sx={{ display: "flex" }}>
-                                  <Typography sx={{ color: "text.secondary" }}>
-                                    51.5074°
-                                  </Typography>
-                                  <Typography sx={{ color: "text.secondary" }}>
-                                    65.5234°
-                                  </Typography>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    mr: "81px",
+                                  }}
+                                >
+                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                    Historical Event
+                                  </AccordionTitle>
+                                  <Box sx={{ display: "flex" }}>
+                                    <AccordionValue sx={{ mr: "23px" }}>
+                                      {`${historical.clue_point_long}°`}
+                                    </AccordionValue>
+                                    <AccordionValue>
+                                      {`${historical.clue_point_lat}°`}
+                                    </AccordionValue>
+                                  </Box>
                                 </Box>
-                              </Box>
-                              <Typography sx={{ color: "text.secondary" }}>
-                                clue_title
-                              </Typography>
-                              <Typography sx={{ color: "text.secondary" }}>
-                                clue_subtitle
-                              </Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                              <StyledMultiTextField
-                                autoComplete="off"
-                                error={Boolean(
-                                  touched.description && errors.description
-                                )}
-                                fullWidth
-                                multiline
-                                rows={2}
-                                helperText={
-                                  touched.description && errors.description
-                                }
-                                placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris, Lorem ipsum dolor sit amet,"
-                                name="description"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                value={values.description}
-                                variant="outlined"
-                              />
-                            </AccordionDetails>
-                          </Accordion>
-                        ))}
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    mr: "81px",
+                                  }}
+                                >
+                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                    Title
+                                  </AccordionTitle>
+                                  <AccordionValue>
+                                    {historical.clue_title}
+                                  </AccordionValue>
+                                </Box>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    mr: "81px",
+                                  }}
+                                >
+                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                    Sub Title
+                                  </AccordionTitle>
+                                  <AccordionValue>{`Dolor Lorem Elit`}</AccordionValue>
+                                </Box>
+                              </AccordionSummary>
+                              <AccordionDetails sx={{ pl: "36px", pt: "16px" }}>
+                                <HistoricalMultiField
+                                  autoComplete="off"
+                                  error={Boolean(
+                                    touched.description && errors.description
+                                  )}
+                                  fullWidth
+                                  multiline
+                                  rows={2}
+                                  helperText={
+                                    touched.description && errors.description
+                                  }
+                                  placeholder="Write something here.."
+                                  name="description"
+                                  onBlur={handleBlur}
+                                  onChange={handleChange}
+                                  value={historical.description}
+                                  variant="outlined"
+                                />
+                              </AccordionDetails>
+                              <SaveChangesButton variant="contained">
+                                Save Changes
+                              </SaveChangesButton>
+                            </StyledAccordion>
+                          ))}
                         {/* ----------------------------------------------------------------------- ACCORDION END */}
                         <Box
                           sx={{
@@ -496,7 +620,7 @@ const RouteCreateForm: FC = (props) => {
                             flexDirection: "row",
                             justifyContent: "flex-start",
                             position: "relative",
-                            mt: "56px",
+                            mt: "33px",
                           }}
                         >
                           <span ref={scrollRef} />
@@ -527,7 +651,7 @@ const RouteCreateForm: FC = (props) => {
                                   )}
                                   fullWidth
                                   helperText={
-                                    touched.histoLat && errors.histoLong
+                                    touched.histoLat && errors.histoLat
                                   }
                                   placeholder="Latitude"
                                   name="histoLat"
@@ -795,6 +919,7 @@ const StyledMultiTextField = styled(TextField)`
   }
 `;
 
+//---------------------------------HISTORICAL EVENTS
 const HistoricalBox = styled(Box)`
   && {
     margin-top: 46px;
@@ -848,9 +973,115 @@ const ColumnBox = styled(Box)`
 
 const AddHistoricalButton = styled(Button)`
   && {
+    background-color: #0e5753;
+    border-radius: 13.6667px;
+    padding: 10px 16.21px 11px 22px;
+    font-family: "Gilroy";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    color: #ffffff;
+  }
+`;
+
+const StyledAccordion = styled(Accordion)`
+  && {
+    background-color: #f7f7f7;
+    padding: 16px auto 22px auto;
+    margin: auto 20px 23px 11px;
+    border: 1px solid #d8d8d8;
+    border-radius: 7px;
+    box-sizing: border-box;
+    box-shadow: none;
+    & .Mui-expanded {
+      margin: 12px 0 0 0 0;
+    }
+    &:before {
+      background-color: transparent;
+    }
+  }
+`;
+
+const AccordionTitle = styled(Box)`
+  && {
+    font-family: "Gilroy";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+    color: #22333b;
+  }
+`;
+
+const AccordionValue = styled(Box)`
+  && {
+    font-family: "Gilroy Semibold";
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 18px;
+    color: #22333b;
+  }
+`;
+
+const HistoricalMultiField = styled(TextField)`
+  && {
+    background: #ffffff;
+    color: #22333b;
+    font-family: "Gilroy Light";
+    font-weight: bold;
+    font-size: 17.7561px;
+    line-height: 27px;
+    border-radius: 10px;
+    && .MuiInputBase-multiline {
+      padding: 0;
+    }
+    && .Mui-focused fieldset {
+      border-width: 1px !important;
+      border-color: rgba(255, 177, 78, 1);
+      border-style: solid;
+      border-radius: 10px;
+    }
+    && textarea {
+      padding: 16px 7px 20px 16px;
+      font-family: "Gilroy Light";
+      font-weight: bold;
+      font-size: 17.7561px;
+      line-height: 27px;
+      color: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      border: 1px solid #f3f3f3;
+      border-radius: 10px;
+      &::placeholder {
+        font-family: "Gilroy Light";
+        font-weight: bold;
+        font-size: 17.7561px;
+        line-height: 27px;
+        color: #000000;
+        opacity: 0.4;
+        display: flex;
+        align-items: center;
+      }
+    }
+    && fieldset {
+      border-style: hidden;
+      border-radius: 10px;
+      /* border: 0; */
+    }
+  }
+`;
+
+const SaveChangesButton = styled(Button)`
+  && {
     background: #0e5753;
     border-radius: 13.6667px;
     padding: 10px 16.21px 11px 22px;
+    margin-top: 13px;
+    margin-bottom: 32px;
+    display: flex;
+    margin-left: auto;
+    margin-right: 24px;
     font-family: "Gilroy";
     font-style: normal;
     font-weight: 600;
