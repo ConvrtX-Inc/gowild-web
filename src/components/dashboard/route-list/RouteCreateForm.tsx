@@ -151,6 +151,8 @@ const RouteCreateForm: FC = (props) => {
     console.log("Add Historical Event response: ", apiResponse);
     getHistoricalEvents();
     scrollToHistoricalEvents();
+    setHistoricalFiles([]);
+    setB64historicalFiles("");
   };
 
   const getHistoricalEvents = useCallback(async () => {
@@ -262,6 +264,8 @@ const RouteCreateForm: FC = (props) => {
         handleSubmit,
         isSubmitting,
         setFieldValue,
+        setFieldError,
+        setFieldTouched,
         touched,
         values,
       }): JSX.Element => (
@@ -471,17 +475,46 @@ const RouteCreateForm: FC = (props) => {
                       </Box>
                       <Box sx={{ ml: "auto", mb: "20px" }}>
                         <AddHistoricalButton
-                          color="primary"
-                          disabled={isSubmitting}
+                          sx={{
+                            opacity: `${
+                              values.histoLong &&
+                              values.histoLat &&
+                              values.histoTitle &&
+                              values.histoSubTitle &&
+                              values.histoDescription
+                                ? 1
+                                : "0.2"
+                            }`,
+                          }}
+                          disabled={
+                            values.histoLong &&
+                            values.histoLat &&
+                            values.histoTitle &&
+                            values.histoSubTitle &&
+                            values.histoDescription
+                              ? false
+                              : true
+                          }
                           variant="contained"
                           onClick={() => {
-                            handleAddHistorical(
-                              values.histoLong,
-                              values.histoLat,
-                              values.histoTitle,
-                              values.histoSubTitle,
-                              values.histoDescription
-                            );
+                            if (
+                              !values.histoLong ||
+                              !values.histoLat ||
+                              !values.histoTitle ||
+                              !values.histoSubTitle ||
+                              !values.histoDescription
+                            ) {
+                              console.log("No values added");
+                            } else {
+                              handleAddHistorical(
+                                values.histoLong,
+                                values.histoLat,
+                                values.histoTitle,
+                                values.histoSubTitle,
+                                values.histoDescription
+                              );
+                            }
+
                             setFieldValue("histoLong", "");
                             setFieldValue("histoLat", "");
                             setFieldValue("histoTitle", "");
@@ -567,11 +600,11 @@ const RouteCreateForm: FC = (props) => {
                                   helperText={
                                     touched.description && errors.description
                                   }
-                                  placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris, Lorem ipsum dolor sit amet,"
+                                  placeholder="Write something here.."
                                   name="description"
                                   onBlur={handleBlur}
                                   onChange={handleChange}
-                                  value={values.description}
+                                  value={historical.description}
                                   variant="outlined"
                                 />
                               </AccordionDetails>
@@ -618,7 +651,7 @@ const RouteCreateForm: FC = (props) => {
                                   )}
                                   fullWidth
                                   helperText={
-                                    touched.histoLat && errors.histoLong
+                                    touched.histoLat && errors.histoLat
                                   }
                                   placeholder="Latitude"
                                   name="histoLat"
@@ -940,7 +973,7 @@ const ColumnBox = styled(Box)`
 
 const AddHistoricalButton = styled(Button)`
   && {
-    background: #0e5753;
+    background-color: #0e5753;
     border-radius: 13.6667px;
     padding: 10px 16.21px 11px 22px;
     font-family: "Gilroy";
