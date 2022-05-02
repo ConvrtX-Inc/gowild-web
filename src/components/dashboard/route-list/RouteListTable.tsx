@@ -347,7 +347,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                               border: "0.2px solid rgba(0, 0, 0, 0.2)",
                               boxSizing: "border-box",
                             }}
-                            image={normalRoute.route_photo}
+                            src={normalRoute.route_photo}
                           />
                           <Typography500>{`${normalRoute.route_name}`}</Typography500>
                         </GroupBox>

@@ -130,8 +130,8 @@ const RouteCreateForm: FC = (props) => {
       route_id: routeId,
       location_point_long: 32.4832,
       location_point_lat: 32.4832,
-      clue_point_long: Number(histoLong),
-      clue_point_lat: Number(histoLat),
+      clue_point_long: histoLong,
+      clue_point_lat: histoLat,
       clue_title: histoTitle,
       description: histoDescription,
       clue_img: {
@@ -194,14 +194,14 @@ const RouteCreateForm: FC = (props) => {
       }}
       validationSchema={Yup.object().shape({
         images: Yup.array(),
-        startPtLong: Yup.string().max(80).required(),
-        startPtLat: Yup.string().max(80).required(),
-        endPtLong: Yup.string().max(80).required(),
-        endPtLat: Yup.string().max(80).required(),
+        startPtLong: Yup.number().max(80).required(),
+        startPtLat: Yup.number().max(80).required(),
+        endPtLong: Yup.number().max(80).required(),
+        endPtLat: Yup.number().max(80).required(),
         raceTitle: Yup.string().max(80).required(),
         description: Yup.string().max(255).required(),
-        histoLong: Yup.string().max(80),
-        histoLat: Yup.string().max(80),
+        histoLong: Yup.number().max(80),
+        histoLat: Yup.number().max(80),
         histoTitle: Yup.string().max(80),
         histoSubTitle: Yup.string().max(80),
         histoDescription: Yup.string().max(80),
@@ -223,6 +223,7 @@ const RouteCreateForm: FC = (props) => {
             start_point_lat: values.startPtLat,
             stop_point_long: values.endPtLong,
             stop_point_lat: values.endPtLat,
+            img_url: "Firebase img url",
           };
           const CONFIG = {
             headers: {
