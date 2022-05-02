@@ -98,7 +98,8 @@ const NavItem: FC<NavItemProps> = (props) => {
         startIcon={icon}
         sx={{
           color: "#E8E8E8",
-          fontFamily: "Gilroy-Light",
+          fontFamily: "Gilroy Medium",
+          fontWeight: 400,
           fontSize: "1rem",
           lineHeight: "19px",
           letterSpacing: "-0.04em",

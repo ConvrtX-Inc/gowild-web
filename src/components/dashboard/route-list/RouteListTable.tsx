@@ -611,7 +611,7 @@ const CreateNormalRouteButton = styled(Button)`
     background-color: #00755e;
     border-radius: 10px;
     padding: 13px 15px 13px 16px;
-    font-family: "Gilroy-Bold";
+    font-family: "Gilroy Bold";
     font-size: 14px;
     line-height: 16px;
     text-align: center;
