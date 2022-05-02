@@ -169,7 +169,7 @@ const LoginButton = styled(Button)`
     background-image: url("/static/login/login-btn.webp");
     background-color: #00755e;
     border-radius: 10px;
-    font-family: "Gilroy-Bold";
+    font-family: "Gilroy Bold";
     font-size: 1rem;
     line-height: 19px;
     text-align: center;
