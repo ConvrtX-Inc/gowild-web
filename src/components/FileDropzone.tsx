@@ -2,11 +2,7 @@ import type { FC } from "react";
 import PropTypes from "prop-types";
 import { useDropzone } from "react-dropzone";
 import type { DropzoneOptions } from "react-dropzone";
-import {
-  Box,
-  Button,
-  IconButton,
-} from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import styled from "styled-components";
 import CrossIcon from "../icons/RouteListCross";
 import bytesToSize from "../utils/bytesToSize";
@@ -176,8 +172,7 @@ export default FileDropzone;
 const CaptionTypo = styled(Box)`
   && {
     margin-top: 15.45px;
-    font-family: "Gilroy Light";
-    font-weight: bold;
+    font-family: "Gilroy Medium";
     font-size: 0.875rem;
     line-height: 16px;
     letter-spacing: 0.5px;
@@ -187,9 +182,8 @@ const CaptionTypo = styled(Box)`
 
 const ImageSize = styled(Box)`
   && {
-    font-family: "Gilroy";
+    font-family: "Gilroy Medium";
     font-style: normal;
-    font-weight: 500;
     line-height: 27px;
     color: #000000;
     opacity: 0.4;
@@ -207,9 +201,8 @@ const ImgBoxError = styled(Box)`
 
 const ErrorMsg = styled(Box)`
   && {
-    font-family: "Gilroy";
+    font-family: "Gilroy Medium";
     font-style: normal;
-    font-weight: 500;
     font-size: 14px;
     line-height: 16px;
     letter-spacing: 0.5px;

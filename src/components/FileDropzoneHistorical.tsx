@@ -246,8 +246,7 @@ export default FileDropzoneHistorical;
 const CaptionTypo = styled(Box)`
   && {
     margin-top: 15.45px;
-    font-family: "Gilroy Light";
-    font-weight: bold;
+    font-family: "Gilroy Medium";
     font-size: 0.875rem;
     line-height: 16px;
     letter-spacing: 0.5px;

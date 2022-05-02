@@ -772,7 +772,7 @@ const LegendBox = styled(Box)`
 const LegendItem = styled(Box)`
   && {
     margin-left: 18px;
-    font-family: "Gilroy";
+    font-family: "Gilroy Medium";
     font-weight: 400;
     font-size: 13.6592px;
     line-height: 14px;
@@ -801,11 +801,9 @@ const StyledForm = styled.form`
 
 const FieldLabel = styled(Box)`
   && {
-    font-family: "Gilroy Semibold";
-    font-weight: 600;
+    font-family: "Gilroy SemiBold";
     font-size: 16px;
     line-height: 18px;
-    text-transform: capitalize;
     color: #22333b;
   }
 `;
@@ -824,8 +822,7 @@ const StyledTextField = styled(TextField)`
     margin-bottom: 20px;
     background: #ffffff;
     color: #22333b;
-    font-family: "Gilroy Light";
-    font-weight: bold;
+    font-family: "Gilroy Medium";
     font-size: 1.11rem;
     line-height: 27px;
     border-radius: 22.1951px;
@@ -838,8 +835,7 @@ const StyledTextField = styled(TextField)`
     && input {
       height: 67px;
       padding: 20px 33px 20px 33px;
-      font-family: "Gilroy Light";
-      font-weight: bold;
+      font-family: "Gilroy Medium";
       font-size: 1.11rem;
       line-height: 27px;
       color: rgba(0, 0, 0, 0.4);
@@ -849,8 +845,7 @@ const StyledTextField = styled(TextField)`
       border: 2px solid #f3f3f3;
       border-radius: 22.1951px;
       &::placeholder {
-        font-family: "Gilroy Light";
-        font-weight: bold;
+        font-family: "Gilroy Medium";
         font-size: 1.11rem;
         line-height: 27px;
         color: #000000;
@@ -874,8 +869,7 @@ const StyledMultiTextField = styled(TextField)`
     margin-top: 6px;
     background: #ffffff;
     color: #22333b;
-    font-family: "Gilroy Light";
-    font-weight: bold;
+    font-family: "Gilroy Medium";
     font-size: 1.11rem;
     line-height: 27px;
     border-radius: 22.1951px;
@@ -890,8 +884,7 @@ const StyledMultiTextField = styled(TextField)`
     }
     && textarea {
       padding: 20px 13px 12px 33px;
-      font-family: "Gilroy Light";
-      font-weight: bold;
+      font-family: "Gilroy Medium";
       font-size: 1.11rem;
       line-height: 25px;
       color: rgba(0, 0, 0, 0.4);
@@ -900,8 +893,7 @@ const StyledMultiTextField = styled(TextField)`
       border: 2px solid #f3f3f3;
       border-radius: 22.1951px;
       &::placeholder {
-        font-family: "Gilroy Light";
-        font-weight: bold;
+        font-family: "Gilroy Medium";
         font-size: 1.11rem;
         line-height: 27px;
         color: #000000;
@@ -976,9 +968,8 @@ const AddHistoricalButton = styled(Button)`
     background-color: #0e5753;
     border-radius: 13.6667px;
     padding: 10px 16.21px 11px 22px;
-    font-family: "Gilroy";
+    font-family: "Gilroy SemiBold";
     font-style: normal;
-    font-weight: 600;
     font-size: 14px;
     line-height: 20px;
     text-align: center;
@@ -1006,8 +997,7 @@ const StyledAccordion = styled(Accordion)`
 
 const AccordionTitle = styled(Box)`
   && {
-    font-family: "Gilroy";
-    font-weight: 400;
+    font-family: "Gilroy Regular";
     font-size: 16px;
     line-height: 18px;
     color: #22333b;
@@ -1028,8 +1018,7 @@ const HistoricalMultiField = styled(TextField)`
   && {
     background: #ffffff;
     color: #22333b;
-    font-family: "Gilroy Light";
-    font-weight: bold;
+    font-family: "Gilroy Medium";
     font-size: 17.7561px;
     line-height: 27px;
     border-radius: 10px;
@@ -1044,8 +1033,7 @@ const HistoricalMultiField = styled(TextField)`
     }
     && textarea {
       padding: 16px 7px 20px 16px;
-      font-family: "Gilroy Light";
-      font-weight: bold;
+      font-family: "Gilroy Medium";
       font-size: 17.7561px;
       line-height: 27px;
       color: rgba(0, 0, 0, 0.4);
@@ -1054,8 +1042,7 @@ const HistoricalMultiField = styled(TextField)`
       border: 1px solid #f3f3f3;
       border-radius: 10px;
       &::placeholder {
-        font-family: "Gilroy Light";
-        font-weight: bold;
+        font-family: "Gilroy Medium";
         font-size: 17.7561px;
         line-height: 27px;
         color: #000000;
@@ -1082,9 +1069,7 @@ const SaveChangesButton = styled(Button)`
     display: flex;
     margin-left: auto;
     margin-right: 24px;
-    font-family: "Gilroy";
-    font-style: normal;
-    font-weight: 600;
+    font-family: "Gilroy SemiBold";
     font-size: 14px;
     line-height: 20px;
     text-align: center;
@@ -1100,9 +1085,7 @@ const SaveButton = styled(Button)`
     background-image: url("/static/route-list/save-btn.png");
     background-color: #00755e;
     border-radius: 10px;
-    font-family: "Gilroy";
-    font-style: normal;
-    font-weight: 700;
+    font-family: "Gilroy Bold";
     font-size: 1rem;
     line-height: 19px;
     text-align: center;
