@@ -38,8 +38,13 @@ import AddHistoricalIcon from "../../../icons/RouteListAddHistorical";
 import ExpandMoreIcon from "../../../icons/ExpandAccordion";
 import { setRouteListIsLoading } from "../../../slices/route-list";
 import { useDispatch } from "../../../store";
+import type { SingleRoute } from "../../../types/route-lists";
+interface SingleRouteProps {
+  singleRoute: SingleRoute[];
+}
 
-const RouteEditForm: FC = (props) => {
+const RouteEditForm: FC<SingleRouteProps> = (props) => {
+  const { singleRoute } = props;
   // const navigate = useNavigate();
   const dispatch = useDispatch();
   const [b64files, setB64files] = useState<any>("");
@@ -51,7 +56,7 @@ const RouteEditForm: FC = (props) => {
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef<HTMLSpanElement>();
   const scrollToEvents = useRef<HTMLSpanElement>();
-
+  console.log("ROUTE EDIT FORM: ", singleRoute);
   useLayoutEffect(() => {
     if (scrollRef?.current) {
       scrollRef.current.scrollIntoView();

@@ -245,6 +245,11 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
       setIsDeleting(false);
       setAnchorEl(null);
     }
+    if (value === "edit") {
+      navigate("/dashboard/route-list/edit", {
+        state: { routeId: selectedRouteId },
+      });
+    }
   };
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(

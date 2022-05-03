@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { FC } from "react";
 import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 import {
   Avatar,
   Box,
@@ -10,17 +12,54 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { RouteCreateForm } from "../../components/dashboard/route-list";
+import { RouteEditForm } from "../../components/dashboard/route-list";
+import useMounted from "../../hooks/useMounted";
 import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
+import type { SingleRoute } from "../../types/route-lists";
+import {
+  setRouteListIsLoading,
+} from "../../slices/route-list";
+import { useDispatch } from "../../store";
 
 const RouteListEdit: FC = () => {
+  const { state } = useLocation();
+  const { routeId } = state as any;
+  const mounted = useMounted();
   const { settings } = useSettings();
+  const dispatch = useDispatch();
+  const [selectedRoute, setSelectedRoute] = useState<SingleRoute[]>([]);
 
   useEffect(() => {
     gtm.push({ event: "page_view" });
   }, []);
+
+  const getOneRoute = useCallback(async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/${routeId}`;
+      const CONFIG = {
+        headers: {
+          Authorization: `bearer ${token}`,
+        },
+      };
+      const apiResponse = await axios.get(URL, CONFIG);
+      console.log("Route Lists", apiResponse.data);
+      dispatch(setRouteListIsLoading(false));
+
+      if (mounted.current) {
+        setSelectedRoute(apiResponse.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [mounted, dispatch, routeId]);
+
+  //INITIAL LOAD LIST
+  useEffect(() => {
+    getOneRoute();
+  }, [getOneRoute]);
 
   return (
     <>
@@ -59,7 +98,7 @@ const RouteListEdit: FC = () => {
             </FlexiGrid>
           </Grid>
           <Box sx={{ mt: "27px" }}>
-            <RouteCreateForm />
+            <RouteEditForm singleRoute={selectedRoute} />
           </Box>
         </StyledContainer>
       </Box>
