@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import type { ChangeEvent, FC, MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-// import { Link as RouterLink } from "react-router-dom";
-// import numeral from "numeral";
+import axios from "axios";
 import PropTypes from "prop-types";
 import {
   // Avatar,
@@ -11,6 +10,7 @@ import {
   Card,
   CardMedia,
   Checkbox,
+  CircularProgress,
   // InputAdornment,
   Popover,
   // Link,
@@ -32,16 +32,24 @@ import DeleteIcon from "../../../icons/RouteListDelete";
 import type { NormalRoute } from "../../../types/route-lists";
 import Scrollbar from "../../Scrollbar";
 import formatDate from "../../../utils/formatDate";
-
+import { refreshListOnDelete } from "../../../slices/route-list";
+import { useDispatch, useSelector } from "../../../store";
 interface RouteListTableProps {
   // normalRoutes: NormalRoute[];
   normalRoutes: NormalRoute[];
 }
 
 type Sort = "updatedAt|desc" | "updatedAt|asc" | "deleteAt|asc";
+type Action = "view" | "edit" | "delete" | null;
 
 interface SortOption {
   value: Sort;
+  label: string;
+  icon: any;
+}
+
+interface actionOption {
+  value: Action;
   label: string;
   icon: any;
 }
@@ -50,17 +58,35 @@ const sortOptions: SortOption[] = [
   {
     label: "View",
     value: "updatedAt|asc",
-    icon: <ViewIcon />,
+    icon: <ViewIcon fontSize="large" />,
   },
   {
     label: "Edit",
     value: "updatedAt|desc",
-    icon: <EditIcon />,
+    icon: <EditIcon fontSize="large" />,
   },
   {
     label: "Delete",
     value: "deleteAt|asc",
-    icon: <DeleteIcon />,
+    icon: <DeleteIcon fontSize="large" />,
+  },
+];
+
+const actionOptions: actionOption[] = [
+  {
+    label: "View",
+    value: "view",
+    icon: <ViewIcon fontSize="large" />,
+  },
+  {
+    label: "Edit",
+    value: "edit",
+    icon: <EditIcon fontSize="large" />,
+  },
+  {
+    label: "Delete",
+    value: "delete",
+    icon: <DeleteIcon fontSize="large" />,
   },
 ];
 
@@ -158,6 +184,9 @@ const applySort = (normalRoutes: NormalRoute[], sort: Sort): NormalRoute[] => {
 
 const RouteListTable: FC<RouteListTableProps> = (props) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const setIsLoading = useSelector((state) => state.routeList.setIsLoading);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { normalRoutes, ...other } = props;
   const [selectedNormalRoutes, setSelectedNormalRoutes] = useState<string[]>(
     []
@@ -172,11 +201,14 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     sort,
     // setSort
   ] = useState<Sort>(sortOptions[1].value);
+  // const [action] = useState<Action>(null);
+  const [selectedRouteId, setSelectedRouteId] = useState<string>("");
   const [filters] = useState<any>({
     hasAcceptedMarketing: null,
     isProspect: null,
     isReturning: null,
   });
+  console.log("ROUTE LIST TABLE RENDERED");
 
   const handleRedirectPath = () => {
     navigate("/dashboard/route-list/new");
@@ -189,17 +221,50 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   //   setSort(event.target.value as Sort);
   // };
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-
   // const handleSortChange = (event: any): void => {
   //   setSort(event.target.value as Sort);
   //   setAnchorEl(null);
   // };
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleRowAction = async (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const accessToken = sessionStorage.getItem("token");
+
+    if (value === "delete") {
+      console.log(`ROW ACTION fn: ${value}, id: ${selectedRouteId}`);
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${selectedRouteId}`;
+      const CONFIG = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          // "Content-Type": "application/json",
+        },
+      };
+      setIsDeleting(true);
+      const apiResponse = await axios.delete(URL, CONFIG);
+      console.log("ROW DELETE response: ", apiResponse);
+      dispatch(refreshListOnDelete(true));
+      setIsDeleting(false);
+      setAnchorEl(null);
+    }
+    if (value === "edit") {
+      navigate("/dashboard/route-list/edit", {
+        state: { routeId: selectedRouteId },
+      });
+    }
   };
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+
+  const handleClickPopOver = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    routeId: string
+  ) => {
+    setAnchorEl(event.currentTarget);
+    console.log("3 DOTS ROUTE ID: ", routeId);
+    setSelectedRouteId(routeId);
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -289,32 +354,81 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <HeaderCheckbox padding="checkbox">
+                  <HeaderCheckbox>
                     <StyledCheckbox
                       checked={selectedAllNormalRoutes}
                       indeterminate={selectedSomeNormalRoutes}
                       onChange={handleSelectAllNormalRoutes}
                     />
                   </HeaderCheckbox>
-                  <TableHeaderCell sx={{ width: "340px" }}>
-                    NAME
-                  </TableHeaderCell>
-                  <TableHeaderCell sx={{ width: "140px" }}>
-                    DATE CREATED
-                  </TableHeaderCell>
-                  <TableHeaderCell sx={{ width: "234px" }}>
-                    STARTING POINT LONG/LAT
-                  </TableHeaderCell>
-                  <TableHeaderCell sx={{ width: "166px" }}>
-                    ENDPOINT LONG/LAT
+                  <TableHeaderCell
+                    sx={{
+                      width: "322px",
+                      maxWidth: "322px",
+                      minWidth: "322px",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      NAME
+                    </Box>
                   </TableHeaderCell>
                   <TableHeaderCell
-                    align="left"
-                    sx={{ width: "161px" }}
-                  ></TableHeaderCell>
+                    sx={{
+                      width: "140px",
+                      minWidth: "140px",
+                      maxWidth: "140px",
+                    }}
+                  >
+                    DATE CREATED
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    sx={{
+                      width: "234px",
+                      minWidth: "234px",
+                      maxWidth: "234px",
+                    }}
+                  >
+                    <Box>
+                      <Box>STARTING POINT</Box>
+                      <Box>LONG / LAT</Box>
+                    </Box>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    sx={{
+                      width: "275.85px",
+                      minWidth: "275.85px",
+                      maxWidth: "275.85px",
+                    }}
+                  >
+                    <Box>
+                      <Box>END POINT</Box>
+                      <Box>LONG / LAT</Box>
+                    </Box>
+                  </TableHeaderCell>
+                  <TableHeaderCell align="left"></TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
+                {normalRoutes.length === 0 && setIsLoading === false && (
+                  <TableRow sx={{ position: "relative" }}>
+                    <TableCell />
+                    <TableCell
+                    // sx={{
+                    //   position: "absolute",
+                    //   left: "0",
+                    //   top: 0,
+                    // }}
+                    >
+                      The database is empty.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {setIsLoading && <CircularProgress />}
                 {paginatedNormalRoutes.map((normalRoute) => {
                   const isNormalRouteselected = selectedNormalRoutes.includes(
                     normalRoute.id
@@ -347,9 +461,9 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                               border: "0.2px solid rgba(0, 0, 0, 0.2)",
                               boxSizing: "border-box",
                             }}
-                            image={normalRoute.route_photo}
+                            image={normalRoute.img_url}
                           />
-                          <Typography500>{`${normalRoute.route_name}`}</Typography500>
+                          <Typography400>{`${normalRoute.route_name}`}</Typography400>
                         </GroupBox>
                       </TableCellStyled>
                       <TableCellStyled>
@@ -367,7 +481,9 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                         <Box>
                           <IconButton
                             aria-describedby={id}
-                            onClick={handleClick}
+                            onClick={(e) =>
+                              handleClickPopOver(e, normalRoute.id)
+                            }
                           >
                             <ThreeDotsIcon />
                           </IconButton>
@@ -385,17 +501,36 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                               horizontal: "right",
                             }}
                           >
-                            {sortOptions.map((option) => (
-                              <OptionsBox key={option.value}>
-                                {option.icon}
-                                <StyledOption
-                                  // onClick={handleSortChange}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </StyledOption>
-                              </OptionsBox>
-                            ))}
+                            {!isDeleting ? (
+                              actionOptions.map((option) => (
+                                <OptionsBox key={option.value}>
+                                  {option.icon}
+                                  <StyledOption
+                                    onClick={handleRowAction}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </StyledOption>
+                                </OptionsBox>
+                              ))
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  width: "161px",
+                                  height: "142.43px",
+                                  fontFamily: "Gilroy Medium",
+                                  fontSize: "25px",
+                                  color: "#878787",
+                                }}
+                              >
+                                <CircularProgress color="success" />
+                                Deleting
+                              </Box>
+                            )}
                           </StyledPopOver>
                         </Box>
                       </TableCellStyled>
@@ -418,22 +553,12 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
         />
       </StyledCard>
       <Box sx={{ display: "flex", position: "relative" }}>
-        {/* <Box
-          sx={{
-            mt: "23px",
-            position: "relative",
-            marginLeft: "auto",
-            mr: "89px",
-            zIndex: 2,
-          }}
-        > */}
         <HiddenCheckBox
           checked={selectedAllNormalRoutes}
           color="primary"
           indeterminate={selectedSomeNormalRoutes}
           onChange={handleSelectAllNormalRoutes}
         />
-        {/* </Box> */}
       </Box>
     </>
   );
@@ -503,15 +628,21 @@ const StyledTableRow = styled(TableRow)`
 
 const OptionsBox = styled(Box)`
   && {
+    /* cursor: pointer; */
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    margin-bottom: 12.4733px;
+    /* &:hover {
+      background-color: red;
+    } */
   }
 `;
 
 const StyledPopOver = styled(Popover)`
   && .MuiPopover-paper {
-    padding: 15px 4px 0 10px;
+    width: 171px;
+    padding: 7.59px 4px 0 10px;
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
@@ -523,13 +654,12 @@ const StyledPopOver = styled(Popover)`
 const StyledOption = styled.option`
   && {
     cursor: pointer;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 18px;
-    padding: 9px 24px 9px 19px;
-    color: #09110e;
+    font-family: "Gilroy Medium";
+    font-size: 0.875rem;
+    line-height: 16px;
+    letter-spacing: 0.02rem;
+    color: #878787;
+    padding: 0 24px 0 5px;
     &:hover {
       background: #e5e7eb;
     }
@@ -541,25 +671,24 @@ const HeaderCheckbox = styled(TableCell)`
     width: 66px;
     height: 45px;
     background-color: #ff7851;
-    padding-top: 13px;
-    padding-bottom: 12px;
-    padding-left: 0;
-    display: flex;
-    justify-content: center;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    padding-left: 19px;
   }
 `;
 
 const TableHeaderCell = styled(TableCell)`
   && {
+    height: 45px;
     background-color: #ff7851;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 9px;
+    padding-bottom: 6px;
     padding-left: 0;
     font-family: "Inter";
     font-weight: 600;
     font-size: 0.75rem;
     line-height: 15px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.05rem;
     color: #ffffff;
   }
 `;
@@ -582,22 +711,13 @@ const GroupBox = styled(Box)`
   }
 `;
 
-const Typography500 = styled(Typography)`
-  && {
-    font-family: "Poppins";
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 18px;
-    color: #000000;
-  }
-`;
 const Typography400 = styled(Typography)`
   && {
-    font-family: "Poppins";
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 18px;
-    color: #626262;
+    font-family: "Gilroy SemiBold";
+    font-size: 18px;
+    line-height: 21px;
+    letter-spacing: 0.05rem;
+    color: #000000;
   }
 `;
 

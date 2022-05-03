@@ -41,7 +41,7 @@ const TitleHeading = styled(Typography)`
   && {
     color: #000;
     font-weight: 700;
-    font-family: "Gilroy-SemiBold", "Gilroy-Bold";
+    font-family: "Gilroy SemiBold", "Gilroy Bold";
   }
 `;
 

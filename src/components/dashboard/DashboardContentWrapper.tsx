@@ -1,81 +1,42 @@
-import { useState, useEffect, useCallback } from "react";
-import type { FC } from "react";
-import { Helmet } from "react-helmet-async";
-import axios from "axios";
 import {
-  Avatar,
   Box,
-  Container,
   Grid,
   IconButton,
+  Avatar,
+  Container,
   Typography,
-} from "@mui/material";
+} from "@material-ui/core";
+import { FC, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import styled from "styled-components";
-import { RouteListTable } from "../../components/dashboard/route-list";
-import useMounted from "../../hooks/useMounted";
 import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
-import type { NormalRoute } from "../../types/route-lists";
-import {
-  refreshListOnDelete,
-  setRouteListIsLoading,
-} from "../../slices/route-list";
-import { useDispatch, useSelector } from "../../store";
 
-const RouteList: FC = () => {
-  const mounted = useMounted();
+interface DashboardContentWrapperProps {
+  title: string;
+  metaDataTitle?: string;
+  contentHeight?: string;
+}
+
+const DashboardContentWrapper: FC<DashboardContentWrapperProps> = ({
+  children,
+  title,
+  metaDataTitle,
+  contentHeight,
+}) => {
   const { settings } = useSettings();
-  const dispatch = useDispatch();
-  const rowDeleted = useSelector((state) => state.routeList.onDeleteOneRoute);
-  const [routeLists, setRouteLists] = useState<NormalRoute[]>([]);
 
   useEffect(() => {
     gtm.push({ event: "page_view" });
   }, []);
-
-  const getRouteLists = useCallback(async () => {
-    try {
-      const token = sessionStorage.getItem("token");
-      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route`;
-      const CONFIG = {
-        headers: {
-          Authorization: `bearer ${token}`,
-        },
-      };
-      const apiResponse = await axios.get(URL, CONFIG);
-      console.log("Route Lists", apiResponse.data);
-      dispatch(setRouteListIsLoading(false));
-
-      if (mounted.current) {
-        setRouteLists(apiResponse.data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [mounted, dispatch]);
-
-  //INITIAL LOAD LIST
-  useEffect(() => {
-    getRouteLists();
-  }, [getRouteLists]);
-
-  //REFRESH LIST
-  useEffect(() => {
-    if (rowDeleted === true) {
-      getRouteLists();
-      dispatch(refreshListOnDelete(false));
-    }
-  }, [dispatch, rowDeleted, getRouteLists]);
-
   return (
     <>
       <Helmet>
-        <title>Route List | Go Wild</title>
+        <title>{metaDataTitle ?? title} | Go Wild</title>
       </Helmet>
       <Box
         sx={{
-          // backgroundColor: "background.default",
           backgroundColor: "#1D140C",
           minHeight: "100%",
           pt: "55px",
@@ -88,7 +49,7 @@ const RouteList: FC = () => {
         >
           <Grid container justifyContent="space-between">
             <Grid item>
-              <ContentTitleTypography>Normal Route</ContentTitleTypography>
+              <ContentTitleTypography>{title}</ContentTitleTypography>
             </Grid>
             <FlexiGrid item>
               <IconBox>
@@ -104,8 +65,8 @@ const RouteList: FC = () => {
               </Box>
             </FlexiGrid>
           </Grid>
-          <Box sx={{ mt: "27px" }}>
-            <RouteListTable normalRoutes={routeLists} />
+          <Box sx={{ mt: "27px", height: contentHeight ?? "auto" }}>
+            {children}
           </Box>
         </StyledContainer>
       </Box>
@@ -113,7 +74,7 @@ const RouteList: FC = () => {
   );
 };
 
-export default RouteList;
+export default DashboardContentWrapper;
 
 const StyledContainer = styled(Container)`
   && {

@@ -1,17 +1,8 @@
 import "dotenv/config";
 import React from "react";
 import GoogleMapReact from "google-map-react";
-// import { Box } from "@mui/material";
 import styled from "styled-components";
-// import StartingPtIcon from "../../../icons/RouteListStartPt";
-// import StartPtImg from "/static/route-list/start-pt.png";
 
-// const LocationPin = ({ text }) => (
-//   <Box sx={{ display: "flex", alignItems: "center" }}>
-//     <StartingPtIcon />
-//     <p>{text}</p>
-//   </Box>
-// );
 let startingPt;
 let finishingPt;
 let histoEventPt;
@@ -59,6 +50,12 @@ const apiIsLoaded = (map, maps, startPt, endPt, historicalEventPt) => {
   });
 };
 
+const createMapOptions = () => {
+  return {
+    scrollwheel: true,
+  };
+};
+
 const Map = (props) => {
   const { startPt, endPt, historicalEventPt } = props;
   const location = {
@@ -66,7 +63,7 @@ const Map = (props) => {
     lat: 54.06291864840513,
     lng: -128.6423159788208,
   };
-  // console.log(process.env.REACT_APP_GOOGLE_KEY);
+
   return (
     <GoogleMapReactCore
       bootstrapURLKeys={{ key: `${process.env.REACT_APP_GOOGLE_KEY}` }}
@@ -76,15 +73,8 @@ const Map = (props) => {
       onGoogleApiLoaded={({ map, maps }) =>
         apiIsLoaded(map, maps, startPt, endPt, historicalEventPt)
       }
-      options={{ scrollwheel: true }}
-    >
-      {/* <LocationPin
-        // @ts-ignore
-        lat={location.lat}
-        lng={location.lng}
-        text={location.address}
-      /> */}
-    </GoogleMapReactCore>
+      options={createMapOptions}
+    ></GoogleMapReactCore>
   );
 };
 

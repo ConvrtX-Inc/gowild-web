@@ -35,8 +35,18 @@ const RouteList = Loadable(lazy(() => import("./pages/dashboard/RouteList")));
 const RouteListCreate = Loadable(
   lazy(() => import("./pages/dashboard/RouteListCreate"))
 );
+const RouteListEdit = Loadable(
+  lazy(() => import("./pages/dashboard/RouteListEdit"))
+);
 
 const Guidelines = Loadable(lazy(() => import("./pages/dashboard/Guidelines")));
+
+const TreasureChestList = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestList"))
+);
+const CreateTreasureChest = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestCreate"))
+);
 
 // const Chat = Loadable(lazy(() => import("./pages/dashboard/Chat")));
 
@@ -119,11 +129,28 @@ const routes: PartialRouteObject[] = [
             path: "new",
             element: <RouteListCreate />,
           },
+          {
+            path: "edit",
+            element: <RouteListEdit />,
+          },
         ],
       },
       {
         path: "/guidelines",
         element: <Guidelines />,
+      },
+      {
+        path: "/treasure-chest-list",
+        children: [
+          {
+            path: "/",
+            element: <TreasureChestList />,
+          },
+          {
+            path: "new",
+            element: <CreateTreasureChest />,
+          },
+        ],
       },
       // {
       //   path: "chat",
