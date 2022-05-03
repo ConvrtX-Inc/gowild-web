@@ -17,10 +17,17 @@ import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
 import type { NormalRoute } from "../../types/route-lists";
+import {
+  refreshListOnDelete,
+  setRouteListIsLoading,
+} from "../../slices/route-list";
+import { useDispatch, useSelector } from "../../store";
 
 const RouteList: FC = () => {
   const mounted = useMounted();
   const { settings } = useSettings();
+  const dispatch = useDispatch();
+  const rowDeleted = useSelector((state) => state.routeList.onDeleteOneRoute);
   const [routeLists, setRouteLists] = useState<NormalRoute[]>([]);
 
   useEffect(() => {
@@ -38,6 +45,7 @@ const RouteList: FC = () => {
       };
       const apiResponse = await axios.get(URL, CONFIG);
       console.log("Route Lists", apiResponse.data);
+      dispatch(setRouteListIsLoading(false));
 
       if (mounted.current) {
         setRouteLists(apiResponse.data);
@@ -45,11 +53,20 @@ const RouteList: FC = () => {
     } catch (err) {
       console.error(err);
     }
-  }, [mounted]);
+  }, [mounted, dispatch]);
 
+  //INITIAL LOAD LIST
   useEffect(() => {
     getRouteLists();
   }, [getRouteLists]);
+
+  //REFRESH LIST
+  useEffect(() => {
+    if (rowDeleted === true) {
+      getRouteLists();
+      dispatch(refreshListOnDelete(false));
+    }
+  }, [dispatch, rowDeleted, getRouteLists]);
 
   return (
     <>

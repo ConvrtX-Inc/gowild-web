@@ -36,9 +36,12 @@ import FinishingPtIcon from "../../../icons/LocationFinishingPt";
 import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
 import AddHistoricalIcon from "../../../icons/RouteListAddHistorical";
 import ExpandMoreIcon from "../../../icons/ExpandAccordion";
+import { setRouteListIsLoading } from "../../../slices/route-list";
+import { useDispatch } from "../../../store";
 
 const RouteCreateForm: FC = (props) => {
   // const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [b64files, setB64files] = useState<any>("");
   const [files, setFiles] = useState<any[]>([]);
   const [b64historicalFiles, setB64historicalFiles] = useState<any>("");
@@ -271,6 +274,9 @@ const RouteCreateForm: FC = (props) => {
           setRouteId(apiResponse.data.id);
 
           setStatus({ success: true });
+
+          //Make the RouteList Table Reload
+          dispatch(setRouteListIsLoading(true));
 
           //Clear Form and Current States
           resetForm();
