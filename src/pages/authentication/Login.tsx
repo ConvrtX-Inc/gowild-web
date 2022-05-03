@@ -6,7 +6,6 @@ import { Box, Container, Link } from "@mui/material";
 import {
   LoginAmplify,
   LoginAuth0,
-  LoginFirebase,
   LoginJWT,
 } from "../../components/authentication/login";
 import styled from "styled-components";
@@ -91,7 +90,6 @@ const Login: FC = () => {
                 >
                   {platform === "Amplify" && <LoginAmplify />}
                   {platform === "Auth0" && <LoginAuth0 />}
-                  {platform === "Firebase" && <LoginFirebase />}
                   {platform === "JWT" && <LoginJWT />}
                   {platform === "Axios" && <LoginJWT />}
                 </Box>

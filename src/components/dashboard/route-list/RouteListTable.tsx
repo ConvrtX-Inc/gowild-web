@@ -11,6 +11,7 @@ import {
   Card,
   CardMedia,
   Checkbox,
+  CircularProgress,
   // InputAdornment,
   Popover,
   // Link,
@@ -314,6 +315,19 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                   ></TableHeaderCell>
                 </TableRow>
               </TableHead>
+              {normalRoutes.length === 0 && (
+                <TableRow sx={{ position: "relative" }}>
+                  <TableCell />
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      left: "450px",
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                </TableRow>
+              )}
               <TableBody>
                 {paginatedNormalRoutes.map((normalRoute) => {
                   const isNormalRouteselected = selectedNormalRoutes.includes(
@@ -347,7 +361,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                               border: "0.2px solid rgba(0, 0, 0, 0.2)",
                               boxSizing: "border-box",
                             }}
-                            image={normalRoute.route_photo}
+                            image={normalRoute.img_url}
                           />
                           <Typography500>{`${normalRoute.route_name}`}</Typography500>
                         </GroupBox>
@@ -418,22 +432,12 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
         />
       </StyledCard>
       <Box sx={{ display: "flex", position: "relative" }}>
-        {/* <Box
-          sx={{
-            mt: "23px",
-            position: "relative",
-            marginLeft: "auto",
-            mr: "89px",
-            zIndex: 2,
-          }}
-        > */}
         <HiddenCheckBox
           checked={selectedAllNormalRoutes}
           color="primary"
           indeterminate={selectedSomeNormalRoutes}
           onChange={handleSelectAllNormalRoutes}
         />
-        {/* </Box> */}
       </Box>
     </>
   );

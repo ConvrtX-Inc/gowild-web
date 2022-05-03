@@ -8,6 +8,8 @@ import {
 import type { FC } from "react";
 // import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../../firebase";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -43,6 +45,7 @@ const RouteCreateForm: FC = (props) => {
   const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
   const [routeId, setRouteId] = useState<string>("");
   const [historicalEvents, setHistoricalEvents] = useState([]);
+  const [progress, setProgress] = useState(0);
   const scrollRef = useRef<HTMLSpanElement>();
   const scrollToEvents = useRef<HTMLSpanElement>();
 
@@ -116,6 +119,32 @@ const RouteCreateForm: FC = (props) => {
     setHistoricalFiles([]);
   };
 
+  const uploadImgToFirebase = async (file) => {
+    if (!file) return console.log("No Image File Attached");
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(storage, `web/storageTest/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      //on(next, error, complete)
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const prog = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgress(prog);
+        },
+        (err) => {
+          console.log("FIREBASE ERROR: ", err);
+          reject(err);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => resolve(url));
+        }
+      );
+    });
+  };
+
   const handleAddHistorical = async (
     histoLong,
     histoLat,
@@ -123,15 +152,15 @@ const RouteCreateForm: FC = (props) => {
     histoSubTitle,
     histoDescription
   ) => {
-    console.log("Add Historical route_id", routeId);
+    console.log("SHOW CURRENT route_id: ", routeId);
     const accessToken = sessionStorage.getItem("token");
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-clues`;
     const DATA = {
       route_id: routeId,
       location_point_long: 32.4832,
       location_point_lat: 32.4832,
-      clue_point_long: Number(histoLong),
-      clue_point_lat: Number(histoLat),
+      clue_point_long: histoLong,
+      clue_point_lat: histoLat,
       clue_title: histoTitle,
       description: histoDescription,
       clue_img: {
@@ -194,14 +223,14 @@ const RouteCreateForm: FC = (props) => {
       }}
       validationSchema={Yup.object().shape({
         images: Yup.array(),
-        startPtLong: Yup.string().max(80).required(),
-        startPtLat: Yup.string().max(80).required(),
-        endPtLong: Yup.string().max(80).required(),
-        endPtLat: Yup.string().max(80).required(),
+        startPtLong: Yup.number().max(80).required(),
+        startPtLat: Yup.number().max(80).required(),
+        endPtLong: Yup.number().max(80).required(),
+        endPtLat: Yup.number().max(80).required(),
         raceTitle: Yup.string().max(80).required(),
         description: Yup.string().max(255).required(),
-        histoLong: Yup.string().max(80),
-        histoLat: Yup.string().max(80),
+        histoLong: Yup.number().max(80),
+        histoLat: Yup.number().max(80),
         histoTitle: Yup.string().max(80),
         histoSubTitle: Yup.string().max(80),
         histoDescription: Yup.string().max(80),
@@ -211,6 +240,11 @@ const RouteCreateForm: FC = (props) => {
         { setErrors, setStatus, setSubmitting, resetForm }
       ): Promise<void> => {
         try {
+          //Note: Upload Img to Firebase
+          console.log("ON SUBMIT IMAGE", files[0]);
+          const firebaseImgUrl = await uploadImgToFirebase(files[0]);
+          console.log("FIREBASE IMG URL: ", firebaseImgUrl);
+
           // NOTE: Make API request
           const accessToken = sessionStorage.getItem("token");
           const userId = sessionStorage.getItem("user_id");
@@ -223,6 +257,8 @@ const RouteCreateForm: FC = (props) => {
             start_point_lat: values.startPtLat,
             stop_point_long: values.endPtLong,
             stop_point_lat: values.endPtLat,
+            img_url: firebaseImgUrl,
+            description: values.description,
           };
           const CONFIG = {
             headers: {
@@ -231,10 +267,12 @@ const RouteCreateForm: FC = (props) => {
             },
           };
           const apiResponse = await axios.post(URL, DATA, CONFIG);
-          console.log(apiResponse.data.id);
+          console.log("ONSUBMIT API RESPONSE: ", apiResponse);
           setRouteId(apiResponse.data.id);
 
           setStatus({ success: true });
+
+          //Clear Form and Current States
           resetForm();
           setFiles([]);
           setHistoricalFiles([]);
@@ -408,7 +446,9 @@ const RouteCreateForm: FC = (props) => {
                                   right: "60px",
                                 }}
                               />
-                              Saving
+                              {progress === 100
+                                ? "Saving"
+                                : `Uploading image ${progress}%   `}
                             </>
                           ) : (
                             "Save"
