@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { FC } from "react";
 import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import {
   Avatar,
@@ -11,33 +12,33 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { RouteListTable } from "../../components/dashboard/route-list";
+import { RouteEditForm } from "../../components/dashboard/route-list";
 import useMounted from "../../hooks/useMounted";
 import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
-import type { NormalRoute } from "../../types/route-lists";
+import type { SingleRoute } from "../../types/route-lists";
 import {
-  refreshListOnDelete,
   setRouteListIsLoading,
 } from "../../slices/route-list";
-import { useDispatch, useSelector } from "../../store";
+import { useDispatch } from "../../store";
 
-const RouteList: FC = () => {
+const RouteListEdit: FC = () => {
+  const { state } = useLocation();
+  const { routeId } = state as any;
   const mounted = useMounted();
   const { settings } = useSettings();
   const dispatch = useDispatch();
-  const rowDeleted = useSelector((state) => state.routeList.onDeleteOneRoute);
-  const [routeLists, setRouteLists] = useState<NormalRoute[]>([]);
+  const [selectedRoute, setSelectedRoute] = useState<SingleRoute[]>([]);
 
   useEffect(() => {
     gtm.push({ event: "page_view" });
   }, []);
 
-  const getRouteLists = useCallback(async () => {
+  const getOneRoute = useCallback(async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route`;
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/${routeId}`;
       const CONFIG = {
         headers: {
           Authorization: `bearer ${token}`,
@@ -48,30 +49,22 @@ const RouteList: FC = () => {
       dispatch(setRouteListIsLoading(false));
 
       if (mounted.current) {
-        setRouteLists(apiResponse.data);
+        setSelectedRoute(apiResponse.data);
       }
     } catch (err) {
       console.error(err);
     }
-  }, [mounted, dispatch]);
+  }, [mounted, dispatch, routeId]);
 
   //INITIAL LOAD LIST
   useEffect(() => {
-    getRouteLists();
-  }, [getRouteLists]);
-
-  //REFRESH LIST
-  useEffect(() => {
-    if (rowDeleted === true) {
-      getRouteLists();
-      dispatch(refreshListOnDelete(false));
-    }
-  }, [dispatch, rowDeleted, getRouteLists]);
+    getOneRoute();
+  }, [getOneRoute]);
 
   return (
     <>
       <Helmet>
-        <title>Route List | Go Wild</title>
+        <title>Route List Edit | Go Wild</title>
       </Helmet>
       <Box
         sx={{
@@ -105,7 +98,7 @@ const RouteList: FC = () => {
             </FlexiGrid>
           </Grid>
           <Box sx={{ mt: "27px" }}>
-            <RouteListTable normalRoutes={routeLists} />
+            <RouteEditForm singleRoute={selectedRoute} />
           </Box>
         </StyledContainer>
       </Box>
@@ -113,7 +106,7 @@ const RouteList: FC = () => {
   );
 };
 
-export default RouteList;
+export default RouteListEdit;
 
 const StyledContainer = styled(Container)`
   && {
