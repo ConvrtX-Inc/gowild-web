@@ -14,7 +14,6 @@ import {
 import {
   RegisterAmplify,
   RegisterAuth0,
-  RegisterFirebase,
   RegisterJWT,
 } from "../../components/authentication/register";
 import Logo from "../../components/Logo";
@@ -109,7 +108,6 @@ const Register: FC = () => {
               >
                 {platform === "Amplify" && <RegisterAmplify />}
                 {platform === "Auth0" && <RegisterAuth0 />}
-                {platform === "Firebase" && <RegisterFirebase />}
                 {platform === "JWT" && <RegisterJWT />}
               </Box>
               <Divider sx={{ my: 3 }} />
