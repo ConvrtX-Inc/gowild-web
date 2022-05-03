@@ -32,9 +32,7 @@ import DeleteIcon from "../../../icons/RouteListDelete";
 import type { NormalRoute } from "../../../types/route-lists";
 import Scrollbar from "../../Scrollbar";
 import formatDate from "../../../utils/formatDate";
-import {
-  refreshListOnDelete,
-} from "../../../slices/route-list";
+import { refreshListOnDelete } from "../../../slices/route-list";
 import { useDispatch, useSelector } from "../../../store";
 interface RouteListTableProps {
   // normalRoutes: NormalRoute[];
@@ -188,6 +186,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const setIsLoading = useSelector((state) => state.routeList.setIsLoading);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { normalRoutes, ...other } = props;
   const [selectedNormalRoutes, setSelectedNormalRoutes] = useState<string[]>(
     []
@@ -202,14 +201,15 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     sort,
     // setSort
   ] = useState<Sort>(sortOptions[1].value);
-  const [action] = useState<Action>(null);
+  // const [action] = useState<Action>(null);
   const [selectedRouteId, setSelectedRouteId] = useState<string>("");
   const [filters] = useState<any>({
     hasAcceptedMarketing: null,
     isProspect: null,
     isReturning: null,
   });
-  console.log("POPOVER ", action);
+  console.log("ROUTE LIST TABLE RENDERED");
+
   const handleRedirectPath = () => {
     navigate("/dashboard/route-list/new");
   };
@@ -238,9 +238,12 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
           // "Content-Type": "application/json",
         },
       };
+      setIsDeleting(true);
       const apiResponse = await axios.delete(URL, CONFIG);
       console.log("ROW DELETE response: ", apiResponse);
       dispatch(refreshListOnDelete(true));
+      setIsDeleting(false);
+      setAnchorEl(null);
     }
   };
 
@@ -493,17 +496,36 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                               horizontal: "right",
                             }}
                           >
-                            {actionOptions.map((option) => (
-                              <OptionsBox key={option.value}>
-                                {option.icon}
-                                <StyledOption
-                                  onClick={handleRowAction}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </StyledOption>
-                              </OptionsBox>
-                            ))}
+                            {!isDeleting ? (
+                              actionOptions.map((option) => (
+                                <OptionsBox key={option.value}>
+                                  {option.icon}
+                                  <StyledOption
+                                    onClick={handleRowAction}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </StyledOption>
+                                </OptionsBox>
+                              ))
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  width: "161px",
+                                  height: "142.43px",
+                                  fontFamily: "Gilroy Medium",
+                                  fontSize: "25px",
+                                  color: "#878787",
+                                }}
+                              >
+                                <CircularProgress color="success" />
+                                Deleting
+                              </Box>
+                            )}
                           </StyledPopOver>
                         </Box>
                       </TableCellStyled>
