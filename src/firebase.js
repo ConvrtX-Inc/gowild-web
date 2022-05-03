@@ -1,3 +1,4 @@
+// import "dotenv/config";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
@@ -8,13 +9,13 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyByvtRitm0_ohufW5FLjnaEbo3gSShHal4",
-  authDomain: "gowild-convrtx.firebaseapp.com",
-  projectId: "gowild-convrtx",
-  storageBucket: "gowild-convrtx.appspot.com",
-  messagingSenderId: "223342894018",
-  appId: "1:223342894018:web:5023a3252ae2a7cddbd45b",
-  measurementId: "G-KYF8DZR143",
+  apiKey: `${process.env.REACT_APP_FIREBASE_KEY}`,
+  authDomain: `${process.env.REACT_APP_FIREBASE_DOMAIN}`,
+  projectId: `${process.env.REACT_APP_FIREBASE_PID}`,
+  storageBucket: `${process.env.REACT_APP_FIREBASE_STORAGE}`,
+  messagingSenderId: `${process.env.REACT_APP_FIREBASE_SID}`,
+  appId: `${process.env.REACT_APP_FIREBASE_APPID}`,
+  measurementId: `${process.env.REACT_APP_FIREBASE_MID}`,
 };
 
 // Initialize Firebase
