@@ -41,6 +41,13 @@ const RouteListEdit = Loadable(
 
 const Guidelines = Loadable(lazy(() => import("./pages/dashboard/Guidelines")));
 
+const TreasureChestList = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestList"))
+);
+const CreateTreasureChest = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestCreate"))
+);
+
 // const Chat = Loadable(lazy(() => import("./pages/dashboard/Chat")));
 
 // Error pages
@@ -131,6 +138,19 @@ const routes: PartialRouteObject[] = [
       {
         path: "/guidelines",
         element: <Guidelines />,
+      },
+      {
+        path: "/treasure-chest-list",
+        children: [
+          {
+            path: "/",
+            element: <TreasureChestList />,
+          },
+          {
+            path: "new",
+            element: <CreateTreasureChest />,
+          },
+        ],
       },
       // {
       //   path: "chat",
