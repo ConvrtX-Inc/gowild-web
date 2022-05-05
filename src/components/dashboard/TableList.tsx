@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { cloneElement, useState } from "react";
 import type { ChangeEvent, FC, MouseEvent } from "react";
 import {
   Box,
@@ -227,9 +227,7 @@ const TableList: FC<TableListProps> = (props) => {
                   />
                 </TableHeaderCell>
                 {headers.map((header) => (
-                  <TableHeaderCell key={header}>
-                    {header}
-                  </TableHeaderCell>
+                  <TableHeaderCell key={header}>{header}</TableHeaderCell>
                 ))}
                 <TableHeaderCell
                   align="left"
@@ -258,7 +256,12 @@ const TableList: FC<TableListProps> = (props) => {
                         />
                       </TableCellStyled>
 
-                      {rowElementsBuilder(item)}
+                      {rowElementsBuilder(item).map((elem, i) =>
+                        cloneElement(elem, {
+                          key: `${item}-${i}`,
+                        })
+                      )}
+
                       <TableCellStyled align="right">
                         <Box>
                           <IconButton

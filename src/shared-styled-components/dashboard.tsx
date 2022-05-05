@@ -8,6 +8,18 @@ import {
 } from "@material-ui/core";
 import styled from "styled-components";
 
+const AbsCircularLoadingBox = styled(Box)`
+  && {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    && .MuiCircularProgress-root {
+      color: #2995a8;
+    }
+  }
+`;
+
 const StyledCard = styled(Card)`
   && {
     box-shadow: none;
@@ -134,7 +146,6 @@ const TextFieldLabel = styled(Typography)`
   }
 `;
 
-
 const OptionsBox = styled(Box)`
   && {
     display: flex;
@@ -165,5 +176,6 @@ export {
   DashboardButton,
   TextFieldLabel,
   OptionsBox,
-  StyledOption
+  StyledOption,
+  AbsCircularLoadingBox,
 };
