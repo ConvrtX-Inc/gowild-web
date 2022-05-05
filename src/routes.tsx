@@ -48,6 +48,14 @@ const CreateTreasureChest = Loadable(
   lazy(() => import("./pages/dashboard/TreasureChestCreate"))
 );
 
+const ViewTreasureChest = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestView"))
+);
+
+const EditTreasureChest = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestEdit"))
+);
+
 // const Chat = Loadable(lazy(() => import("./pages/dashboard/Chat")));
 
 // Error pages
@@ -149,6 +157,14 @@ const routes: PartialRouteObject[] = [
           {
             path: "new",
             element: <CreateTreasureChest />,
+          },
+          {
+            path: "view/:id",
+            element: <ViewTreasureChest />,
+          },
+          {
+            path: "edit/:id",
+            element: <EditTreasureChest />,
           },
         ],
       },

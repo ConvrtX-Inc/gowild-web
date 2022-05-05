@@ -16,6 +16,7 @@ export interface TreasureChest {
 }
 
 export interface Sponsor {
+  id?: string;
   treasure_chest_id: string;
   link: string;
   img: Byte64Image;
