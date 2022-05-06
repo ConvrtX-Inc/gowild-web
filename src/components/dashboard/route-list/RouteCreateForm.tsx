@@ -298,7 +298,7 @@ const RouteCreateForm: FC = (props) => {
         histoLat: Yup.number().max(80),
         histoTitle: Yup.string().max(80),
         histoSubTitle: Yup.string().max(80),
-        histoDescription: Yup.string().max(80),
+        histoDescription: Yup.string().max(255),
       })}
       onSubmit={async (
         values,

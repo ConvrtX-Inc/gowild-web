@@ -15,7 +15,6 @@ import {
   Button,
   Card,
   CardContent,
-  CircularProgress,
   FormHelperText,
   Grid,
   IconButton,
@@ -25,22 +24,20 @@ import styled from "styled-components";
 import Scrollbar from "../../Scrollbar";
 import Map from "./Map";
 import FileDropzone from "../../FileDropzone";
-import FileDropzoneHistorical from "../../FileDropzoneHistorical";
 import StartingPtIcon from "../../../icons/LocationStartingPt";
 import FinishingPtIcon from "../../../icons/LocationFinishingPt";
 import CrossIcon from "../../../icons/RouteListCross";
 import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
-import AddHistoricalIcon from "../../../icons/RouteListAddHistorical";
 import ExpandMoreIcon from "../../../icons/ExpandAccordion";
 import { setRouteListIsLoading } from "../../../slices/route-list";
 import { useDispatch } from "../../../store";
 
-// interface RouteEditFormProps {
+// interface RouteViewFormProps {
 //   // normalRoutes: NormalRoute[];
 //   normalRoutes: NormalRoute[];
 // }
 
-const RouteEditForm: FC<any> = (props) => {
+const RouteViewForm: FC<any> = (props) => {
   const { singleRoute } = props;
   console.log("EDIT FORM PROPS: ", singleRoute);
   const dispatch = useDispatch();
@@ -399,134 +396,53 @@ const RouteEditForm: FC<any> = (props) => {
                         </FlexiBox>
                       </LegendBox>
                       <FieldLabel>Starting Point</FieldLabel>
-                      <StyledTextField
-                        autoComplete="off"
-                        error={Boolean(
-                          touched.startPtLong && errors.startPtLong
-                        )}
-                        fullWidth
-                        helperText={touched.startPtLong && errors.startPtLong}
-                        placeholder="Longitude"
-                        name="startPtLong"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.startPtLong}
-                        variant="outlined"
-                      />
-                      <StyledTextField
-                        autoComplete="off"
-                        sx={{ mt: "0 !important" }}
-                        error={Boolean(touched.startPtLat && errors.startPtLat)}
-                        fullWidth
-                        helperText={touched.startPtLat && errors.startPtLat}
-                        placeholder="Latitude"
-                        name="startPtLat"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.startPtLat}
-                        variant="outlined"
-                      />
+                      <ViewField sx={{ mt: "26px" }}>
+                        {values.startPtLong}°
+                      </ViewField>
+                      <ViewField sx={{ mt: "60px", mb: "40px" }}>
+                        {values.startPtLat}°
+                      </ViewField>
                       <FieldLabel>End Point</FieldLabel>
-                      <StyledTextField
-                        autoComplete="off"
-                        error={Boolean(touched.endPtLong && errors.endPtLong)}
-                        fullWidth
-                        helperText={touched.endPtLong && errors.endPtLong}
-                        placeholder="Longitude"
-                        name="endPtLong"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.endPtLong}
-                        variant="outlined"
-                      />
-                      <StyledTextField
-                        autoComplete="off"
-                        sx={{ mt: "0 !important" }}
-                        error={Boolean(touched.endPtLat && errors.endPtLat)}
-                        fullWidth
-                        helperText={touched.endPtLat && errors.endPtLat}
-                        placeholder="Latitude"
-                        name="endPtLat"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.endPtLat}
-                        variant="outlined"
-                      />
+                      <ViewField sx={{ mt: "26px" }}>
+                        {values.endPtLong}°
+                      </ViewField>
+                      <ViewField sx={{ mt: "60px", mb: "40px" }}>
+                        {values.endPtLat}°
+                      </ViewField>
                       <Box
                         sx={{
                           width: "289px",
                           height: "89.98px",
                         }}
                       >
-                        {singleRoute.img_url && isImgLoaded ? (
-                          <Box
-                            sx={{
-                              position: "relative",
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              mb: "20px",
-                            }}
-                          >
-                            <IconButton
-                              sx={{
-                                position: "absolute",
-                                right: "76px",
-                                top: "-20px",
-                              }}
-                              onClick={() => setIsImgLoaded(false)}
-                            >
-                              <CrossIcon fontSize="medium" />
-                            </IconButton>
-                            <img
-                              height="90px"
-                              width="90px"
-                              src={singleRoute.img_url}
-                              alt="route-img"
-                            />
-                          </Box>
-                        ) : (
-                          <FileDropzone
-                            accept={["image/png", ".jpg", "image/gif"]}
-                            maxFiles={1}
-                            files={files}
-                            onDrop={handleDrop}
-                            onRemove={handleRemove}
-                            onRemoveAll={handleRemoveAll}
+                        <Box
+                          sx={{
+                            position: "relative",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-start",
+                            mb: "20px",
+                          }}
+                        >
+                          <img
+                            height="90px"
+                            width="90px"
+                            src={singleRoute.img_url}
+                            alt="route-img"
                           />
-                        )}
+                        </Box>
                       </Box>
-                      <FieldLabel>Title</FieldLabel>
-                      <StyledTextField
-                        autoComplete="off"
-                        error={Boolean(touched.raceTitle && errors.raceTitle)}
-                        fullWidth
-                        helperText={touched.raceTitle && errors.raceTitle}
-                        placeholder="My race title"
-                        name="raceTitle"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.raceTitle}
-                        variant="outlined"
-                      />
+                      <FieldLabel sx={{ mt: "14px" }}>Title</FieldLabel>
+                      <ViewField sx={{ mt: "26px", mb: "40px" }}>
+                        {values.raceTitle}
+                      </ViewField>
                       <FieldLabel>Description</FieldLabel>
-                      <StyledMultiTextField
-                        autoComplete="off"
-                        error={Boolean(
-                          touched.description && errors.description
-                        )}
-                        fullWidth
-                        multiline
-                        rows={4}
-                        helperText={touched.description && errors.description}
-                        placeholder="Write something here..."
-                        name="description"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.description}
-                        variant="outlined"
-                      />
+                      <ViewField
+                        sx={{ height: "100px", mt: "26px", pr: "70px" }}
+                      >
+                        <Scrollbar>{values.description}</Scrollbar>
+                      </ViewField>
                       <Box
                         sx={{
                           display: "flex",
@@ -534,7 +450,7 @@ const RouteEditForm: FC<any> = (props) => {
                           mt: "16px",
                         }}
                       >
-                        <SaveButton
+                        {/* <SaveButton
                           disabled={isSubmitting}
                           type="submit"
                           variant="contained"
@@ -555,7 +471,7 @@ const RouteEditForm: FC<any> = (props) => {
                           ) : (
                             "Save Changes"
                           )}
-                        </SaveButton>
+                        </SaveButton> */}
                       </Box>
                       {errors.submit && (
                         <Box sx={{ mt: 3, position: "relative" }}>
@@ -604,70 +520,8 @@ const RouteEditForm: FC<any> = (props) => {
                           sx={{ color: "#0E5753", borderColor: "#0E5753" }}
                           variant="outlined"
                         >
-                          🔺 Scroll to Events
+                          🔺 Scroll Up
                         </Button>
-                      </Box>
-                      <Box sx={{ ml: "20px" }} onClick={scrollToHistoricalForm}>
-                        <Button
-                          sx={{ color: "#0E5753", borderColor: "#0E5753" }}
-                          variant="outlined"
-                        >
-                          🔻 Scroll to Form
-                        </Button>
-                      </Box>
-                      <Box sx={{ ml: "auto", mb: "20px" }}>
-                        <AddHistoricalButton
-                          sx={{
-                            opacity: `${
-                              values.histoLong &&
-                              values.histoLat &&
-                              values.histoTitle &&
-                              values.histoSubTitle &&
-                              values.histoDescription
-                                ? 1
-                                : "0.2"
-                            }`,
-                          }}
-                          disabled={
-                            values.histoLong &&
-                            values.histoLat &&
-                            values.histoTitle &&
-                            values.histoSubTitle &&
-                            values.histoDescription
-                              ? false
-                              : true
-                          }
-                          variant="contained"
-                          onClick={() => {
-                            if (
-                              !values.histoLong ||
-                              !values.histoLat ||
-                              !values.histoTitle ||
-                              !values.histoSubTitle ||
-                              !values.histoDescription
-                            ) {
-                              console.log("No values added");
-                            } else {
-                              handleAddHistorical(
-                                values.histoLong,
-                                values.histoLat,
-                                values.histoTitle,
-                                values.histoSubTitle,
-                                values.histoDescription
-                              );
-                            }
-                            setFieldValue("histoLong", "");
-                            setFieldValue("histoLat", "");
-                            setFieldValue("histoTitle", "");
-                            setFieldValue("histoSubTitle", "");
-                            setFieldValue("histoDescription", "");
-                          }}
-                        >
-                          <Box sx={{ mr: "3px" }}>
-                            <AddHistoricalIcon fontSize="small" />
-                          </Box>
-                          Add Historical
-                        </AddHistoricalButton>
                       </Box>
                     </ToolbarBox>
                     <Box sx={{ height: "457px" }}>
@@ -734,144 +588,9 @@ const RouteEditForm: FC<any> = (props) => {
                               <AccordionDetails sx={{ pl: "36px", pt: "16px" }}>
                                 {historical.description}
                               </AccordionDetails>
-                              <SaveChangesButton variant="contained">
-                                Edit
-                              </SaveChangesButton>
                             </StyledAccordion>
                           ))}
                         {/* ----------------------------------------------------------------------- ACCORDION END */}
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "flex-start",
-                            position: "relative",
-                            mt: `${historicalEvents.length > 0 ? "33px" : "0"}`,
-                          }}
-                        >
-                          <span ref={scrollRef} />
-                          <RowBox sx={{ width: "688.31px" }}>
-                            <ColumnBox>
-                              <Box sx={{ width: "293px", pl: "13px" }}>
-                                <FieldLabel>Historical Event</FieldLabel>
-                                <StyledTextField
-                                  sx={{ mb: "35px !important" }}
-                                  error={Boolean(
-                                    touched.histoLong && errors.histoLong
-                                  )}
-                                  fullWidth
-                                  helperText={
-                                    touched.histoLong && errors.histoLong
-                                  }
-                                  placeholder="Longitude"
-                                  name="histoLong"
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={values.histoLong}
-                                  variant="outlined"
-                                />
-                                <StyledTextField
-                                  sx={{ mt: 0 }}
-                                  error={Boolean(
-                                    touched.histoLat && errors.histoLat
-                                  )}
-                                  fullWidth
-                                  helperText={
-                                    touched.histoLat && errors.histoLat
-                                  }
-                                  placeholder="Latitude"
-                                  name="histoLat"
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={values.histoLat}
-                                  autoComplete="off"
-                                  variant="outlined"
-                                />
-                              </Box>
-                              <Box sx={{ width: "293px", ml: "39px" }}>
-                                <FieldLabel>Title</FieldLabel>
-                                <StyledTextField
-                                  error={Boolean(
-                                    touched.histoTitle && errors.histoTitle
-                                  )}
-                                  fullWidth
-                                  helperText={
-                                    touched.histoTitle && errors.histoTitle
-                                  }
-                                  placeholder="Historical Item"
-                                  name="histoTitle"
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={values.histoTitle}
-                                  autoComplete="off"
-                                  variant="outlined"
-                                />
-                                <FieldLabel>Sub-Title</FieldLabel>
-                                <StyledTextField
-                                  sx={{ mt: 0 }}
-                                  error={Boolean(
-                                    touched.histoSubTitle &&
-                                      errors.histoSubTitle
-                                  )}
-                                  fullWidth
-                                  helperText={
-                                    touched.histoSubTitle &&
-                                    errors.histoSubTitle
-                                  }
-                                  placeholder="Write something here..."
-                                  name="histoSubTitle"
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={values.histoSubTitle}
-                                  autoComplete="off"
-                                  variant="outlined"
-                                />
-                              </Box>
-                            </ColumnBox>
-                          </RowBox>
-
-                          <Box
-                            sx={{
-                              width: "296px",
-                              height: "470px",
-                              position: "absolute",
-                              right: "0",
-                              top: "0",
-                            }}
-                          >
-                            <Scrollbar>
-                              <FileDropzoneHistorical
-                                accept="image/*"
-                                files={historicalFiles}
-                                onDrop={handleHistoricalDrop}
-                                onRemove={handleHistoricalRemove}
-                                onRemoveAll={handleHistoricalRemoveAll}
-                              />
-                            </Scrollbar>
-                          </Box>
-                        </Box>
-                        <Box sx={{ width: "622px", pl: "16px" }}>
-                          <FieldLabel>Description</FieldLabel>
-                          <StyledMultiTextField
-                            error={Boolean(
-                              touched.histoDescription &&
-                                errors.histoDescription
-                            )}
-                            fullWidth
-                            multiline
-                            rows={7}
-                            helperText={
-                              touched.histoDescription &&
-                              errors.histoDescription
-                            }
-                            placeholder="Write something here..."
-                            name="histoDescription"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.histoDescription}
-                            variant="outlined"
-                          />
-                        </Box>
                       </Scrollbar>
                     </Box>
                   </HistoricalBox>
@@ -885,7 +604,7 @@ const RouteEditForm: FC<any> = (props) => {
   );
 };
 
-export default RouteEditForm;
+export default RouteViewForm;
 
 const LegendBox = styled(Box)`
   && {
@@ -1092,17 +811,15 @@ const ColumnBox = styled(Box)`
   }
 `;
 
-const AddHistoricalButton = styled(Button)`
+const ViewField = styled(Box)`
   && {
-    background-color: #0e5753;
-    border-radius: 13.6667px;
-    padding: 10px 16.21px 11px 22px;
-    font-family: "Gilroy SemiBold";
+    font-family: "Gilroy Semibold";
     font-style: normal;
-    font-size: 14px;
-    line-height: 20px;
-    text-align: center;
-    color: #ffffff;
+    font-weight: 500;
+    font-size: 17.7561px;
+    line-height: 27px;
+    color: #000000;
+    opacity: 0.4;
   }
 `;
 
