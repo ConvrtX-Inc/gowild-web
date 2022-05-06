@@ -1,12 +1,6 @@
-import {
-  useState,
-  useCallback,
-  useLayoutEffect,
-  useEffect,
-  useRef,
-} from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type { FC } from "react";
-// import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../../firebase";
@@ -38,31 +32,36 @@ import AddHistoricalIcon from "../../../icons/RouteListAddHistorical";
 import ExpandMoreIcon from "../../../icons/ExpandAccordion";
 import { setRouteListIsLoading } from "../../../slices/route-list";
 import { useDispatch } from "../../../store";
-import type { SingleRoute } from "../../../types/route-lists";
-interface SingleRouteProps {
-  singleRoute: SingleRoute[];
-}
 
-const RouteEditForm: FC<SingleRouteProps> = (props) => {
+// interface RouteEditFormProps {
+//   // normalRoutes: NormalRoute[];
+//   normalRoutes: NormalRoute[];
+// }
+
+const RouteEditForm: FC<any> = (props) => {
   const { singleRoute } = props;
   // const navigate = useNavigate();
+  console.log("EDIT FORM PROPS: ", singleRoute);
   const dispatch = useDispatch();
   const [b64files, setB64files] = useState<any>("");
   const [files, setFiles] = useState<any[]>([]);
-  const [b64historicalFiles, setB64historicalFiles] = useState<any>("");
+  const [
+    ,
+    // b64historicalFiles
+    setB64historicalFiles,
+  ] = useState<any>("");
   const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
-  const [routeId, setRouteId] = useState<string>("");
+  const [eventId, setEventId] = useState<string>("");
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef<HTMLSpanElement>();
   const scrollToEvents = useRef<HTMLSpanElement>();
-  console.log("ROUTE EDIT FORM: ", singleRoute);
-  useLayoutEffect(() => {
-    if (scrollRef?.current) {
-      scrollRef.current.scrollIntoView();
-    }
-  }, []);
 
+  // useEffect(() => {
+  //   if (scrollRef?.current) {
+  //     scrollRef.current.scrollIntoView();
+  //   }
+  // }, []);
   const scrollToHistoricalEvents = () => {
     scrollToEvents.current.scrollIntoView();
   };
@@ -86,10 +85,6 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
       setB64files(reader.result);
     };
   };
-
-  if (files.length > 0) {
-    console.log("Base 64 ", b64files);
-  }
 
   const handleRemove = (file): void => {
     setFiles((prevFiles) =>
@@ -130,7 +125,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
   const uploadImgToFirebase = async (file) => {
     if (!file) return console.log("No Image File Attached");
     return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `web/storageTest/${file.name}`);
+      const storageRef = ref(storage, `web/normal-route/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       //on(next, error, complete)
@@ -153,75 +148,152 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
     });
   };
 
-  const handleAddHistorical = async (
-    histoLong,
-    histoLat,
-    histoTitle,
-    histoSubTitle,
-    histoDescription
-  ) => {
-    console.log("SHOW CURRENT route_id: ", routeId);
-    const accessToken = sessionStorage.getItem("token");
-    const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-clues`;
-    const DATA = {
-      route_id: routeId,
-      location_point_long: 32.4832,
-      location_point_lat: 32.4832,
-      clue_point_long: histoLong,
-      clue_point_lat: histoLat,
-      clue_title: histoTitle,
-      description: histoDescription,
-      clue_img: {
-        type: "Buffer",
-        data: [b64historicalFiles],
-      },
-      video_url: "video",
-      ar_clue: "augmented reality",
-    };
-    const CONFIG = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    };
-    const apiResponse = await axios.post(URL, DATA, CONFIG);
-    console.log("Add Historical Event response: ", apiResponse);
-    getHistoricalEvents();
-    scrollToHistoricalEvents();
-    setHistoricalFiles([]);
-    setB64historicalFiles("");
-  };
-
   const getHistoricalEvents = useCallback(async () => {
-    console.log("Get Historical Events by ID loaded: ", routeId);
+    console.log("Get Historical Events by ID loaded: ", singleRoute.id);
     const accessToken = sessionStorage.getItem("token");
-    const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-clues/all-clues/${routeId}`;
+    const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events?filter=route_id||$eq||${singleRoute.id}`;
+
     const CONFIG = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     };
     const apiResponse = await axios.get(URL, CONFIG);
-    console.log("GET Historical Events", apiResponse.data);
-    setHistoricalEvents(apiResponse.data);
-  }, [routeId]);
+    console.log("GET Historical Events", apiResponse.data.data);
+    setHistoricalEvents(apiResponse.data.data);
+  }, [singleRoute.id]);
 
   useEffect(() => {
-    if (routeId) {
+    if (singleRoute.id) {
       getHistoricalEvents();
     }
-  }, [routeId, getHistoricalEvents]);
+  }, [singleRoute.id, getHistoricalEvents]);
+  console.log("EVENT ID AFTER: ", eventId);
 
+  // Add HistoricalEvent & Photo
+  const handleAddEventPhoto = useCallback(async () => {
+    try {
+      //Get firebase img url
+      const firebaseImgUrl = await uploadEventImgToFirebase(historicalFiles[0]);
+
+      const accessToken = sessionStorage.getItem("token");
+      const IMGURL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-event-photo`;
+      const IMGBODY = {
+        route_historical_event_id: eventId,
+        event_photo_url: firebaseImgUrl,
+      };
+      const IMGCONFIG = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      };
+      const apiResponseImg = await axios.post(IMGURL, IMGBODY, IMGCONFIG);
+      console.log("Add Historical Event Photo Response: ", apiResponseImg);
+    } catch (err) {
+      console.log("Handle Add Event Photo Error: ", err);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventId]);
+
+  useEffect(() => {
+    if (eventId) {
+      handleAddEventPhoto();
+    }
+  }, [eventId, handleAddEventPhoto]);
+
+  const handleAddHistorical = useCallback(
+    async (
+      histoLong,
+      histoLat,
+      histoTitle,
+      histoSubTitle,
+      histoDescription
+    ) => {
+      try {
+        console.log("SHOW CURRENT route_id: ", singleRoute.id);
+        const uuid = uuidv4();
+        console.log("uuid generated ", uuid);
+        const accessToken = sessionStorage.getItem("token");
+        const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events`;
+        const DATA = {
+          route_id: singleRoute.id,
+          route_clue_id: uuid,
+          closure_uid: "830759078-477",
+          event_long: histoLong,
+          event_lat: histoLat,
+          event_title: histoTitle,
+          event_subtitle: histoSubTitle,
+          description: histoDescription,
+        };
+        const CONFIG = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        };
+        const apiResponse = await axios.post(URL, DATA, CONFIG);
+        console.log("Add Historical Event Response: ", apiResponse);
+        setEventId(apiResponse.data.id);
+        getHistoricalEvents();
+        scrollToHistoricalEvents();
+        setHistoricalFiles([]);
+        setB64historicalFiles("");
+      } catch (err) {
+        console.log("Adding Historical Event Error: ", err);
+      }
+    },
+    [singleRoute.id, getHistoricalEvents]
+  );
+
+  const uploadEventImgToFirebase = (histoFile) => {
+    if (!histoFile) return console.log("No Image File Attached");
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(
+        storage,
+        `web/normal-route/historical-event/${histoFile.name}`
+      );
+      const uploadTask = uploadBytesResumable(storageRef, histoFile);
+
+      //on(next, error, complete)
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const prog = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgress(prog);
+        },
+        (err) => {
+          console.log("FIREBASE ERROR: ", err);
+          reject(err);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => resolve(url));
+        }
+      );
+    });
+  };
+  // "user_id": "cbcfa8b8-3a25-4adb-a9c6-e325f0d0f3ae",
+  // "route_name": "First On the List",
+  // "route_photo": "byte64image",
+  // "start_point_long": 32.4832,
+  // "start_point_lat": 12.4233,
+  // "stop_point_long": 65.5234,
+  // "stop_point_lat": 12.4233,
+  // "img_url": "Firebase img url",
+  // "description": "description"
   return (
     <Formik
+      enableReinitialize={true}
       initialValues={{
         images: [],
-        startPtLong: "",
-        startPtLat: "",
-        endPtLong: "",
-        endPtLat: "",
-        raceTitle: "",
-        description: "",
+        startPtLong: singleRoute.start_point_long,
+        startPtLat: singleRoute.start_point_lat,
+        endPtLong: singleRoute.stop_point_long,
+        endPtLat: singleRoute.stop_point_lat,
+        raceTitle: singleRoute.route_name,
+        description: singleRoute.description,
         histoLong: "",
         histoLat: "",
         histoTitle: "",
@@ -231,12 +303,12 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
       }}
       validationSchema={Yup.object().shape({
         images: Yup.array(),
-        startPtLong: Yup.number().max(80).required(),
-        startPtLat: Yup.number().max(80).required(),
-        endPtLong: Yup.number().max(80).required(),
-        endPtLat: Yup.number().max(80).required(),
-        raceTitle: Yup.string().max(80).required(),
-        description: Yup.string().max(255).required(),
+        startPtLong: Yup.number().max(80).required("This field is required"),
+        startPtLat: Yup.number().max(80).required("This field is required"),
+        endPtLong: Yup.number().max(80).required("This field is required"),
+        endPtLat: Yup.number().max(80).required("This field is required"),
+        raceTitle: Yup.string().max(80).required("This field is required"),
+        description: Yup.string().max(255).required("This field is required"),
         histoLong: Yup.number().max(80),
         histoLat: Yup.number().max(80),
         histoTitle: Yup.string().max(80),
@@ -249,14 +321,12 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
       ): Promise<void> => {
         try {
           //Note: Upload Img to Firebase
-          console.log("ON SUBMIT IMAGE", files[0]);
           const firebaseImgUrl = await uploadImgToFirebase(files[0]);
-          console.log("FIREBASE IMG URL: ", firebaseImgUrl);
 
           // NOTE: Make API request
           const accessToken = sessionStorage.getItem("token");
           const userId = sessionStorage.getItem("user_id");
-          const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route`;
+          const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${singleRoute.id}`;
           const DATA = {
             user_id: userId,
             route_name: values.raceTitle,
@@ -274,9 +344,8 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
               "Content-Type": "application/json",
             },
           };
-          const apiResponse = await axios.post(URL, DATA, CONFIG);
+          const apiResponse = await axios.patch(URL, DATA, CONFIG);
           console.log("ONSUBMIT API RESPONSE: ", apiResponse);
-          setRouteId(apiResponse.data.id);
 
           setStatus({ success: true });
 
@@ -363,10 +432,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                         placeholder="Latitude"
                         name="startPtLat"
                         onBlur={handleBlur}
-                        onChange={(e) => {
-                          handleChange(e);
-                          console.log("Text Field Value", values.startPtLat);
-                        }}
+                        onChange={handleChange}
                         value={values.startPtLat}
                         variant="outlined"
                       />
@@ -462,7 +528,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                                 : `Uploading image ${progress}%   `}
                             </>
                           ) : (
-                            "Save"
+                            "Save Changes"
                           )}
                         </SaveButton>
                       </Box>
@@ -481,17 +547,17 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                       }}
                     >
                       <Map
-                        startPt={(lat, long) => {
+                        setStartPt={(lat, long) => {
                           console.log("StartPt props", lat, long);
                           setFieldValue("startPtLat", lat.toFixed(4));
                           setFieldValue("startPtLong", long.toFixed(4));
                         }}
-                        endPt={(lat, long) => {
+                        setEndPt={(lat, long) => {
                           console.log("EndPt props", lat, long);
                           setFieldValue("endPtLat", lat.toFixed(4));
                           setFieldValue("endPtLong", long.toFixed(4));
                         }}
-                        historicalEventPt={(lat, long) => {
+                        setHistoricalEventPt={(lat, long) => {
                           console.log("Event Pt props", lat, long);
                           setFieldValue("histoLat", lat.toFixed(4));
                           setFieldValue("histoLong", long.toFixed(4));
@@ -565,7 +631,6 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                                 values.histoDescription
                               );
                             }
-
                             setFieldValue("histoLong", "");
                             setFieldValue("histoLat", "");
                             setFieldValue("histoTitle", "");
@@ -586,7 +651,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                         <span ref={scrollToEvents} />
                         {historicalEvents.length > 0 &&
                           historicalEvents.map((historical, index) => (
-                            <StyledAccordion square={true} key={index}>
+                            <StyledAccordion square={true} key={historical.id}>
                               <AccordionSummary
                                 sx={{ pl: "36px" }}
                                 expandIcon={<ExpandMoreIcon />}
@@ -605,10 +670,10 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                                   </AccordionTitle>
                                   <Box sx={{ display: "flex" }}>
                                     <AccordionValue sx={{ mr: "23px" }}>
-                                      {`${historical.clue_point_long}°`}
+                                      {`${historical.event_long}°`}
                                     </AccordionValue>
                                     <AccordionValue>
-                                      {`${historical.clue_point_lat}°`}
+                                      {`${historical.event_lat}°`}
                                     </AccordionValue>
                                   </Box>
                                 </Box>
@@ -623,7 +688,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                                     Title
                                   </AccordionTitle>
                                   <AccordionValue>
-                                    {historical.clue_title}
+                                    {historical.event_title}
                                   </AccordionValue>
                                 </Box>
                                 <Box
@@ -636,31 +701,16 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                                   <AccordionTitle sx={{ mb: "15px" }}>
                                     Sub Title
                                   </AccordionTitle>
-                                  <AccordionValue>{`Dolor Lorem Elit`}</AccordionValue>
+                                  <AccordionValue>
+                                    {historical.event_subtitle}
+                                  </AccordionValue>
                                 </Box>
                               </AccordionSummary>
                               <AccordionDetails sx={{ pl: "36px", pt: "16px" }}>
-                                <HistoricalMultiField
-                                  autoComplete="off"
-                                  error={Boolean(
-                                    touched.description && errors.description
-                                  )}
-                                  fullWidth
-                                  multiline
-                                  rows={2}
-                                  helperText={
-                                    touched.description && errors.description
-                                  }
-                                  placeholder="Write something here.."
-                                  name="description"
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={historical.description}
-                                  variant="outlined"
-                                />
+                                {historical.description}
                               </AccordionDetails>
                               <SaveChangesButton variant="contained">
-                                Save Changes
+                                Edit
                               </SaveChangesButton>
                             </StyledAccordion>
                           ))}
@@ -671,7 +721,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                             flexDirection: "row",
                             justifyContent: "flex-start",
                             position: "relative",
-                            mt: "33px",
+                            mt: `${historicalEvents.length > 0 ? "33px" : "0"}`,
                           }}
                         >
                           <span ref={scrollRef} />
@@ -709,6 +759,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                                   onBlur={handleBlur}
                                   onChange={handleChange}
                                   value={values.histoLat}
+                                  autoComplete="off"
                                   variant="outlined"
                                 />
                               </Box>
@@ -727,6 +778,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                                   onBlur={handleBlur}
                                   onChange={handleChange}
                                   value={values.histoTitle}
+                                  autoComplete="off"
                                   variant="outlined"
                                 />
                                 <FieldLabel>Sub-Title</FieldLabel>
@@ -746,6 +798,7 @@ const RouteEditForm: FC<SingleRouteProps> = (props) => {
                                   onBlur={handleBlur}
                                   onChange={handleChange}
                                   value={values.histoSubTitle}
+                                  autoComplete="off"
                                   variant="outlined"
                                 />
                               </Box>
@@ -1065,50 +1118,50 @@ const AccordionValue = styled(Box)`
   }
 `;
 
-const HistoricalMultiField = styled(TextField)`
-  && {
-    background: #ffffff;
-    color: #22333b;
-    font-family: "Gilroy Medium";
-    font-size: 17.7561px;
-    line-height: 27px;
-    border-radius: 10px;
-    && .MuiInputBase-multiline {
-      padding: 0;
-    }
-    && .Mui-focused fieldset {
-      border-width: 1px !important;
-      border-color: rgba(255, 177, 78, 1);
-      border-style: solid;
-      border-radius: 10px;
-    }
-    && textarea {
-      padding: 16px 7px 20px 16px;
-      font-family: "Gilroy Medium";
-      font-size: 17.7561px;
-      line-height: 27px;
-      color: rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      border: 1px solid #f3f3f3;
-      border-radius: 10px;
-      &::placeholder {
-        font-family: "Gilroy Medium";
-        font-size: 17.7561px;
-        line-height: 27px;
-        color: #000000;
-        opacity: 0.4;
-        display: flex;
-        align-items: center;
-      }
-    }
-    && fieldset {
-      border-style: hidden;
-      border-radius: 10px;
-      /* border: 0; */
-    }
-  }
-`;
+// const HistoricalMultiField = styled(TextField)`
+//   && {
+//     background: #ffffff;
+//     color: #22333b;
+//     font-family: "Gilroy Medium";
+//     font-size: 17.7561px;
+//     line-height: 27px;
+//     border-radius: 10px;
+//     && .MuiInputBase-multiline {
+//       padding: 0;
+//     }
+//     && .Mui-focused fieldset {
+//       border-width: 1px !important;
+//       border-color: rgba(255, 177, 78, 1);
+//       border-style: solid;
+//       border-radius: 10px;
+//     }
+//     && textarea {
+//       padding: 16px 7px 20px 16px;
+//       font-family: "Gilroy Medium";
+//       font-size: 17.7561px;
+//       line-height: 27px;
+//       color: rgba(0, 0, 0, 0.4);
+//       display: flex;
+//       align-items: center;
+//       border: 1px solid #f3f3f3;
+//       border-radius: 10px;
+//       &::placeholder {
+//         font-family: "Gilroy Medium";
+//         font-size: 17.7561px;
+//         line-height: 27px;
+//         color: #000000;
+//         opacity: 0.4;
+//         display: flex;
+//         align-items: center;
+//       }
+//     }
+//     && fieldset {
+//       border-style: hidden;
+//       border-radius: 10px;
+//       /* border: 0; */
+//     }
+//   }
+// `;
 
 const SaveChangesButton = styled(Button)`
   && {

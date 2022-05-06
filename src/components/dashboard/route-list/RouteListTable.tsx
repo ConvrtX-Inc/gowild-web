@@ -428,7 +428,13 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                     </TableCell>
                   </TableRow>
                 )}
-                {setIsLoading && <CircularProgress />}
+                {setIsLoading && (
+                  <TableRow>
+                    <TableCell>
+                    <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                )}
                 {paginatedNormalRoutes.map((normalRoute) => {
                   const isNormalRouteselected = selectedNormalRoutes.includes(
                     normalRoute.id
