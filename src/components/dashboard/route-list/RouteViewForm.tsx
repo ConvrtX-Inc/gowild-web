@@ -1,9 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { FC } from "react";
-import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../../firebase";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -17,43 +14,22 @@ import {
   CardContent,
   FormHelperText,
   Grid,
-  IconButton,
-  TextField,
 } from "@mui/material";
 import styled from "styled-components";
 import Scrollbar from "../../Scrollbar";
 import Map from "./Map";
-import FileDropzone from "../../FileDropzone";
 import StartingPtIcon from "../../../icons/LocationStartingPt";
 import FinishingPtIcon from "../../../icons/LocationFinishingPt";
-import CrossIcon from "../../../icons/RouteListCross";
 import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
 import ExpandMoreIcon from "../../../icons/ExpandAccordion";
-import { setRouteListIsLoading } from "../../../slices/route-list";
-import { useDispatch } from "../../../store";
-
-// interface RouteViewFormProps {
-//   // normalRoutes: NormalRoute[];
-//   normalRoutes: NormalRoute[];
-// }
 
 const RouteViewForm: FC<any> = (props) => {
   const { singleRoute } = props;
   console.log("EDIT FORM PROPS: ", singleRoute);
-  const dispatch = useDispatch();
-  const [b64files, setB64files] = useState<any>("");
-  const [files, setFiles] = useState<any[]>([]);
-  const [isImgLoaded, setIsImgLoaded] = useState(true);
-  const [
-    ,
-    // b64historicalFiles
-    setB64historicalFiles,
-  ] = useState<any>("");
-  const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
-  const [eventId, setEventId] = useState<string>("");
+  const [eventId, 
+    // setEventId
+  ] = useState<string>("");
   const [historicalEvents, setHistoricalEvents] = useState([]);
-  const [progress, setProgress] = useState(0);
-  const scrollRef = useRef<HTMLSpanElement>();
   const scrollToEvents = useRef<HTMLSpanElement>();
 
   // useEffect(() => {
@@ -63,88 +39,6 @@ const RouteViewForm: FC<any> = (props) => {
   // }, []);
   const scrollToHistoricalEvents = () => {
     scrollToEvents.current.scrollIntoView();
-  };
-
-  const scrollToHistoricalForm = () => {
-    scrollRef.current.scrollIntoView();
-  };
-
-  const handleDrop = (newFiles: any): void => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    const file = newFiles.find((f) => f);
-    console.log(file);
-
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      console.log("OBJ SRC & DATA ", {
-        src: file.preview,
-        data: reader.result,
-      });
-      setB64files(reader.result);
-    };
-  };
-
-  const handleRemove = (file): void => {
-    setFiles((prevFiles) =>
-      prevFiles.filter((_file) => _file.path !== file.path)
-    );
-  };
-
-  const handleRemoveAll = (): void => {
-    setFiles([]);
-  };
-
-  const handleHistoricalDrop = (newFiles: any): void => {
-    setHistoricalFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    const file = newFiles.find((f) => f);
-    console.log("Historical Img Drop ", file);
-
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      console.log("OBJ SRC & DATA ", {
-        src: file.preview,
-        data: reader.result,
-      });
-      setB64historicalFiles(reader.result);
-    };
-  };
-
-  const handleHistoricalRemove = (file): void => {
-    setHistoricalFiles((prevFiles) =>
-      prevFiles.filter((_file) => _file.path !== file.path)
-    );
-  };
-
-  const handleHistoricalRemoveAll = (): void => {
-    setHistoricalFiles([]);
-  };
-
-  const uploadImgToFirebase = async (file) => {
-    if (!file) return console.log("No Image File Attached");
-    return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `web/normal-route/${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      //on(next, error, complete)
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const prog = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgress(prog);
-        },
-        (err) => {
-          console.log("FIREBASE ERROR: ", err);
-          reject(err);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((url) => resolve(url));
-        }
-      );
-    });
   };
 
   const getHistoricalEvents = useCallback(async () => {
@@ -168,110 +62,6 @@ const RouteViewForm: FC<any> = (props) => {
   }, [singleRoute.id, getHistoricalEvents]);
   console.log("EVENT ID AFTER: ", eventId);
 
-  // Add HistoricalEvent & Photo
-  const handleAddEventPhoto = useCallback(async () => {
-    try {
-      //Get firebase img url
-      const firebaseImgUrl = await uploadEventImgToFirebase(historicalFiles[0]);
-
-      const accessToken = sessionStorage.getItem("token");
-      const IMGURL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-event-photo`;
-      const IMGBODY = {
-        route_historical_event_id: eventId,
-        event_photo_url: firebaseImgUrl,
-      };
-      const IMGCONFIG = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      };
-      const apiResponseImg = await axios.post(IMGURL, IMGBODY, IMGCONFIG);
-      console.log("Add Historical Event Photo Response: ", apiResponseImg);
-    } catch (err) {
-      console.log("Handle Add Event Photo Error: ", err);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId]);
-
-  useEffect(() => {
-    if (eventId) {
-      handleAddEventPhoto();
-    }
-  }, [eventId, handleAddEventPhoto]);
-
-  const handleAddHistorical = useCallback(
-    async (
-      histoLong,
-      histoLat,
-      histoTitle,
-      histoSubTitle,
-      histoDescription
-    ) => {
-      try {
-        console.log("SHOW CURRENT route_id: ", singleRoute.id);
-        const uuid = uuidv4();
-        console.log("uuid generated ", uuid);
-        const accessToken = sessionStorage.getItem("token");
-        const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events`;
-        const DATA = {
-          route_id: singleRoute.id,
-          route_clue_id: uuid,
-          closure_uid: "830759078-477",
-          event_long: histoLong,
-          event_lat: histoLat,
-          event_title: histoTitle,
-          event_subtitle: histoSubTitle,
-          description: histoDescription,
-        };
-        const CONFIG = {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        };
-        const apiResponse = await axios.post(URL, DATA, CONFIG);
-        console.log("Add Historical Event Response: ", apiResponse);
-        setEventId(apiResponse.data.id);
-        getHistoricalEvents();
-        scrollToHistoricalEvents();
-        setHistoricalFiles([]);
-        setB64historicalFiles("");
-      } catch (err) {
-        console.log("Adding Historical Event Error: ", err);
-      }
-    },
-    [singleRoute.id, getHistoricalEvents]
-  );
-
-  const uploadEventImgToFirebase = (histoFile) => {
-    if (!histoFile) return console.log("No Image File Attached");
-    return new Promise((resolve, reject) => {
-      const storageRef = ref(
-        storage,
-        `web/normal-route/historical-event/${histoFile.name}`
-      );
-      const uploadTask = uploadBytesResumable(storageRef, histoFile);
-
-      //on(next, error, complete)
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const prog = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgress(prog);
-        },
-        (err) => {
-          console.log("FIREBASE ERROR: ", err);
-          reject(err);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((url) => resolve(url));
-        }
-      );
-    });
-  };
   return (
     <Formik
       enableReinitialize={true}
@@ -308,44 +98,9 @@ const RouteViewForm: FC<any> = (props) => {
       ): Promise<void> => {
         try {
           //Note: Upload Img to Firebase
-          const firebaseImgUrl = await uploadImgToFirebase(files[0]);
-
+          // REDUNDANT
           // NOTE: Make API request
-          const accessToken = sessionStorage.getItem("token");
-          const userId = sessionStorage.getItem("user_id");
-          const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${singleRoute.id}`;
-          const DATA = {
-            user_id: userId,
-            route_name: values.raceTitle,
-            route_photo: "byte64image",
-            start_point_long: values.startPtLong,
-            start_point_lat: values.startPtLat,
-            stop_point_long: values.endPtLong,
-            stop_point_lat: values.endPtLat,
-            img_url: firebaseImgUrl,
-            description: values.description,
-          };
-          const CONFIG = {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-          };
-          const apiResponse = await axios.patch(URL, DATA, CONFIG);
-          console.log("ONSUBMIT API RESPONSE: ", apiResponse);
-
-          setStatus({ success: true });
-
-          //Make the RouteList Table Loading
-          dispatch(setRouteListIsLoading(true));
-
-          //Clear Form and Current States
-          // resetForm();
-          // setFiles([]);
-          setHistoricalFiles([]);
-          setB64files("");
-          setSubmitting(false);
-          toast.success("Route created!");
+          // REDUNDANT
         } catch (err) {
           console.error(err);
           if (err.response.status === 413) {
@@ -664,101 +419,6 @@ const RowBox = styled(Box)`
   }
 `;
 
-const StyledTextField = styled(TextField)`
-  && {
-    margin-top: 6px;
-    margin-bottom: 20px;
-    background: #ffffff;
-    color: #22333b;
-    font-family: "Gilroy Medium";
-    font-size: 1.11rem;
-    line-height: 27px;
-    border-radius: 22.1951px;
-    && .Mui-focused fieldset {
-      height: 67px;
-      border-width: 2px !important;
-      border-color: #2995a8;
-      border-style: solid;
-    }
-    && input {
-      height: 67px;
-      padding: 20px 33px 20px 33px;
-      font-family: "Gilroy Medium";
-      font-size: 1.11rem;
-      line-height: 27px;
-      color: rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      box-sizing: border-box;
-      border: 2px solid #f3f3f3;
-      border-radius: 22.1951px;
-      &::placeholder {
-        font-family: "Gilroy Medium";
-        font-size: 1.11rem;
-        line-height: 27px;
-        color: #000000;
-        opacity: 0.4;
-        display: flex;
-        align-items: center;
-      }
-    }
-    && fieldset {
-      height: 67px;
-      margin-top: 2px;
-      border-style: hidden;
-      border-radius: 22.1951px;
-      /* border: 0; */
-    }
-  }
-`;
-
-const StyledMultiTextField = styled(TextField)`
-  && {
-    margin-top: 6px;
-    background: #ffffff;
-    color: #22333b;
-    font-family: "Gilroy Medium";
-    font-size: 1.11rem;
-    line-height: 27px;
-    border-radius: 22.1951px;
-    && .MuiInputBase-multiline {
-      padding: 0;
-    }
-    && .Mui-focused fieldset {
-      border-width: 2px !important;
-      border-color: #2995a8;
-      border-style: solid;
-      border-radius: 22.1951px;
-    }
-    && textarea {
-      padding: 20px 13px 12px 33px;
-      font-family: "Gilroy Medium";
-      font-size: 1.11rem;
-      line-height: 25px;
-      color: rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      border: 2px solid #f3f3f3;
-      border-radius: 22.1951px;
-      &::placeholder {
-        font-family: "Gilroy Medium";
-        font-size: 1.11rem;
-        line-height: 27px;
-        color: #000000;
-        opacity: 0.4;
-        display: flex;
-        align-items: center;
-      }
-    }
-    && fieldset {
-      margin-top: 2px;
-      border-style: hidden;
-      border-radius: 22.1951px;
-      /* border: 0; */
-    }
-  }
-`;
-
 //---------------------------------HISTORICAL EVENTS
 const HistoricalBox = styled(Box)`
   && {
@@ -799,15 +459,6 @@ const OrangeBorder = styled(Box)`
     position: absolute;
     bottom: -4px;
     left: 42px;
-  }
-`;
-
-const ColumnBox = styled(Box)`
-  && {
-    width: 688.31px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
   }
 `;
 
@@ -857,84 +508,5 @@ const AccordionValue = styled(Box)`
     font-size: 20px;
     line-height: 18px;
     color: #22333b;
-  }
-`;
-
-// const HistoricalMultiField = styled(TextField)`
-//   && {
-//     background: #ffffff;
-//     color: #22333b;
-//     font-family: "Gilroy Medium";
-//     font-size: 17.7561px;
-//     line-height: 27px;
-//     border-radius: 10px;
-//     && .MuiInputBase-multiline {
-//       padding: 0;
-//     }
-//     && .Mui-focused fieldset {
-//       border-width: 1px !important;
-//       border-color: rgba(255, 177, 78, 1);
-//       border-style: solid;
-//       border-radius: 10px;
-//     }
-//     && textarea {
-//       padding: 16px 7px 20px 16px;
-//       font-family: "Gilroy Medium";
-//       font-size: 17.7561px;
-//       line-height: 27px;
-//       color: rgba(0, 0, 0, 0.4);
-//       display: flex;
-//       align-items: center;
-//       border: 1px solid #f3f3f3;
-//       border-radius: 10px;
-//       &::placeholder {
-//         font-family: "Gilroy Medium";
-//         font-size: 17.7561px;
-//         line-height: 27px;
-//         color: #000000;
-//         opacity: 0.4;
-//         display: flex;
-//         align-items: center;
-//       }
-//     }
-//     && fieldset {
-//       border-style: hidden;
-//       border-radius: 10px;
-//       /* border: 0; */
-//     }
-//   }
-// `;
-
-const SaveChangesButton = styled(Button)`
-  && {
-    background: #0e5753;
-    border-radius: 13.6667px;
-    padding: 10px 16.21px 11px 22px;
-    margin-top: 13px;
-    margin-bottom: 32px;
-    display: flex;
-    margin-left: auto;
-    margin-right: 24px;
-    font-family: "Gilroy SemiBold";
-    font-size: 14px;
-    line-height: 20px;
-    text-align: center;
-    color: #ffffff;
-  }
-`;
-
-const SaveButton = styled(Button)`
-  && {
-    height: 60px;
-    width: 303px;
-    padding: 20px auto 20px;
-    background-image: url("/static/route-list/save-btn.png");
-    background-color: #00755e;
-    border-radius: 10px;
-    font-family: "Gilroy Bold";
-    font-size: 1rem;
-    line-height: 19px;
-    text-align: center;
-    color: #ffffff;
   }
 `;

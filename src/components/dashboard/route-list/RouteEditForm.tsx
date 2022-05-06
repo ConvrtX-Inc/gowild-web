@@ -44,7 +44,9 @@ const RouteEditForm: FC<any> = (props) => {
   const { singleRoute } = props;
   console.log("EDIT FORM PROPS: ", singleRoute);
   const dispatch = useDispatch();
-  const [b64files, setB64files] = useState<any>("");
+  const [
+    // b64files
+    , setB64files] = useState<any>("");
   const [files, setFiles] = useState<any[]>([]);
   const [isImgLoaded, setIsImgLoaded] = useState(true);
   const [
@@ -54,6 +56,7 @@ const RouteEditForm: FC<any> = (props) => {
   ] = useState<any>("");
   const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
   const [eventId, setEventId] = useState<string>("");
+  const [gmapMarkerUid, setGmapMarkerUid] = useState("");
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef<HTMLSpanElement>();
@@ -220,7 +223,7 @@ const RouteEditForm: FC<any> = (props) => {
         const DATA = {
           route_id: singleRoute.id,
           route_clue_id: uuid,
-          closure_uid: "830759078-477",
+          closure_uid: gmapMarkerUid,
           event_long: histoLong,
           event_lat: histoLat,
           event_title: histoTitle,
@@ -244,7 +247,7 @@ const RouteEditForm: FC<any> = (props) => {
         console.log("Adding Historical Event Error: ", err);
       }
     },
-    [singleRoute.id, getHistoricalEvents]
+    [singleRoute.id, getHistoricalEvents, gmapMarkerUid]
   );
 
   const uploadEventImgToFirebase = (histoFile) => {
@@ -582,10 +585,11 @@ const RouteEditForm: FC<any> = (props) => {
                           setFieldValue("endPtLat", lat.toFixed(4));
                           setFieldValue("endPtLong", long.toFixed(4));
                         }}
-                        setHistoricalEventPt={(lat, long) => {
+                        setHistoricalEventPt={(lat, long, closureUid) => {
                           console.log("Event Pt props", lat, long);
                           setFieldValue("histoLat", lat.toFixed(4));
                           setFieldValue("histoLong", long.toFixed(4));
+                          setGmapMarkerUid(closureUid);
                         }}
                       />
                     </Box>
