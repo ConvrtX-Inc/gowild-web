@@ -72,7 +72,7 @@ const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
 
     const firstLat = marker.position.lat();
     const firstLong = marker.position.lng();
-    setHistoricalEventPt(firstLat, firstLong);
+    setHistoricalEventPt(firstLat, firstLong, combinedString);
     console.log(`ADDED MARKER: `, extractedPropName);
     console.log("UID to be stored: ", combinedString);
 
@@ -83,7 +83,7 @@ const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
       console.log(
         `Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
       );
-      setHistoricalEventPt(lat, long);
+      setHistoricalEventPt(lat, long, combinedString);
     });
 
     //Delete Current Marker

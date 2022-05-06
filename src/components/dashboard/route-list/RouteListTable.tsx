@@ -209,7 +209,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     isProspect: null,
     isReturning: null,
   });
-  console.log("ROUTE LIST TABLE RENDERED");
+  console.log("ROUTE LIST TABLE RENDERED: checking for optimization");
 
   const handleRedirectPath = () => {
     navigate("/dashboard/route-list/new");
