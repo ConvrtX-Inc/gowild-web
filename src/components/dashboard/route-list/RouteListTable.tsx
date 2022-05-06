@@ -472,7 +472,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                               height: "96.01px",
                               mr: "26px",
                               borderRadius: "20px",
-                              border: "0.2px solid rgba(0, 0, 0, 0.2)",
+                              // border: "0.2px solid rgba(0, 0, 0, 0.2)",
                               boxSizing: "border-box",
                             }}
                             image={normalRoute.img_url}

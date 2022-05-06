@@ -125,19 +125,32 @@ const FileDropzoneHistorical: FC<FileDropzoneHistoricalProps> = (props) => {
       <Box>
         <List>
           {files.map((file) => (
-            <ListItem key={file.path} sx={{ position: "relative" }}>
+            <ListItem
+              key={file.path}
+              sx={{
+                position: "relative",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
               <IconButton
-                sx={{ position: "absolute", right: "23px", top: "-15px" }}
+                sx={{ position: "absolute", right: "55px", top: "-15px" }}
                 onClick={() => onRemove && onRemove(file)}
               >
                 <CrossIcon fontSize="medium" />
               </IconButton>
               <img
+                height="50%"
+                width="50%"
+                src={URL.createObjectURL(file)}
+                alt="sample"
+              />
+              {/* <img
                 height="157.17px"
                 width="234"
                 src={URL.createObjectURL(file)}
                 alt="sample"
-              />
+              /> */}
             </ListItem>
           ))}
         </List>
