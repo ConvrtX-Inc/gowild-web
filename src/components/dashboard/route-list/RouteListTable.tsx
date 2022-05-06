@@ -34,6 +34,7 @@ import Scrollbar from "../../Scrollbar";
 import formatDate from "../../../utils/formatDate";
 import { refreshListOnDelete } from "../../../slices/route-list";
 import { useDispatch, useSelector } from "../../../store";
+
 interface RouteListTableProps {
   // normalRoutes: NormalRoute[];
   normalRoutes: NormalRoute[];
@@ -245,8 +246,15 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
       setIsDeleting(false);
       setAnchorEl(null);
     }
+
     if (value === "edit") {
       navigate("/dashboard/route-list/edit", {
+        state: { routeId: selectedRouteId },
+      });
+    }
+
+    if (value === "view") {
+      navigate("/dashboard/route-list/view", {
         state: { routeId: selectedRouteId },
       });
     }
@@ -424,14 +432,14 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                     //   top: 0,
                     // }}
                     >
-                      The database is empty.
+                      {/* The database is empty. */}
                     </TableCell>
                   </TableRow>
                 )}
                 {setIsLoading && (
                   <TableRow>
                     <TableCell>
-                    <CircularProgress />
+                      <CircularProgress />
                     </TableCell>
                   </TableRow>
                 )}

@@ -37,6 +37,9 @@ const RouteListCreate = Loadable(
 const RouteListEdit = Loadable(
   lazy(() => import("./pages/dashboard/RouteListEdit"))
 );
+const RouteListView = Loadable(
+  lazy(() => import("./pages/dashboard/RouteListView"))
+);
 
 // const Chat = Loadable(lazy(() => import("./pages/dashboard/Chat")));
 
@@ -122,6 +125,10 @@ const routes: PartialRouteObject[] = [
           {
             path: "edit",
             element: <RouteListEdit />,
+          },
+          {
+            path: "view",
+            element: <RouteListView />,
           },
         ],
       },

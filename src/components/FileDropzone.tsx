@@ -5,7 +5,7 @@ import type { DropzoneOptions } from "react-dropzone";
 import { Box, Button, IconButton } from "@mui/material";
 import styled from "styled-components";
 import CrossIcon from "../icons/RouteListCross";
-import bytesToSize from "../utils/bytesToSize";
+// import bytesToSize from "../utils/bytesToSize";
 
 interface FileDropzoneProps extends DropzoneOptions {
   files?: any[];
@@ -106,18 +106,17 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
                   >
                     <CrossIcon fontSize="medium" />
                   </IconButton>
-
                   <img
                     height="90px"
                     width="90px"
                     src={files.length > 0 ? URL.createObjectURL(files[0]) : ""}
-                    alt="sample"
+                    alt="route-img"
                   />
-                  <ImageSize
+                  {/* <ImageSize
                     sx={{ position: "absolute", top: "30px", right: "-80px" }}
                   >
                     {bytesToSize(files[0].size)}
-                  </ImageSize>
+                  </ImageSize> */}
                 </>
               )}
             </Box>
@@ -180,15 +179,15 @@ const CaptionTypo = styled(Box)`
   }
 `;
 
-const ImageSize = styled(Box)`
-  && {
-    font-family: "Gilroy Medium";
-    font-style: normal;
-    line-height: 27px;
-    color: #000000;
-    opacity: 0.4;
-  }
-`;
+// const ImageSize = styled(Box)`
+//   && {
+//     font-family: "Gilroy Medium";
+//     font-style: normal;
+//     line-height: 27px;
+//     color: #000000;
+//     opacity: 0.4;
+//   }
+// `;
 
 const ImgBoxError = styled(Box)`
   && {
