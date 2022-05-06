@@ -18,9 +18,7 @@ import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
 import type { SingleRoute } from "../../types/route-lists";
-import {
-  setRouteListIsLoading,
-} from "../../slices/route-list";
+import { setRouteListIsLoading } from "../../slices/route-list";
 import { useDispatch } from "../../store";
 
 const RouteListEdit: FC = () => {
@@ -38,7 +36,7 @@ const RouteListEdit: FC = () => {
   const getOneRoute = useCallback(async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/${routeId}`;
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${routeId}`;
       const CONFIG = {
         headers: {
           Authorization: `bearer ${token}`,
