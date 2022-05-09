@@ -81,6 +81,14 @@ const TreasureChestList: FC = () => {
   const handleRowAction = async (actionType: RowAction, id) => {
     try {
       switch (actionType) {
+        case RowAction.VIEW: {
+          await onView(id);
+          break;
+        }
+        case RowAction.EDIT: {
+          await onEdit(id);
+          break;
+        }
         case RowAction.DELETE: {
           await onDelete(id);
           break;
@@ -90,6 +98,15 @@ const TreasureChestList: FC = () => {
       console.error(err);
     }
   };
+
+  const onView = async (id) => {
+    navigate(`/dashboard/treasure-chest-list/view/${id}`,);
+  };
+
+  const onEdit = async (id) => {
+    navigate(`/dashboard/treasure-chest-list/edit/${id}`,);
+  };
+
   const onDelete = async (id) => {
     const token = sessionStorage.getItem("token");
     const CONFIG = {

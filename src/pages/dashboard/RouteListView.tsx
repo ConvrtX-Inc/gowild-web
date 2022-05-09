@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { RouteEditForm } from "../../components/dashboard/route-list";
+import { RouteViewForm } from "../../components/dashboard/route-list";
 import useMounted from "../../hooks/useMounted";
 import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
@@ -21,7 +21,7 @@ import type { SingleRoute } from "../../types/route-lists";
 import { setRouteListIsLoading } from "../../slices/route-list";
 import { useDispatch } from "../../store";
 
-const RouteListEdit: FC = () => {
+const RouteListView: FC = () => {
   const { state } = useLocation();
   const { routeId } = state as any;
   const mounted = useMounted();
@@ -62,7 +62,7 @@ const RouteListEdit: FC = () => {
   return (
     <>
       <Helmet>
-        <title>Route List Edit | Go Wild</title>
+        <title>Route List View | Go Wild</title>
       </Helmet>
       <Box
         sx={{
@@ -96,7 +96,7 @@ const RouteListEdit: FC = () => {
             </FlexiGrid>
           </Grid>
           <Box sx={{ mt: "27px" }}>
-            <RouteEditForm singleRoute={selectedRoute} />
+            <RouteViewForm singleRoute={selectedRoute} />
           </Box>
         </StyledContainer>
       </Box>
@@ -104,7 +104,7 @@ const RouteListEdit: FC = () => {
   );
 };
 
-export default RouteListEdit;
+export default RouteListView;
 
 const StyledContainer = styled(Container)`
   && {

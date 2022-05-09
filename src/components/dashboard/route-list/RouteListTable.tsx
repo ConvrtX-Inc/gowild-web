@@ -34,6 +34,7 @@ import Scrollbar from "../../Scrollbar";
 import formatDate from "../../../utils/formatDate";
 import { refreshListOnDelete } from "../../../slices/route-list";
 import { useDispatch, useSelector } from "../../../store";
+
 interface RouteListTableProps {
   // normalRoutes: NormalRoute[];
   normalRoutes: NormalRoute[];
@@ -208,7 +209,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     isProspect: null,
     isReturning: null,
   });
-  console.log("ROUTE LIST TABLE RENDERED");
+  console.log("ROUTE LIST TABLE RENDERED: checking for optimization");
 
   const handleRedirectPath = () => {
     navigate("/dashboard/route-list/new");
@@ -245,8 +246,15 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
       setIsDeleting(false);
       setAnchorEl(null);
     }
+
     if (value === "edit") {
       navigate("/dashboard/route-list/edit", {
+        state: { routeId: selectedRouteId },
+      });
+    }
+
+    if (value === "view") {
+      navigate("/dashboard/route-list/view", {
         state: { routeId: selectedRouteId },
       });
     }
@@ -424,11 +432,17 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                     //   top: 0,
                     // }}
                     >
-                      The database is empty.
+                      {/* The database is empty. */}
                     </TableCell>
                   </TableRow>
                 )}
-                {setIsLoading && <CircularProgress />}
+                {setIsLoading && (
+                  <TableRow>
+                    <TableCell>
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                )}
                 {paginatedNormalRoutes.map((normalRoute) => {
                   const isNormalRouteselected = selectedNormalRoutes.includes(
                     normalRoute.id
@@ -458,7 +472,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                               height: "96.01px",
                               mr: "26px",
                               borderRadius: "20px",
-                              border: "0.2px solid rgba(0, 0, 0, 0.2)",
+                              // border: "0.2px solid rgba(0, 0, 0, 0.2)",
                               boxSizing: "border-box",
                             }}
                             image={normalRoute.img_url}
