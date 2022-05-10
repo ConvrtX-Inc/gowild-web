@@ -1,10 +1,9 @@
 import { Box, CircularProgress } from "@material-ui/core";
 import axios from "axios";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DashboardContentWrapper from "src/components/dashboard/DashboardContentWrapper";
 import { TreasureChestEditForm } from "src/components/dashboard/treasure-chest";
-import useMounted from "src/hooks/useMounted";
 import {
   AbsCircularLoadingBox,
   StyledCard,
@@ -22,23 +21,21 @@ const CONFIG = {
 };
 
 const TreasureChestEdit: FC = () => {
-  const mounted = useMounted();
   let { id } = useParams();
   const [editTreasureChest, setEditChest] = useState<TreasureChest>(null);
 
-  const getEditTreasureChest = useCallback(async () => {
-    const TREASURE_URL = `${BASE_URL}/treasure-chest/${id}`;
-
-    const chestAPIResponse = await axios.get(TREASURE_URL, CONFIG);
-    if (chestAPIResponse.status === 200) {
-      setEditChest(chestAPIResponse.data);
-    }
-  }, [mounted]);
-
   useEffect(() => {
-    getEditTreasureChest();
-  }, [getEditTreasureChest]);
+    const getEditTreasureChest = async () => {
+      const TREASURE_URL = `${BASE_URL}/treasure-chest/${id}`;
 
+      const chestAPIResponse = await axios.get(TREASURE_URL, CONFIG);
+      if (chestAPIResponse.status === 200) {
+        setEditChest(chestAPIResponse.data);
+      }
+    };
+    getEditTreasureChest();
+  }, [id]);
+  
   return (
     <DashboardContentWrapper title={pageTitle}>
       <StyledCard
