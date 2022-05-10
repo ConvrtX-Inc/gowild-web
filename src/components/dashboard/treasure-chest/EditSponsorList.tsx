@@ -5,7 +5,7 @@ import ImageDropzone from "../ImageDropzone";
 import XIcon from "../../../icons/X";
 import toast, { Toaster } from "react-hot-toast";
 import Refresh from "src/icons/Refresh";
-import { StyledComponents } from "./SponsorList";
+import { StyledElements } from "./SponsorList";
 
 export type SponsorState = {
   id?: string;
@@ -110,10 +110,10 @@ const EditSponsorList: FC<EditSponsorListProps> = ({
   };
 
   return (
-    <StyledComponents.ListBox>
+    <StyledElements.ListBox>
       {sponsors.map((s: SponsorState, i) =>
         !Boolean(s?.deleted) ? (
-          <StyledComponents.SponsorBox key={i}>
+          <StyledElements.SponsorBox key={i}>
             <IconButton
               sx={{
                 position: "absolute",
@@ -146,7 +146,7 @@ const EditSponsorList: FC<EditSponsorListProps> = ({
                     </ImageDropzone>
                   )}
                 </IconButton>
-                <StyledComponents.SponsorLogo
+                <StyledElements.SponsorLogo
                   component="img"
                   src={
                     s.imageFile ? URL.createObjectURL(s.imageFile) : s.img_url
@@ -160,13 +160,13 @@ const EditSponsorList: FC<EditSponsorListProps> = ({
                   handleDrop(file, i);
                 }}
               >
-                <StyledComponents.SponsorPlaceHolder>
+                <StyledElements.SponsorPlaceHolder>
                   {" "}
                   add image{" "}
-                </StyledComponents.SponsorPlaceHolder>
+                </StyledElements.SponsorPlaceHolder>
               </ImageDropzone>
             )}
-            <StyledComponents.StyledTextField
+            <StyledElements.StyledTextField
               InputProps={{
                 startAdornment: <WebLink />,
               }}
@@ -174,14 +174,14 @@ const EditSponsorList: FC<EditSponsorListProps> = ({
               value={s.link}
               onChange={(e) => handleLinkTextChange(e, i)}
             />
-          </StyledComponents.SponsorBox>
+          </StyledElements.SponsorBox>
         ) : null
       )}
-      <StyledComponents.AddMoreText onClick={handleAddMore}>
+      <StyledElements.AddMoreText onClick={handleAddMore}>
         {sponsors.length > 0 ? "Add more" : "Add sponsor"}
-      </StyledComponents.AddMoreText>
+      </StyledElements.AddMoreText>
       <Toaster />
-    </StyledComponents.ListBox>
+    </StyledElements.ListBox>
   );
 };
 

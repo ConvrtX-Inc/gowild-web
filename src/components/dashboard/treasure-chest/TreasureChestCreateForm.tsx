@@ -297,7 +297,7 @@ const ColumnRight = styled(Box)`
   }
 `;
 
-export const StyledComponents = {
+export const StyledElements = {
   SubmitLoadingBox,
   SubmitButton,
   FormContainer,
