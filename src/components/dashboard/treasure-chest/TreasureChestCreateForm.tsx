@@ -16,7 +16,6 @@ import { useNavigate } from "react-router-dom";
 import TMap from "./TreasureChestMap";
 import { CircularProgress } from "@mui/material";
 import { uploadImgToFirebase } from "src/utils/firebaseUtils";
-import { imageFileToB64 } from "src/utils/imageUtils";
 
 const TreasureChestSchema = Yup.object().shape({
   title: Yup.string().required("Please enter a title."),
@@ -76,7 +75,7 @@ const TreasureChestCreateForm: FC = (props) => {
         event_date: values.eventDate,
         event_time: values.eventTime,
         no_of_participants: values.numParticipants,
-        thumbnail_img: await imageFileToB64(values.thumbnailImage),
+        thumbnail_img: "",
         img_url: fbThumbnailLink,
         a_r: "", //TODO: Update AR image upload when supported.
       };
@@ -99,7 +98,7 @@ const TreasureChestCreateForm: FC = (props) => {
                 SPONSOR_URL,
                 {
                   treasure_chest_id: treasureChestId,
-                  img: await imageFileToB64(sponsor.imageFile),
+                  img: "",
                   link: sponsor.link,
                   img_url: fbImageLink,
                 },
@@ -141,7 +140,6 @@ const TreasureChestCreateForm: FC = (props) => {
             <ColumnLeft mr={2}>
               <TextFieldLabel>Title</TextFieldLabel>
               <StyledTextField
-                placeholder="First on the list"
                 onChange={handleChange}
                 name="title"
                 value={values.title}
@@ -151,7 +149,6 @@ const TreasureChestCreateForm: FC = (props) => {
               <TextFieldLabel>Description</TextFieldLabel>
               <StyledTextField
                 multiline={true}
-                placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 onChange={handleChange}
                 name="description"
                 value={values.description}
@@ -160,7 +157,6 @@ const TreasureChestCreateForm: FC = (props) => {
               />
               <TextFieldLabel>Treasure Location</TextFieldLabel>
               <StyledTextField
-                placeholder="65.5234°"
                 onChange={handleChange}
                 name="tLocationLat"
                 value={values.tLocationLat}
@@ -168,7 +164,6 @@ const TreasureChestCreateForm: FC = (props) => {
                 helperText={errors.tLocationLat}
               />
               <StyledTextField
-                placeholder="1.12378°"
                 onChange={handleChange}
                 name="tLocationLong"
                 value={values.tLocationLong}
@@ -217,18 +212,19 @@ const TreasureChestCreateForm: FC = (props) => {
                       value={values.numParticipants}
                       error={Boolean(errors.numParticipants)}
                       helperText={errors.numParticipants}
-                      placeholder="10"
                     />
                     {isSubmitting ? (
                       <SubmitLoadingBox>
                         <CircularProgress />
                       </SubmitLoadingBox>
                     ) : (
-                      <SubmitButton type="submit">Submit</SubmitButton>
+                      <SubmitButton type="submit" disabled={isSubmitting}>
+                        Submit
+                      </SubmitButton>
                     )}
                   </Grid>
                   <Grid container item xs={6} direction="column">
-                    <UploadImage
+                    {/* <UploadImage
                       label="Upload Augmented Reality"
                       onImgUpload={(file) =>
                         setFieldValue("augmentImage", file)
@@ -236,7 +232,7 @@ const TreasureChestCreateForm: FC = (props) => {
                       disable={true}
                       imageFile={values.augmentImage}
                       error={errors.augmentImage}
-                    />
+                    /> */}
                     <UploadImage
                       label="Upload Thumbnail"
                       onImgUpload={(file) =>
@@ -300,3 +296,11 @@ const ColumnRight = styled(Box)`
     flex: 3;
   }
 `;
+
+export const StyledComponents = {
+  SubmitLoadingBox,
+  SubmitButton,
+  FormContainer,
+  ColumnLeft,
+  ColumnRight,
+};

@@ -219,13 +219,18 @@ const TableList: FC<TableListProps> = (props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableHeaderCell padding="checkbox">
+                {/* <TableHeaderCell
+                  padding="checkbox"
+                  sx={{
+                    padding: "0 !important",
+                  }}
+                >
                   <StyledCheckbox
                     checked={selectedAllItems}
                     indeterminate={selectedSomeItems}
                     onChange={handleSelectAllItems}
                   />
-                </TableHeaderCell>
+                </TableHeaderCell> */}
                 {headers.map((header) => (
                   <TableHeaderCell key={header}>{header}</TableHeaderCell>
                 ))}
@@ -246,15 +251,23 @@ const TableList: FC<TableListProps> = (props) => {
                       key={item.id}
                       selected={isItemSelected}
                     >
-                      <TableCellStyled padding="checkbox">
-                        <StyledCheckbox
-                          checked={isItemSelected}
-                          onChange={(event) =>
-                            handleSelectOneItem(event, item.id)
-                          }
-                          value={isItemSelected}
-                        />
-                      </TableCellStyled>
+                      {/* <TableCellStyled padding="checkbox">
+                        <Box
+                          sx={{
+                            width: 66,
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <StyledCheckbox
+                            checked={isItemSelected}
+                            onChange={(event) =>
+                              handleSelectOneItem(event, item.id)
+                            }
+                            value={isItemSelected}
+                          />
+                        </Box>
+                      </TableCellStyled> */}
 
                       {rowElementsBuilder(item).map((elem, i) =>
                         cloneElement(elem, {
@@ -353,7 +366,6 @@ const LoadingBox = styled(Box)`
 
 const StyledCheckbox = styled(Checkbox)`
   && {
-    width: 66px;
     padding: 0;
     color: #ffe4dc;
     &.Mui-checked {
@@ -387,9 +399,8 @@ const StyledPopOver = styled(Popover)`
 const TableHeaderCell = styled(TableCell)`
   && {
     background-color: #ff7851;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    padding-left: 0;
+    padding: 15px 18px;
+    text-align: center;
     font-family: "Inter";
     font-weight: 600;
     font-size: 0.75rem;
@@ -402,9 +413,7 @@ const TableHeaderCell = styled(TableCell)`
 const TableCellStyled = styled(TableCell)`
   && {
     border-color: #efefef;
-    padding-top: 42.5px;
-    padding-bottom: 49.5px;
-    padding-left: 0;
+    padding: 42.5px 0;
   }
 `;
 

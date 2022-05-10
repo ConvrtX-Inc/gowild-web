@@ -68,7 +68,10 @@ const TreasureChestList: FC = () => {
           Authorization: `bearer ${token}`,
         },
       };
-      const apiResponse = await axios.get(API_URL, CONFIG);
+      const apiResponse = await axios.get(
+        `${API_URL}/?sort=event_date,ASC`,
+        CONFIG
+      );
       if (mounted.current) {
         setTreasureChests(apiResponse.data.data);
         setLoading(false);
@@ -100,11 +103,11 @@ const TreasureChestList: FC = () => {
   };
 
   const onView = async (id) => {
-    navigate(`/dashboard/treasure-chest-list/view/${id}`,);
+    navigate(`/dashboard/treasure-chest-list/view/${id}`);
   };
 
   const onEdit = async (id) => {
-    navigate(`/dashboard/treasure-chest-list/edit/${id}`,);
+    navigate(`/dashboard/treasure-chest-list/edit/${id}`);
   };
 
   const onDelete = async (id) => {
@@ -135,13 +138,25 @@ const TreasureChestList: FC = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "flex-start",
+            justifyContent: "center",
+            width: "100%",
           }}
         >
-          <ImgBox mr={2} border={thumbnail}>
-            <TableImg src={thumbnail} />
-          </ImgBox>
-          {tc.title}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              textAlign: "left",
+              width: "225px",
+              wordWrap: "break-word",
+            }}
+          >
+            <ImgBox mr={3} border={thumbnail}>
+              <TableImg src={thumbnail} />
+            </ImgBox>
+            {tc.title}
+          </Box>
         </Box>
       </TableCellStyled>,
       <TableCellStyled>{formatDate(tc.created_date)}</TableCellStyled>,

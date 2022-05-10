@@ -32,9 +32,8 @@ const StyledCard = styled(Card)`
 const TableCellStyled = styled(TableCell)`
   && {
     border-color: #efefef;
-    padding-top: 42.5px;
-    padding-bottom: 49.5px;
-    padding-left: 0;
+    padding: 42.5px 0;
+    text-align: center;
     font-family: "Gilroy Semibold", "Gilroy Regular";
   }
 `;
@@ -53,6 +52,13 @@ const StyledTextField = styled(TextField)`
   && {
     margin-top: 6px;
     margin-bottom: 20px;
+    border-radius: 22.1951px;
+    overflow: hidden;
+
+    && .MuiInputBase-multiline.MuiInputBase-root {
+      padding: 0;
+    }
+
     && .Mui-focused fieldset {
       min-height: 67px;
       border-width: 2px !important;
@@ -67,7 +73,6 @@ const StyledTextField = styled(TextField)`
       font-size: 16px;
       line-height: 24px;
       letter-spacing: -0.025em;
-      color: #242426;
       display: flex;
       align-items: center;
       box-sizing: border-box;
@@ -77,13 +82,13 @@ const StyledTextField = styled(TextField)`
 
     && textarea,
     input {
+      color: rgba(0,0,0,0.4);
       &::placeholder {
         font-family: "Gilroy Semibold";
         font-weight: 500;
         font-size: 17.7561px;
         line-height: 27px;
-        color: #000000;
-        opacity: 0.4;
+        color: rgba(0,0,0,0.2);
         display: flex;
         align-items: center;
       }
@@ -105,7 +110,7 @@ const StyledTextField = styled(TextField)`
       border-style: solid;
 
       && textarea {
-        min-height: 132px;
+        min-height: 211px;
       }
     }
 
@@ -114,11 +119,11 @@ const StyledTextField = styled(TextField)`
       font-size: 16px;
       line-height: 24px;
       letter-spacing: -0.025em;
-      color: #242426;
-      min-height: 132px;
-      height: 132px;
-      max-height: 132px;
+      min-height: 211px;
+      height: 211px;
+      max-height: 211px;
       overflow-y: auto !important;
+      padding: 20px 33px 20px 33px;
     }
   }
 `;
