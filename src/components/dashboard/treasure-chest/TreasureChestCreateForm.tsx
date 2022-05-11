@@ -193,6 +193,9 @@ const TreasureChestCreateForm: FC = (props) => {
                       value={values.eventDate}
                       error={Boolean(errors.eventDate)}
                       helperText={errors.eventDate}
+                      inputProps={{
+                        min: new Date().toISOString().split("T")[0],
+                      }}
                     />
 
                     <TextFieldLabel>Time</TextFieldLabel>
