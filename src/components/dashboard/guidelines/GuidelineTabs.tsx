@@ -52,6 +52,7 @@ const GuidelineTabElem = styled(ToggleButton)`
   && {
     border: 0;
     border-radius: 0;
+    width: 175px;
     &.MuiToggleButton-root {
       color: #c0c0c0;
       font-family: "Gilroy Bold";

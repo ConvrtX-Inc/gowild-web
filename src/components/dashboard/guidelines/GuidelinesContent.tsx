@@ -8,6 +8,7 @@ import {
 import { Formik } from "formik";
 import { FC, useEffect, useState } from "react";
 import { GuidelineType } from "src/enums";
+import { AbsCircularLoadingBox } from "src/shared-styled-components/dashboard";
 import { Guideline, GuidelineLog } from "src/types/guidelines";
 import styled from "styled-components";
 import * as Yup from "yup";
@@ -99,7 +100,7 @@ const GuidelinesContent: FC = () => {
     event: React.MouseEvent<HTMLElement>,
     tab: GuidelineType
   ): void => {
-    if (tab === null) return;
+    if (tab === null || !textAreaValue) return;
     setTabOpen(tab);
     switch (tab) {
       case GuidelineType.TERMS_AND_CONDITIONS:
@@ -192,17 +193,29 @@ const GuidelinesContent: FC = () => {
                 onTabChange={handleTabChange}
               ></GuidelineTabs>
               <Box display="flex" height="100%" pb={2}>
-                <Box flex="3" pr={2}>
-                  <GuidelinesTextArea
-                    multiline={true}
-                    aria-label="Guidelines description"
-                    value={values.description}
-                    name="description"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    error={Boolean(errors.description)}
-                    helperText={errors.description}
-                  />
+                <Box
+                  flex="3"
+                  pr={2}
+                  sx={{
+                    position: "relative",
+                  }}
+                >
+                  {textAreaValue ? (
+                    <GuidelinesTextArea
+                      multiline={true}
+                      aria-label="Guidelines description"
+                      value={values.description}
+                      name="description"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      error={Boolean(errors.description)}
+                      helperText={errors.description}
+                    />
+                  ) : (
+                    <AbsCircularLoadingBox>
+                      <CircularProgress />
+                    </AbsCircularLoadingBox>
+                  )}
                 </Box>
                 <Box flex="1">
                   <LogContent logs={logs} />
@@ -211,7 +224,7 @@ const GuidelinesContent: FC = () => {
               <SaveButton
                 $touched={touched.description}
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!textAreaValue || isSubmitting}
               >
                 {!isSubmitting ? (
                   "Save"
