@@ -54,66 +54,62 @@ const UploadImage: FC<UploadImageProps> = ({
   return (
     <>
       <TextFieldLabel>{label}</TextFieldLabel>
-      {ToggleImageDropZone(
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <UploadBox>
-            {!imageFile && (sizeError || error) ? (
-              <ImgBoxError>
-                {sizeError ? (
-                  <>
-                    <ErrorMsg>File must be 1MB size or less</ErrorMsg>
-                    <TryAgainButton
-                      sx={{ mt: 1 }}
-                      onClick={(e) => setSizeError(false)}
-                      variant="outlined"
-                    >
-                      Try again
-                    </TryAgainButton>{" "}
-                  </>
-                ) : (
-                  <>
-                    <ErrorMsg>{error}</ErrorMsg>
-                    <TryAgainButton sx={{ mt: 1 }} variant="outlined">
-                      Upload
-                    </TryAgainButton>{" "}
-                  </>
-                )}
-              </ImgBoxError>
-            ) : imageFile ? (
-              <>
-                <IconButton
-                  sx={{
-                    position: "absolute",
-                    right: "-21px",
-                    top: "-20px",
-                  }}
-                  onClick={handleRemove}
-                >
-                  <XIcon fontSize="small" />
-                </IconButton>
-                <Box
-                  component="img"
-                  src={URL.createObjectURL(imageFile)}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "22.2px",
-                  }}
-                />
-              </>
-            ) : (
-              <StyledUploadIcon />
-            )}
-          </UploadBox>
-        </Box>
-      )}
+      <FlexCenterBox>
+        {ToggleImageDropZone(
+          <FlexCenterBox>
+            <UploadBox>
+              {!imageFile && (sizeError || error) ? (
+                <ImgBoxError>
+                  {sizeError ? (
+                    <>
+                      <ErrorMsg>File must be 1MB size or less</ErrorMsg>
+                      <TryAgainButton
+                        sx={{ mt: 1 }}
+                        onClick={(e) => setSizeError(false)}
+                        variant="outlined"
+                      >
+                        Try again
+                      </TryAgainButton>{" "}
+                    </>
+                  ) : (
+                    <>
+                      <ErrorMsg>{error}</ErrorMsg>
+                      <TryAgainButton sx={{ mt: 1 }} variant="outlined">
+                        Upload
+                      </TryAgainButton>{" "}
+                    </>
+                  )}
+                </ImgBoxError>
+              ) : imageFile ? (
+                <>
+                  <IconButton
+                    sx={{
+                      position: "absolute",
+                      right: "-21px",
+                      top: "-20px",
+                    }}
+                    onClick={handleRemove}
+                  >
+                    <XIcon fontSize="small" />
+                  </IconButton>
+                  <Box
+                    component="img"
+                    src={URL.createObjectURL(imageFile)}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "22.2px",
+                    }}
+                  />
+                </>
+              ) : (
+                <StyledUploadIcon />
+              )}
+            </UploadBox>
+          </FlexCenterBox>
+        )}
+      </FlexCenterBox>
     </>
   );
 };
@@ -179,10 +175,18 @@ const UploadBox = styled(Box)`
   }
 `;
 
+export const FlexCenterBox = styled(Box)`
+  && {
+    display: flex;
+    justify-content: center;
+  }
+`;
+
 export const StyledElements = {
   ImgBoxError,
   ErrorMsg,
   TryAgainButton,
   StyledUploadIcon,
   UploadBox,
+  FlexCenterBox,
 };
