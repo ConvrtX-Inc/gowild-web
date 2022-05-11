@@ -1,15 +1,16 @@
 import "dotenv/config";
 import React from "react";
-import { renderToString } from "react-dom/server";
+// import { renderToString } from "react-dom/server";
 import GoogleMapReact from "google-map-react";
-import { Box, Button } from "@mui/material";
+// import { Box, Button } from "@mui/material";
 import styled from "styled-components";
-import ReactDOM from "react-dom";
-import $ from "jquery";
+// import ReactDOM from "react-dom";
+// import $ from "jquery";
 
-const apiIsLoaded = (map, maps, loadRouteMarkers, setHistoricalEventPt) => {
+const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
   // Load One Normal Route Markers 👇
-  console.log("API IS LOADED: ", loadRouteMarkers);
+  console.log("API IS LOADED: ", loadEventMarkers);
+  console.log(loadEventMarkers[0].event_lat);
   const startingPt = new maps.Marker({
     position: {
       lat: Number(loadRouteMarkers.start_point_lat),
@@ -43,6 +44,7 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, setHistoricalEventPt) => {
   });
 
   // Creating Historical Event Markers👇
+  var markers = [];
   const drawingManager = new maps.drawing.DrawingManager({
     drawingMode: maps.drawing.OverlayType.MARKER,
     drawingControl: false,
@@ -50,111 +52,130 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, setHistoricalEventPt) => {
       position: maps.ControlPosition.RIGHT_TOP,
       drawingModes: ["marker"],
     },
-    markerOptions: {
-      icon: "/static/route-list/event-pt.png",
-      draggable: false,
-    },
+    // markerOptions: {
+    //   icon: "/static/route-list/event-pt.png",
+    //   draggable: true,
+    // },
   });
   drawingManager.setMap(map);
   drawingManager.setDrawingMode(null);
-
-  maps.event.addListener(drawingManager, "markercomplete", function (marker) {
-    //Disable Add Marker Controls after first drop on the map
-    console.log("THE DRAWING MANAGER: ", drawingManager);
-    drawingManager.setDrawingMode(null);
-
-    //Extracting Google Map Marker UID object key
-    const propertyNamesArr = Object.getOwnPropertyNames(marker);
-    const extractedPropName = propertyNamesArr.find((element) =>
-      element.includes("closure_uid")
+  for (let i = 0; i < loadEventMarkers.length; i++) {
+    markers.push(
+      new maps.Marker({
+        icon: "/static/route-list/event-pt.png",
+        position: {
+          lat: Number(loadEventMarkers[i].event_lat),
+          lng: Number(loadEventMarkers[i].event_long),
+        },
+        map,
+      })
     );
-    const closureUidName = extractedPropName.slice(12); //from closure_uid_ to end
-    const closureUidValue = marker[`${extractedPropName}`].toString();
-    const combinedString = closureUidName.concat(`-${closureUidValue}`);
-
-    const firstLat = marker.position.lat();
-    const firstLong = marker.position.lng();
-    setHistoricalEventPt(firstLat, firstLong, combinedString);
-    console.log(`ADDED MARKER: `, extractedPropName);
-    console.log("UID to be stored: ", combinedString);
-
-    //Change Event Marker Position
-    maps.event.addListener(marker, "dragend", function () {
-      var lat = marker.getPosition().lat();
-      var long = marker.getPosition().lng();
-      console.log(
-        `Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
-      );
-      setHistoricalEventPt(lat, long, combinedString);
-    });
-
-    //Delete Current Marker
-    var prev_infoWindow;
-    maps.event.addListener(marker, "click", function () {
-      var lat = marker.getPosition().lat();
-      var long = marker.getPosition().lng();
-      console.log(
-        `Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
-      );
-
-      const handleClick = () => {
-        console.log("Marker Clicked", closureUidName);
-        //Remove the selected Marker
-        marker.setMap(null);
-      };
-
-      //Use Any Component to render in info window(pop-up)
-      const popUpComponent = (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            p: 1,
-          }}
-        >
-          <Box sx={{ mb: "6px" }}>
-            <PopUpTitle>Marker UID:</PopUpTitle>
-            <PopUpValue>{closureUidValue}</PopUpValue>
-          </Box>
-          <RowBox>
-            <Box sx={{ mr: "6px" }}>
-              <PopUpTitle>Lat:</PopUpTitle>
-              <PopUpValue>{lat.toFixed(4)}</PopUpValue>
-            </Box>
-            <Box>
-              <PopUpTitle>Long:</PopUpTitle>
-              <PopUpValue>{long.toFixed(4)}</PopUpValue>
-            </Box>
-          </RowBox>
-          <DeleteButton onClick={handleClick} variant="contained">
-            Delete
-          </DeleteButton>
-        </Box>
-      );
-      const infoWindow = new maps.InfoWindow({
-        content: renderToString(popUpComponent),
-      });
-      if (prev_infoWindow) {
-        prev_infoWindow.close();
-      }
-      console.log("prev_infoWindow", prev_infoWindow);
-      console.log("infoWindow ", infoWindow);
-      prev_infoWindow = infoWindow;
-      infoWindow.open(map, marker);
-
-      // setTimeout(() => {
-      //   ReactDOM.render(myComponent, $(".gm-style-iw > div > div").get(0));
-      // }, 100);
-
-      maps.event.addListener(infoWindow, "domready", function (e) {
-        if (typeof document === "undefined") {
-          React.useLayoutEffect = React.useEffect;
-        }
-        ReactDOM.render(popUpComponent, $(".gm-style-iw > div > div").get(0));
-      });
-    });
+  }
+  maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
+    console.log("OVERLAY COMPLETE DRAWING MGR ");
+    for (var i = 0; i < markers.length; i++) {
+      // show current marker
+      markers[i].setMap(map);
+    }
   });
+
+  // maps.event.addListener(drawingManager, "markercomplete", function (marker) {
+  //   //Disable Add Marker Controls after first drop on the map
+  //   console.log("THE DRAWING MANAGER: ", drawingManager);
+  //   drawingManager.setDrawingMode(null);
+
+  //   //Extracting Google Map Marker UID object key
+  //   const propertyNamesArr = Object.getOwnPropertyNames(marker);
+  //   const extractedPropName = propertyNamesArr.find((element) =>
+  //     element.includes("closure_uid")
+  //   );
+  //   const closureUidName = extractedPropName.slice(12); //from closure_uid_ to end
+  //   const closureUidValue = marker[`${extractedPropName}`].toString();
+  //   const combinedString = closureUidName.concat(`-${closureUidValue}`);
+
+  //   const firstLat = marker.position.lat();
+  //   const firstLong = marker.position.lng();
+  //   // setHistoricalEventPt(firstLat, firstLong, combinedString);
+  //   console.log(`ADDED MARKER: `, extractedPropName);
+  //   console.log("UID to be stored: ", combinedString);
+
+  //   //Change Event Marker Position
+  //   maps.event.addListener(marker, "dragend", function () {
+  //     var lat = marker.getPosition().lat();
+  //     var long = marker.getPosition().lng();
+  //     console.log(
+  //       `Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
+  //     );
+  //     // setHistoricalEventPt(lat, long, combinedString);
+  //   });
+
+  //   //Delete Current Marker
+  //   var prev_infoWindow;
+  //   maps.event.addListener(marker, "click", function () {
+  //     var lat = marker.getPosition().lat();
+  //     var long = marker.getPosition().lng();
+  //     console.log(
+  //       `Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
+  //     );
+
+  //     const handleClick = () => {
+  //       console.log("Marker Clicked", closureUidName);
+  //       //Remove the selected Marker
+  //       marker.setMap(null);
+  //     };
+
+  //     //Use Any Component to render in info window(pop-up)
+  //     const popUpComponent = (
+  //       <Box
+  //         sx={{
+  //           display: "flex",
+  //           flexDirection: "column",
+  //           justifyContent: "center",
+  //           p: 1,
+  //         }}
+  //       >
+  //         <Box sx={{ mb: "6px" }}>
+  //           <PopUpTitle>Marker UID:</PopUpTitle>
+  //           <PopUpValue>{closureUidValue}</PopUpValue>
+  //         </Box>
+  //         <RowBox>
+  //           <Box sx={{ mr: "6px" }}>
+  //             <PopUpTitle>Lat:</PopUpTitle>
+  //             <PopUpValue>{lat.toFixed(4)}</PopUpValue>
+  //           </Box>
+  //           <Box>
+  //             <PopUpTitle>Long:</PopUpTitle>
+  //             <PopUpValue>{long.toFixed(4)}</PopUpValue>
+  //           </Box>
+  //         </RowBox>
+  //         <DeleteButton onClick={handleClick} variant="contained">
+  //           Delete
+  //         </DeleteButton>
+  //       </Box>
+  //     );
+  //     const infoWindow = new maps.InfoWindow({
+  //       content: renderToString(popUpComponent),
+  //     });
+  //     if (prev_infoWindow) {
+  //       prev_infoWindow.close();
+  //     }
+  //     console.log("prev_infoWindow", prev_infoWindow);
+  //     console.log("infoWindow ", infoWindow);
+  //     prev_infoWindow = infoWindow;
+  //     infoWindow.open(map, marker);
+
+  //     // setTimeout(() => {
+  //     //   ReactDOM.render(myComponent, $(".gm-style-iw > div > div").get(0));
+  //     // }, 100);
+
+  //     maps.event.addListener(infoWindow, "domready", function (e) {
+  //       if (typeof document === "undefined") {
+  //         React.useLayoutEffect = React.useEffect;
+  //       }
+  //       ReactDOM.render(popUpComponent, $(".gm-style-iw > div > div").get(0));
+  //     });
+  //   });
+  // });
 };
 
 const createMapOptions = (maps: any) => {
@@ -169,8 +190,8 @@ const createMapOptions = (maps: any) => {
 };
 
 const RouteViewMap = (props) => {
-  const { loadRouteMarkers, setHistoricalEventPt } = props;
-  console.log("ROUTE VIEW MAP PROPS: ", loadRouteMarkers);
+  const { loadRouteMarkers, loadEventMarkers } = props;
+  console.log("EVENT VIEW MAP PROPS: ", loadEventMarkers);
 
   const startToEndDiffLong =
     Number(loadRouteMarkers.start_point_long) -
@@ -200,7 +221,7 @@ const RouteViewMap = (props) => {
         defaultZoom={16}
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={({ map, maps }) =>
-          apiIsLoaded(map, maps, loadRouteMarkers, setHistoricalEventPt)
+          apiIsLoaded(map, maps, loadRouteMarkers, loadEventMarkers)
         }
         options={createMapOptions}
       ></GoogleMapReact>
@@ -266,42 +287,42 @@ const MapWrapper = styled.div`
   }
 `;
 
-const PopUpTitle = styled(Box)`
-  && {
-    font-family: "Gilroy Regular";
-    font-size: 14px;
-    line-height: 18px;
-    color: #22333b;
-  }
-`;
+// const PopUpTitle = styled(Box)`
+//   && {
+//     font-family: "Gilroy Regular";
+//     font-size: 14px;
+//     line-height: 18px;
+//     color: #22333b;
+//   }
+// `;
 
-const PopUpValue = styled(Box)`
-  && {
-    font-family: "Gilroy SemiBold";
-    font-size: 16px;
-    line-height: 18px;
-    color: #22333b;
-  }
-`;
+// const PopUpValue = styled(Box)`
+//   && {
+//     font-family: "Gilroy SemiBold";
+//     font-size: 16px;
+//     line-height: 18px;
+//     color: #22333b;
+//   }
+// `;
 
-const RowBox = styled(Box)`
-  && {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-  }
-`;
+// const RowBox = styled(Box)`
+//   && {
+//     display: flex;
+//     justify-content: flex-start;
+//     align-items: center;
+//   }
+// `;
 
-const DeleteButton = styled(Button)`
-  && {
-    width: 70px;
-    height: 30px;
-    border-radius: 15px;
-    margin-top: 12px;
-    text-transform: none;
-    background-color: #e01313;
-    &:hover {
-      background-color: #a71010;
-    }
-  }
-`;
+// const DeleteButton = styled(Button)`
+//   && {
+//     width: 70px;
+//     height: 30px;
+//     border-radius: 15px;
+//     margin-top: 12px;
+//     text-transform: none;
+//     background-color: #e01313;
+//     &:hover {
+//       background-color: #a71010;
+//     }
+//   }
+// `;

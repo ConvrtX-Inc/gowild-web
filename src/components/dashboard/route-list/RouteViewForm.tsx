@@ -192,7 +192,9 @@ const RouteViewForm: FC<any> = (props) => {
                       <ViewField
                         sx={{ height: "100px", mt: "26px", pr: "70px" }}
                       >
-                        <Scrollbar>{values.description}</Scrollbar>
+                        <Scrollbar>
+                          <Box>{values.description}</Box>
+                        </Scrollbar>
                       </ViewField>
                       <Box
                         sx={{
@@ -238,16 +240,13 @@ const RouteViewForm: FC<any> = (props) => {
                         borderRadius: "20px",
                       }}
                     >
-                      {Object.keys(singleRoute).length !== 0 && (
-                        <RouteViewMap
-                          loadRouteMarkers={singleRoute}
-                          setHistoricalEventPt={(lat, long) => {
-                            console.log("Event Pt props", lat, long);
-                            setFieldValue("histoLat", lat.toFixed(4));
-                            setFieldValue("histoLong", long.toFixed(4));
-                          }}
-                        />
-                      )}
+                      {Object.keys(singleRoute).length !== 0 &&
+                        Object.keys(historicalEvents).length !== 0 && (
+                          <RouteViewMap
+                            loadRouteMarkers={singleRoute}
+                            loadEventMarkers={historicalEvents}
+                          />
+                        )}
                     </Box>
                   </RowBox>
                   {/* -----------------------------HISTORICAL------------------------------------- */}
