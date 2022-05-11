@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import Scrollbar from "../../Scrollbar";
-import Map from "./Map";
+import RouteViewMap from "./RouteViewMap";
 import StartingPtIcon from "../../../icons/LocationStartingPt";
 import FinishingPtIcon from "../../../icons/LocationFinishingPt";
 import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
@@ -25,12 +25,22 @@ import ExpandMoreIcon from "../../../icons/ExpandAccordion";
 
 const RouteViewForm: FC<any> = (props) => {
   const { singleRoute } = props;
-  console.log("EDIT FORM PROPS: ", singleRoute);
-  const [eventId, 
-    // setEventId
-  ] = useState<string>("");
+  console.log("VIEW FORM PROPS: ", singleRoute);
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const scrollToEvents = useRef<HTMLSpanElement>();
+  // created_date: "2022-05-11T08:34:05.469Z"
+  // description: "Into the void"
+  // id: "0d415f31-d38b-4c38-9988-d2228376a245"
+  // img_url: "https://firebasestorage.googleapis.com/v0/b/gowild-convrtx.appspot.com/o/web%2Fnormal-route%2Ffirst-on-the-list.png?alt=media&token=a1467ee0-83c8-4fa8-a7c7-ab00a16af643"
+  // route_name: "Valley of Trees"
+  // route_photo: "byte64im"
+  // start_point_lat: "54.0650"
+  // start_point_long: "-128.6475"
+  // stop_point_lat: "54.0649"
+  // stop_point_long: "-128.6371"
+  // updated_date: "2022-05-11T08:34:05.469Z"
+  // user_id: "50764a56-6d09-4907-91dd-06a4abcdbabd"
+  // __entity: "Route"
 
   // useEffect(() => {
   //   if (scrollRef?.current) {
@@ -60,7 +70,6 @@ const RouteViewForm: FC<any> = (props) => {
       getHistoricalEvents();
     }
   }, [singleRoute.id, getHistoricalEvents]);
-  console.log("EVENT ID AFTER: ", eventId);
 
   return (
     <Formik
@@ -242,23 +251,16 @@ const RouteViewForm: FC<any> = (props) => {
                         borderRadius: "20px",
                       }}
                     >
-                      <Map
-                        setStartPt={(lat, long) => {
-                          console.log("StartPt props", lat, long);
-                          setFieldValue("startPtLat", lat.toFixed(4));
-                          setFieldValue("startPtLong", long.toFixed(4));
-                        }}
-                        setEndPt={(lat, long) => {
-                          console.log("EndPt props", lat, long);
-                          setFieldValue("endPtLat", lat.toFixed(4));
-                          setFieldValue("endPtLong", long.toFixed(4));
-                        }}
-                        setHistoricalEventPt={(lat, long) => {
-                          console.log("Event Pt props", lat, long);
-                          setFieldValue("histoLat", lat.toFixed(4));
-                          setFieldValue("histoLong", long.toFixed(4));
-                        }}
-                      />
+                      {Object.keys(singleRoute).length !== 0 && (
+                        <RouteViewMap
+                          loadRouteMarkers={singleRoute}
+                          setHistoricalEventPt={(lat, long) => {
+                            console.log("Event Pt props", lat, long);
+                            setFieldValue("histoLat", lat.toFixed(4));
+                            setFieldValue("histoLong", long.toFixed(4));
+                          }}
+                        />
+                      )}
                     </Box>
                   </RowBox>
                   {/* -----------------------------HISTORICAL------------------------------------- */}
