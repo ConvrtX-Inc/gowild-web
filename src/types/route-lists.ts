@@ -1,7 +1,4 @@
 export interface NormalRoute {
-  isProspect?: boolean;
-  isReturning?: boolean;
-  isVerified?: boolean;
   id: string;
   user_id: string;
   route_name: string;
@@ -15,9 +12,6 @@ export interface NormalRoute {
 }
 
 export interface SingleRoute {
-  isProspect?: boolean;
-  isReturning?: boolean;
-  isVerified?: boolean;
   user_id: string;
   route_name: string;
   route_photo: string;
