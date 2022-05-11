@@ -1,19 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import type { ChangeEvent, FC, MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
 import {
-  // Avatar,
   Box,
   Button,
   Card,
   CardMedia,
   Checkbox,
   CircularProgress,
-  // InputAdornment,
   Popover,
-  // Link,
   IconButton,
   Table,
   TableBody,
@@ -21,7 +18,6 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  // TextField,
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
@@ -36,11 +32,10 @@ import { refreshListOnDelete } from "../../../slices/route-list";
 import { useDispatch, useSelector } from "../../../store";
 
 interface RouteListTableProps {
-  // normalRoutes: NormalRoute[];
   normalRoutes: NormalRoute[];
 }
 
-type Sort = "updatedAt|desc" | "updatedAt|asc" | "deleteAt|asc";
+type Sort = "updated_date|desc" | "updated_date|asc" | "deleteAt|asc";
 type Action = "view" | "edit" | "delete" | null;
 
 interface SortOption {
@@ -58,12 +53,12 @@ interface actionOption {
 const sortOptions: SortOption[] = [
   {
     label: "View",
-    value: "updatedAt|asc",
+    value: "updated_date|asc",
     icon: <ViewIcon fontSize="large" />,
   },
   {
     label: "Edit",
-    value: "updatedAt|desc",
+    value: "updated_date|desc",
     icon: <EditIcon fontSize="large" />,
   },
   {
@@ -194,26 +189,17 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   );
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
-  const [
-    query,
-    // setQuery
-  ] = useState<string>("");
-  const [
-    sort,
-    // setSort
-  ] = useState<Sort>(sortOptions[1].value);
-  // const [action] = useState<Action>(null);
+  const [query] = useState<string>("");
+  const [sort] = useState<Sort>(sortOptions[0].value);
   const [selectedRouteId, setSelectedRouteId] = useState<string>("");
   const [filters] = useState<any>({
-    hasAcceptedMarketing: null,
-    isProspect: null,
-    isReturning: null,
+    dummy: null,
   });
-  console.log("ROUTE LIST TABLE RENDERED: checking for optimization");
 
   const handleRedirectPath = () => {
     navigate("/dashboard/route-list/new");
   };
+
   // const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
   //   setQuery(event.target.value);
   // };
@@ -226,39 +212,46 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   //   setSort(event.target.value as Sort);
   //   setAnchorEl(null);
   // };
-  const handleRowAction = async (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    const accessToken = sessionStorage.getItem("token");
 
-    if (value === "delete") {
-      console.log(`ROW ACTION fn: ${value}, id: ${selectedRouteId}`);
-      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${selectedRouteId}`;
-      const CONFIG = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          // "Content-Type": "application/json",
-        },
-      };
-      setIsDeleting(true);
-      const apiResponse = await axios.delete(URL, CONFIG);
-      console.log("ROW DELETE response: ", apiResponse);
-      dispatch(refreshListOnDelete(true));
-      setIsDeleting(false);
-      setAnchorEl(null);
-    }
+  const handleRowAction = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>, action) => {
+      const { value } = event.target;
+      const accessToken = sessionStorage.getItem("token");
 
-    if (value === "edit") {
-      navigate("/dashboard/route-list/edit", {
-        state: { routeId: selectedRouteId },
-      });
-    }
+      if (value === "delete" || action === "delete") {
+        console.log(`ROW ACTION fn: ${value}, id: ${selectedRouteId}`);
+        const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${selectedRouteId}`;
+        const CONFIG = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            // "Content-Type": "application/json",
+          },
+        };
+        setIsDeleting(true);
+        const apiResponse = await axios.delete(URL, CONFIG);
+        if (apiResponse.status === 200) {
+          //Trigger Refresh Route List Table in Route List Page
+          dispatch(refreshListOnDelete(true));
+          setIsDeleting(false);
+        }
 
-    if (value === "view") {
-      navigate("/dashboard/route-list/view", {
-        state: { routeId: selectedRouteId },
-      });
-    }
-  };
+        setAnchorEl(null);
+      }
+
+      if (value === "edit" || action === "edit") {
+        navigate("/dashboard/route-list/edit", {
+          state: { routeId: selectedRouteId },
+        });
+      }
+
+      if (value === "view" || action === "view") {
+        navigate("/dashboard/route-list/view", {
+          state: { routeId: selectedRouteId },
+        });
+      }
+    },
+    [dispatch, navigate, selectedRouteId]
+  );
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
@@ -269,7 +262,6 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     routeId: string
   ) => {
     setAnchorEl(event.currentTarget);
-    console.log("3 DOTS ROUTE ID: ", routeId);
     setSelectedRouteId(routeId);
   };
 
@@ -364,7 +356,12 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                 <TableRow>
                   <HeaderCheckbox>
                     <StyledCheckbox
-                      checked={selectedAllNormalRoutes}
+                      sx={{ visibility: "hidden" }}
+                      checked={
+                        normalRoutes.length > 0
+                          ? selectedAllNormalRoutes
+                          : false
+                      }
                       indeterminate={selectedSomeNormalRoutes}
                       onChange={handleSelectAllNormalRoutes}
                     />
@@ -408,9 +405,9 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                   </TableHeaderCell>
                   <TableHeaderCell
                     sx={{
-                      width: "275.85px",
-                      minWidth: "275.85px",
-                      maxWidth: "275.85px",
+                      width: "266.85px",
+                      minWidth: "266.85px",
+                      maxWidth: "266.85px",
                     }}
                   >
                     <Box>
@@ -423,23 +420,29 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
               </TableHead>
               <TableBody>
                 {normalRoutes.length === 0 && setIsLoading === false && (
-                  <TableRow sx={{ position: "relative" }}>
+                  <TableRow>
                     <TableCell />
-                    <TableCell
-                    // sx={{
-                    //   position: "absolute",
-                    //   left: "0",
-                    //   top: 0,
-                    // }}
-                    >
-                      {/* The database is empty. */}
-                    </TableCell>
+                    <TableCell />
                   </TableRow>
                 )}
                 {setIsLoading && (
-                  <TableRow>
-                    <TableCell>
-                      <CircularProgress />
+                  <TableRow sx={{ width: "100%" }}>
+                    <TableCell
+                      sx={{
+                        borderBottom: "none",
+                        position: "relative",
+                        height: "142px",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: "48.49px",
+                          left: "calc(19vw + 239px)",
+                        }}
+                      >
+                        <CircularProgress sx={{ color: "#2995A8" }} />
+                      </Box>
                     </TableCell>
                   </TableRow>
                 )}
@@ -447,7 +450,6 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                   const isNormalRouteselected = selectedNormalRoutes.includes(
                     normalRoute.id
                   );
-
                   return (
                     <StyledTableRow
                       hover
@@ -455,8 +457,9 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       selected={isNormalRouteselected}
                     >
                       <TableCellStyled>
+                        {/* <Box sx={{ ml: "20px" }}></Box> */}
                         <StyledCheckbox
-                          sx={{ ml: "20px" }}
+                          sx={{ ml: "20px", visibility: "hidden" }}
                           checked={isNormalRouteselected}
                           onChange={(event) =>
                             handleSelectOneNormalRoute(event, normalRoute.id)
@@ -517,9 +520,16 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                           >
                             {!isDeleting ? (
                               actionOptions.map((option) => (
-                                <OptionsBox key={option.value}>
+                                <OptionsBox
+                                  key={option.value}
+                                  onClick={(e) => {
+                                    // optionRef.current.click()
+                                    handleRowAction(e, option.value);
+                                  }}
+                                >
                                   {option.icon}
                                   <StyledOption
+                                    // ref={optionRef}
                                     onClick={handleRowAction}
                                     value={option.value}
                                   >
@@ -558,7 +568,8 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
 
         <StyledTablePagination
           component="div"
-          count={filteredNormalRoutes.length}
+          // count={filteredNormalRoutes.length}
+          count={normalRoutes.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}
@@ -582,8 +593,8 @@ RouteListTable.propTypes = {
   normalRoutes: PropTypes.array.isRequired,
 };
 
-export default RouteListTable;
-
+export default React.memo(RouteListTable);
+// export default RouteListTable;
 const StyledCard = styled(Card)`
   && {
     box-shadow: none;
@@ -642,21 +653,22 @@ const StyledTableRow = styled(TableRow)`
 
 const OptionsBox = styled(Box)`
   && {
-    /* cursor: pointer; */
+    padding-left: 6px;
+    cursor: pointer;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     margin-bottom: 12.4733px;
-    /* &:hover {
-      background-color: red;
-    } */
+    &:hover {
+      background-color: #e5e7eb;
+    }
   }
 `;
 
 const StyledPopOver = styled(Popover)`
   && .MuiPopover-paper {
     width: 171px;
-    padding: 7.59px 4px 0 10px;
+    padding: 7.59px 4px 0 4px;
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
@@ -673,7 +685,7 @@ const StyledOption = styled.option`
     line-height: 16px;
     letter-spacing: 0.02rem;
     color: #878787;
-    padding: 0 24px 0 5px;
+    padding: 4px 24px 4px 5px;
     &:hover {
       background: #e5e7eb;
     }
@@ -682,7 +694,7 @@ const StyledOption = styled.option`
 
 const HeaderCheckbox = styled(TableCell)`
   && {
-    width: 66px;
+    width: 60px;
     height: 45px;
     background-color: #ff7851;
     padding-top: 9px;
@@ -755,7 +767,6 @@ const CreateNormalRouteButton = styled(Button)`
 
 const StyledTablePagination = styled(TablePagination)`
   && {
-    /* padding: 0 0 0 0; */
     height: 43px;
     background: #ff7851;
     border-radius: 0px 0px 20px 20px;
@@ -763,8 +774,6 @@ const StyledTablePagination = styled(TablePagination)`
     justify-content: flex-end;
     align-items: center;
     & .css-1cnh8g5-MuiInputBase-root-MuiTablePagination-select {
-      /* background: red; */
-      /* margin-left: 0 !important; */
       margin-right: 84px;
     }
     & .MuiTablePagination-toolbar {

@@ -36,7 +36,11 @@ import { useDispatch } from "../../../store";
 const RouteCreateForm: FC = (props) => {
   // const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [b64files, setB64files] = useState<any>("");
+  const [
+    ,
+    // b64files
+    setB64files,
+  ] = useState<any>("");
   const [files, setFiles] = useState<any[]>([]);
   const [
     ,
@@ -57,6 +61,7 @@ const RouteCreateForm: FC = (props) => {
   //     scrollRef.current.scrollIntoView();
   //   }
   // }, []);
+  
   const scrollToHistoricalEvents = () => {
     scrollToEvents.current.scrollIntoView();
   };
@@ -68,15 +73,14 @@ const RouteCreateForm: FC = (props) => {
   const handleDrop = (newFiles: any): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const file = newFiles.find((f) => f);
-    console.log(file);
 
     let reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      console.log("OBJ SRC & DATA ", {
-        src: file.preview,
-        data: reader.result,
-      });
+      // console.log("OBJ SRC & DATA ", {
+      //   src: file.preview,
+      //   data: reader.result,
+      // });
       setB64files(reader.result);
     };
   };
@@ -94,15 +98,14 @@ const RouteCreateForm: FC = (props) => {
   const handleHistoricalDrop = (newFiles: any): void => {
     setHistoricalFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const file = newFiles.find((f) => f);
-    console.log("Historical Img Drop ", file);
 
     let reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      console.log("OBJ SRC & DATA ", {
-        src: file.preview,
-        data: reader.result,
-      });
+      // console.log("OBJ SRC & DATA ", {
+      //   src: file.preview,
+      //   data: reader.result,
+      // });
       setB64historicalFiles(reader.result);
     };
   };
@@ -144,7 +147,6 @@ const RouteCreateForm: FC = (props) => {
   };
 
   const getHistoricalEvents = useCallback(async () => {
-    console.log("Get Historical Events by ID loaded: ", routeId);
     const accessToken = sessionStorage.getItem("token");
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events?filter=route_id||$eq||${routeId}`;
 
@@ -154,7 +156,6 @@ const RouteCreateForm: FC = (props) => {
       },
     };
     const apiResponse = await axios.get(URL, CONFIG);
-    console.log("GET Historical Events", apiResponse.data.data);
     setHistoricalEvents(apiResponse.data.data);
   }, [routeId]);
 
@@ -163,7 +164,6 @@ const RouteCreateForm: FC = (props) => {
       getHistoricalEvents();
     }
   }, [routeId, getHistoricalEvents]);
-  console.log("EVENT ID AFTER: ", eventId);
 
   // Add HistoricalEvent & Photo
   const handleAddEventPhoto = useCallback(async () => {
@@ -316,7 +316,7 @@ const RouteCreateForm: FC = (props) => {
           const DATA = {
             user_id: userId,
             route_name: values.raceTitle,
-            route_photo: b64files,
+            route_photo: "byte64img",
             start_point_long: values.startPtLong,
             start_point_lat: values.startPtLat,
             stop_point_long: values.endPtLong,
@@ -331,8 +331,6 @@ const RouteCreateForm: FC = (props) => {
             },
           };
           const apiResponse = await axios.post(URL, DATA, CONFIG);
-          console.log("ONSUBMIT API RESPONSE: ", apiResponse);
-          console.log("ON SUBMIT ROUTE ID ", apiResponse.data.id);
           setRouteId(apiResponse.data.id);
 
           setStatus({ success: true });
@@ -536,18 +534,14 @@ const RouteCreateForm: FC = (props) => {
                     >
                       <Map
                         setStartPt={(lat, long) => {
-                          console.log("StartPt props", lat, long);
                           setFieldValue("startPtLat", lat.toFixed(4));
                           setFieldValue("startPtLong", long.toFixed(4));
                         }}
                         setEndPt={(lat, long) => {
-                          console.log("EndPt props", lat, long);
                           setFieldValue("endPtLat", lat.toFixed(4));
                           setFieldValue("endPtLong", long.toFixed(4));
                         }}
                         setHistoricalEventPt={(lat, long, closureUid) => {
-                          console.log("Event Pt props", lat, long);
-                          console.log("CREATE FORM: UID ", closureUid);
                           setFieldValue("histoLat", lat.toFixed(4));
                           setFieldValue("histoLong", long.toFixed(4));
                           setGmapMarkerUid(closureUid);
