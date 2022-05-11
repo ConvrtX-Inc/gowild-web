@@ -104,6 +104,7 @@ const UploadImage: FC<UploadImageProps> = ({
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
+                    borderRadius: "22.2px",
                   }}
                 />
               </>
@@ -168,7 +169,6 @@ const UploadBox = styled(Box)`
     align-items: center;
     cursor: pointer;
     position: relative;
-    overflow: ${props=>props.overflowNone ? "none" : "hidden"};
     &:hover {
       border-color: #2995a8;
       color: #2995a8;
@@ -179,7 +179,7 @@ const UploadBox = styled(Box)`
   }
 `;
 
-export const StyledComponents = {
+export const StyledElements = {
   ImgBoxError,
   ErrorMsg,
   TryAgainButton,

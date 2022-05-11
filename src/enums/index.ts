@@ -1,5 +1,2 @@
-import GuidelineTab from './guidelinetab';
-
-export {
-    GuidelineTab,
-}
+import GuidelineType from "./guidelinetype";
+export { GuidelineType };

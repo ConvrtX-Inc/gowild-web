@@ -5,7 +5,7 @@ import { TextFieldLabel } from "src/shared-styled-components/dashboard";
 import styled from "styled-components";
 import ImageDropzone from "../ImageDropzone";
 import XIcon from "../../../icons/X";
-import { StyledComponents } from "./UploadImage";
+import { StyledElements } from "./UploadImage";
 import { borderRadius } from "@material-ui/system";
 
 interface EditUploadImageProps {
@@ -60,7 +60,7 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
             justifyContent: "center",
           }}
         >
-          <StyledComponents.UploadBox overflowNone={replaceImage}>
+          <StyledElements.UploadBox>
             {!replaceImage ? (
               <>
                 <Box
@@ -70,41 +70,42 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
+                    borderRadius: "22.2px",
                   }}
                 />
                 <ReUploadBox>
-                  <StyledComponents.StyledUploadIcon />
+                  <StyledElements.StyledUploadIcon />
                 </ReUploadBox>
               </>
             ) : !imageFile && (sizeError || error) ? (
-              <StyledComponents.ImgBoxError>
+              <StyledElements.ImgBoxError>
                 {sizeError ? (
                   <>
-                    <StyledComponents.ErrorMsg>
+                    <StyledElements.ErrorMsg>
                       File must be 1MB size or less
-                    </StyledComponents.ErrorMsg>
-                    <StyledComponents.TryAgainButton
+                    </StyledElements.ErrorMsg>
+                    <StyledElements.TryAgainButton
                       sx={{ mt: 1 }}
                       onClick={(e) => setSizeError(false)}
                       variant="outlined"
                     >
                       Try again
-                    </StyledComponents.TryAgainButton>{" "}
+                    </StyledElements.TryAgainButton>{" "}
                   </>
                 ) : (
                   <>
-                    <StyledComponents.ErrorMsg>
+                    <StyledElements.ErrorMsg>
                       {error}
-                    </StyledComponents.ErrorMsg>
-                    <StyledComponents.TryAgainButton
+                    </StyledElements.ErrorMsg>
+                    <StyledElements.TryAgainButton
                       sx={{ mt: 1 }}
                       variant="outlined"
                     >
                       Upload
-                    </StyledComponents.TryAgainButton>{" "}
+                    </StyledElements.TryAgainButton>{" "}
                   </>
                 )}
-              </StyledComponents.ImgBoxError>
+              </StyledElements.ImgBoxError>
             ) : imageFile ? (
               <>
                 <IconButton
@@ -129,9 +130,9 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
                 />
               </>
             ) : (
-              <StyledComponents.StyledUploadIcon />
+              <StyledElements.StyledUploadIcon />
             )}
-          </StyledComponents.UploadBox>
+          </StyledElements.UploadBox>
         </Box>
       </ImageDropzone>
     </>

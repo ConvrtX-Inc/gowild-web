@@ -13,8 +13,8 @@ import {
 } from "src/shared-styled-components/dashboard";
 import { Sponsor, TreasureChest } from "src/types/treasurechest";
 import styled from "styled-components";
-import { StyledComponents as TreasureChestStyled } from "src/components/dashboard/treasure-chest/TreasureChestCreateForm";
-import { StyledComponents as SponsorStyled } from "src/components/dashboard/treasure-chest/SponsorList";
+import { StyledElements as TreasureChestStyled } from "src/components/dashboard/treasure-chest/TreasureChestCreateForm";
+import { StyledElements as SponsorStyled } from "src/components/dashboard/treasure-chest/SponsorList";
 const pageTitle = "Treasure Chest Details";
 const accessToken = sessionStorage.getItem("token");
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;

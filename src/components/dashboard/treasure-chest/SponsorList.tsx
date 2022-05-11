@@ -240,7 +240,7 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-export const StyledComponents = {
+export const StyledElements = {
   ListBox,
   AddMoreText,
   SponsorBox,

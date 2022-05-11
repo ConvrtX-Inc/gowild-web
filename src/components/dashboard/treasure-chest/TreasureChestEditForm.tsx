@@ -15,7 +15,7 @@ import { uploadImgToFirebase } from "src/utils/firebaseUtils";
 import EditUploadImage from "./EditUploadImage";
 import format from "date-fns/format";
 import EditSponsorList, { SponsorState } from "./EditSponsorList";
-import { StyledComponents } from "./TreasureChestCreateForm";
+import { StyledElements } from "./TreasureChestCreateForm";
 
 const TreasureChestSchema = Yup.object().shape({
   title: Yup.string().required("Please enter a title."),
@@ -175,8 +175,8 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
         setFieldValue,
       }) => (
         <form noValidate onSubmit={handleSubmit}>
-          <StyledComponents.FormContainer>
-            <StyledComponents.ColumnLeft mr={2}>
+          <StyledElements.FormContainer>
+            <StyledElements.ColumnLeft mr={2}>
               <TextFieldLabel>Title</TextFieldLabel>
               <StyledTextField
                 onChange={handleChange}
@@ -211,8 +211,8 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
               />
               <TextFieldLabel>Sponsors</TextFieldLabel>
               <EditSponsorList sponsors={sponsors} setSponsors={setSponsors} />
-            </StyledComponents.ColumnLeft>
-            <StyledComponents.ColumnRight>
+            </StyledElements.ColumnLeft>
+            <StyledElements.ColumnRight>
               <Box sx={{ height: "539px", width: "100%" }} mb={1}>
                 {editTreasure.location_lat ? (
                   <TMap
@@ -263,16 +263,16 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                       helperText={errors.numParticipants}
                     />
                     {isSubmitting ? (
-                      <StyledComponents.SubmitLoadingBox>
+                      <StyledElements.SubmitLoadingBox>
                         <CircularProgress />
-                      </StyledComponents.SubmitLoadingBox>
+                      </StyledElements.SubmitLoadingBox>
                     ) : (
-                      <StyledComponents.SubmitButton
+                      <StyledElements.SubmitButton
                         type="submit"
                         disabled={isSubmitting}
                       >
                         Update
-                      </StyledComponents.SubmitButton>
+                      </StyledElements.SubmitButton>
                     )}
                   </Grid>
                   <Grid container item xs={6} direction="column">
@@ -290,8 +290,8 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                   </Grid>
                 </Grid>
               </Box>
-            </StyledComponents.ColumnRight>
-          </StyledComponents.FormContainer>
+            </StyledElements.ColumnRight>
+          </StyledElements.FormContainer>
         </form>
       )}
     </Formik>

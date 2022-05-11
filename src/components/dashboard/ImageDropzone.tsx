@@ -3,14 +3,7 @@ import { FC } from "react";
 import { DropzoneOptions, useDropzone } from "react-dropzone";
 
 const ImageDropzone: FC<DropzoneOptions> = (props) => {
-  const {
-    accept,
-    maxFiles,
-    maxSize,
-    minSize,
-    onDrop,
-    children,
-  } = props;
+  const { accept, maxFiles, maxSize, minSize, onDrop, children } = props;
 
   const { getRootProps, getInputProps } = useDropzone({
     accept,
@@ -22,7 +15,7 @@ const ImageDropzone: FC<DropzoneOptions> = (props) => {
 
   return (
     <>
-      <Box {...getRootProps()}>
+      <Box {...getRootProps()} sx={{ cursor: "pointer" }}>
         <input {...getInputProps()} />
         {children}
       </Box>
