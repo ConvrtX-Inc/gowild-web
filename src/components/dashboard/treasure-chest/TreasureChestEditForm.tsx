@@ -242,6 +242,9 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                       value={format(new Date(values.eventDate), "yyyy-MM-dd")}
                       error={Boolean(errors.eventDate)}
                       helperText={errors.eventDate}
+                      inputProps={{
+                        min: new Date().toISOString().split("T")[0],
+                      }}
                     />
 
                     <TextFieldLabel>Time</TextFieldLabel>
