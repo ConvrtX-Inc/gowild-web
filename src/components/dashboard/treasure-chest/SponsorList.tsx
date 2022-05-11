@@ -1,9 +1,4 @@
-import {
-  Box,
-  IconButton,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Box, IconButton, TextField, Typography } from "@material-ui/core";
 import { FC } from "react";
 import WebLink from "src/icons/WebLink";
 import styled from "styled-components";
@@ -129,7 +124,6 @@ const SponsorList: FC<SponsorListProps> = ({ sponsors, setSponsors }) => {
             InputProps={{
               startAdornment: <WebLink />,
             }}
-            placeholder="link"
             value={s.link}
             onChange={(e) => handleLinkTextChange(e, i)}
           />
@@ -165,6 +159,7 @@ const AddMoreText = styled(Typography)`
     font-size: 12px;
     font-family: Gilroy Medium;
     line-height: 15.6px;
+    font-style: italic;
   }
 `;
 const SponsorBox = styled(Box)`
@@ -174,6 +169,7 @@ const SponsorBox = styled(Box)`
     align-items: center;
     margin: 0.25rem 0;
     position: relative;
+    width: 100%;
   }
 `;
 
@@ -202,11 +198,10 @@ const SponsorPlaceHolder = styled(SponsorLogo)`
 
 const StyledTextField = styled(TextField)`
   && {
+    width: 100%;
     margin-left: 0.5rem;
     background: #ffffff;
     color: #22333b;
-    font-family: "Gilroy Medium";
-    font-size: 18px;
     line-height: 27px;
     border-radius: 22.1951px;
     && .MuiSvgIcon-root {
@@ -221,11 +216,11 @@ const StyledTextField = styled(TextField)`
     && input {
       height: 67px;
       padding: 20px 33px 20px 5px;
-      font-family: "Gilroy Semibold";
-      font-size: 16px;
+      font-family: "Gilroy Regular";
+      font-size: 12px;
       line-height: 24px;
       letter-spacing: -0.025em;
-      color: #242426;
+      color: rgba(0, 0, 0, 0.4);
       display: flex;
       align-items: center;
       box-sizing: border-box;
@@ -234,8 +229,7 @@ const StyledTextField = styled(TextField)`
         font-weight: 500;
         font-size: 12px;
         line-height: 15.6px;
-        color: #000000;
-        opacity: 0.4;
+        color: rgba(0, 0, 0, 0.2);
         display: flex;
       }
     }
@@ -245,3 +239,12 @@ const StyledTextField = styled(TextField)`
     }
   }
 `;
+
+export const StyledElements = {
+  ListBox,
+  AddMoreText,
+  SponsorBox,
+  SponsorLogo,
+  SponsorPlaceHolder,
+  StyledTextField,
+};

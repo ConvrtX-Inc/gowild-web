@@ -1,13 +1,13 @@
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/core";
-import { FC, } from "react";
+import { FC } from "react";
 import styled from "styled-components";
-import { GuidelineTab } from "../../../enums";
+import { GuidelineType } from "../../../enums";
 
 interface GuidelineTabsProps {
-  tabOpened: GuidelineTab;
+  tabOpened: GuidelineType;
   onTabChange: (
     event: React.MouseEvent<HTMLElement>,
-    tab: GuidelineTab
+    tab: GuidelineType
   ) => void;
 }
 
@@ -23,39 +23,40 @@ const GuidelineTabs: FC<GuidelineTabsProps> = ({ tabOpened, onTabChange }) => {
       }}
     >
       <GuidelineTabElem
-        value={GuidelineTab.TermsAndConditions}
-        aria-label={GuidelineTab.TermsAndConditions}
+        value={GuidelineType.TERMS_AND_CONDITIONS}
+        aria-label={GuidelineType.TERMS_AND_CONDITIONS}
       >
-        {GuidelineTab.TermsAndConditions}
-      </GuidelineTabElem>
-
-      <GuidelineTabElem value={GuidelineTab.FAQ} aria-label={GuidelineTab.FAQ}>
-        {GuidelineTab.FAQ}
+        {"Terms & Condition"}
       </GuidelineTabElem>
 
       <GuidelineTabElem
-        value={GuidelineTab.EWaiver}
-        aria-label={GuidelineTab.EWaiver}
+        value={GuidelineType.FAQ}
+        aria-label={GuidelineType.FAQ}
       >
-        {GuidelineTab.EWaiver}
+        FAQ
+      </GuidelineTabElem>
+
+      <GuidelineTabElem
+        value={GuidelineType.E_WAIVER}
+        aria-label={GuidelineType.E_WAIVER}
+      >
+        E - Waiver
       </GuidelineTabElem>
     </GuidelineTabsGroup>
   );
 };
 
-const GuidelineTabsGroup = styled(ToggleButtonGroup)`
-  && {
-    color: #c0c0c0;
-    font-family: "Gilroy-Bold";
-  }
-`;
+const GuidelineTabsGroup = styled(ToggleButtonGroup)``;
 
 const GuidelineTabElem = styled(ToggleButton)`
   && {
     border: 0;
     border-radius: 0;
+    width: 175px;
     &.MuiToggleButton-root {
       color: #c0c0c0;
+      font-family: "Gilroy Bold";
+      font-weight: 400;
     }
     &.Mui-selected {
       background-color: transparent;

@@ -45,7 +45,7 @@ const DashboardContentWrapper: FC<DashboardContentWrapperProps> = ({
       >
         <StyledContainer
           maxWidth={settings.compact ? "xl" : false}
-          sx={{ pl: "28px !important", pr: "89px !important" }}
+          sx={{ p: "0 89px !important" }}
         >
           <Grid container justifyContent="space-between">
             <Grid item>

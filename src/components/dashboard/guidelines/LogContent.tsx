@@ -1,5 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
+import { format } from "date-fns";
 import { FC } from "react";
 import { GuidelineLog } from "src/types/guidelines";
 import styled from "styled-components";
@@ -10,24 +11,23 @@ interface LogContentProps {
 }
 
 const LogContent: FC<LogContentProps> = ({ logs }) => {
-  const lastDateUpdated: Date = logs[logs.length - 1].date;
-
   return (
     <LogBox pl={2}>
       <TitleHeading variant="h5" mb={2}>
-        {lastDateUpdated.toLocaleString("default", { month: "long" })}{" "}
-        {lastDateUpdated.getDate()}, {lastDateUpdated.getFullYear()}
+        {logs !== null &&
+          logs.length > 0 &&
+          format(new Date(logs[0].last_update_date), "PP")}
       </TitleHeading>
       <Typography sx={{ opacity: "0.3", fontFamily: "Poppins" }}>
         Update Logs
       </Typography>
-      {logs.map((_, i, logsArr) => {
+      {logs?.map((_, i, logsArr) => {
         const item = logsArr[logsArr.length - 1 - i];
         return (
           <LogItem
-            date={item.date}
-            type={item.type}
-            key={`${item.type}-${i}`}
+            date={item.last_update_date}
+            type={item.guideline_type}
+            key={`${item.id}`}
           />
         );
       })}

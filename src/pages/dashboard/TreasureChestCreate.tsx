@@ -4,7 +4,7 @@ import DashboardContentWrapper from "src/components/dashboard/DashboardContentWr
 import { TreasureChestCreateForm } from "src/components/dashboard/treasure-chest";
 import { StyledCard } from "src/shared-styled-components/dashboard";
 
-const pageTitle = "Treasure Chest";
+const pageTitle = "New Treasure Chest";
 const TreasureChestCreate: FC = () => {
   return (
     <DashboardContentWrapper title={pageTitle}>

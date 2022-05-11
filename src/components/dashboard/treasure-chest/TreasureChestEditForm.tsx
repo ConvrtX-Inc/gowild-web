@@ -1,24 +1,21 @@
 import { Box, Grid } from "@material-ui/core";
 import { Formik } from "formik";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
-  DashboardButton,
   StyledTextField,
   TextFieldLabel,
 } from "src/shared-styled-components/dashboard";
-import { Sponsor, TreasureChest } from "src/types/treasurechest";
-import styled from "styled-components";
+import { TreasureChest } from "src/types/treasurechest";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TMap from "./TreasureChestMap";
 import { CircularProgress } from "@mui/material";
 import { uploadImgToFirebase } from "src/utils/firebaseUtils";
-import { imageFileToB64 } from "src/utils/imageUtils";
 import EditUploadImage from "./EditUploadImage";
 import format from "date-fns/format";
-import useMounted from "src/hooks/useMounted";
 import EditSponsorList, { SponsorState } from "./EditSponsorList";
+import { StyledElements } from "./TreasureChestCreateForm";
 
 const TreasureChestSchema = Yup.object().shape({
   title: Yup.string().required("Please enter a title."),
@@ -62,7 +59,6 @@ const CONFIG = {
 const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
   editTreasure,
 }) => {
-  const mounted = useMounted();
   const navigate = useNavigate();
 
   const [replaceThumbnailImg, setReplaceThumbnail] = useState<boolean>(false);
@@ -70,20 +66,18 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
   const [sponsors, setSponsors] = useState<SponsorState[]>([]);
 
   useEffect(() => {
-    getSponsors(editTreasure);
-  }, []);
-  const getSponsors = useCallback(
-    async (chestData: TreasureChest) => {
+    const getSponsors = async (chestData: TreasureChest) => {
       const sponsorsAPIResponse = await axios.get(
-        `${BASE_URL}/sponsor?fields=&s=%7B%22treasure_chest_id%22%3A%22${chestData.id}%22%7D&filter=`,
+        `${BASE_URL}/sponsor?s={"treasure_chest_id":"${chestData.id}"}`,
         CONFIG
       );
       if (sponsorsAPIResponse.status === 200) {
         setSponsors(sponsorsAPIResponse.data.data);
       }
-    },
-    [editTreasure, mounted]
-  );
+    };
+    getSponsors(editTreasure);
+  }, [editTreasure]);
+
   const editChest = async (values: ChestFormObject): Promise<boolean> => {
     const TREASURE_URL = `${BASE_URL}/treasure-chest`;
     const SPONSOR_URL = `${BASE_URL}/sponsor`;
@@ -100,9 +94,7 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
         event_date: values.eventDate,
         event_time: values.eventTime,
         no_of_participants: values.numParticipants,
-        thumbnail_img: thumbnailImgUrl
-          ? await imageFileToB64(values.thumbnailImage)
-          : editTreasure.thumbnail_img,
+        thumbnail_img: "",
         img_url: thumbnailImgUrl || editTreasure.img_url,
         a_r: "", //TODO: Update AR image upload when supported.
       };
@@ -123,9 +115,6 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                 `${SPONSOR_URL}/${sponsor.id}`,
                 {
                   treasure_chest_id: editTreasure.id,
-                  img: updatedImgLink
-                    ? await imageFileToB64(sponsor.imageFile)
-                    : (sponsor as Sponsor).img,
                   link: sponsor.link,
                   img_url: updatedImgLink || sponsor.img_url,
                 },
@@ -139,7 +128,6 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                 SPONSOR_URL,
                 {
                   treasure_chest_id: editTreasure.id,
-                  img: imgLink ? await imageFileToB64(sponsor.imageFile) : "",
                   link: sponsor.link,
                   img_url: imgLink,
                 },
@@ -187,11 +175,10 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
         setFieldValue,
       }) => (
         <form noValidate onSubmit={handleSubmit}>
-          <FormContainer>
-            <ColumnLeft mr={2}>
+          <StyledElements.FormContainer>
+            <StyledElements.ColumnLeft mr={2}>
               <TextFieldLabel>Title</TextFieldLabel>
               <StyledTextField
-                placeholder="First on the list"
                 onChange={handleChange}
                 name="title"
                 value={values.title}
@@ -201,7 +188,6 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
               <TextFieldLabel>Description</TextFieldLabel>
               <StyledTextField
                 multiline={true}
-                placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 onChange={handleChange}
                 name="description"
                 value={values.description}
@@ -210,7 +196,6 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
               />
               <TextFieldLabel>Treasure Location</TextFieldLabel>
               <StyledTextField
-                placeholder="65.5234°"
                 onChange={handleChange}
                 name="tLocationLat"
                 value={values.tLocationLat}
@@ -218,7 +203,6 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                 helperText={errors.tLocationLat}
               />
               <StyledTextField
-                placeholder="1.12378°"
                 onChange={handleChange}
                 name="tLocationLong"
                 value={values.tLocationLong}
@@ -227,15 +211,25 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
               />
               <TextFieldLabel>Sponsors</TextFieldLabel>
               <EditSponsorList sponsors={sponsors} setSponsors={setSponsors} />
-            </ColumnLeft>
-            <ColumnRight>
+            </StyledElements.ColumnLeft>
+            <StyledElements.ColumnRight>
               <Box sx={{ height: "539px", width: "100%" }} mb={1}>
-                <TMap
-                  handleChestLoc={(lat, long) => {
-                    setFieldValue("tLocationLat", lat.toFixed(4));
-                    setFieldValue("tLocationLong", long.toFixed(4));
-                  }}
-                />
+                {editTreasure.location_lat ? (
+                  <TMap
+                    handleChestLoc={(lat, long) => {
+                      setFieldValue("tLocationLat", lat.toFixed(4));
+                      setFieldValue("tLocationLong", long.toFixed(4));
+                    }}
+                    lat={Number(editTreasure.location_lat)}
+                    lng={Number(editTreasure.location_long)}
+                  />
+                ) : (
+                  <Box
+                    component="img"
+                    sx={{ height: "100%", width: "100%", objectFit: "cover" }}
+                    src="/static/route-list/sample-map.png"
+                  />
+                )}
               </Box>
               <Box>
                 <Grid container spacing={2}>
@@ -267,14 +261,18 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                       value={values.numParticipants}
                       error={Boolean(errors.numParticipants)}
                       helperText={errors.numParticipants}
-                      placeholder="10"
                     />
                     {isSubmitting ? (
-                      <SubmitLoadingBox>
+                      <StyledElements.SubmitLoadingBox>
                         <CircularProgress />
-                      </SubmitLoadingBox>
+                      </StyledElements.SubmitLoadingBox>
                     ) : (
-                      <SubmitButton type="submit">Update</SubmitButton>
+                      <StyledElements.SubmitButton
+                        type="submit"
+                        disabled={isSubmitting}
+                      >
+                        Update
+                      </StyledElements.SubmitButton>
                     )}
                   </Grid>
                   <Grid container item xs={6} direction="column">
@@ -292,8 +290,8 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                   </Grid>
                 </Grid>
               </Box>
-            </ColumnRight>
-          </FormContainer>
+            </StyledElements.ColumnRight>
+          </StyledElements.FormContainer>
         </form>
       )}
     </Formik>
@@ -301,46 +299,3 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
 };
 
 export default TreasureChestEditForm;
-
-const SubmitLoadingBox = styled(Box)`
-  && {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    && .MuiCircularProgress-svg {
-      color: #2995a8;
-    }
-  }
-`;
-
-const SubmitButton = styled(DashboardButton)`
-  && {
-    height: 60px;
-    width: 100%;
-    background-size: contain;
-  }
-`;
-
-const FormContainer = styled(Box)`
-  && {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 1rem;
-    font-family: "Gilroy SemiBold", "Gilroy Bold";
-  }
-`;
-const ColumnLeft = styled(Box)`
-  && {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-`;
-const ColumnRight = styled(Box)`
-  && {
-    display: flex;
-    flex-direction: column;
-    flex: 3;
-  }
-`;

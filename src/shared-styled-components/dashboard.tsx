@@ -31,21 +31,21 @@ const StyledCard = styled(Card)`
 
 const TableCellStyled = styled(TableCell)`
   && {
-    border-color: #efefef;
-    padding-top: 42.5px;
-    padding-bottom: 49.5px;
-    padding-left: 0;
+    border-color: rgba(255, 120, 81, 1);
+    padding: 23px 0;
+    text-align: center;
     font-family: "Gilroy Semibold", "Gilroy Regular";
   }
 `;
 
 const Typography400 = styled(Typography)`
   && {
-    font-family: "Poppins";
+    font-family: "Gilroy SemiBold";
     font-weight: 400;
-    font-size: 14px;
-    line-height: 18px;
-    color: #626262;
+    font-size: 18px;
+    line-height: 21px;
+    letter-spacing: 0.05rem;
+    color: #000000;
   }
 `;
 
@@ -53,6 +53,13 @@ const StyledTextField = styled(TextField)`
   && {
     margin-top: 6px;
     margin-bottom: 20px;
+    border-radius: 22.1951px;
+    overflow: hidden;
+
+    && .MuiInputBase-multiline.MuiInputBase-root {
+      padding: 0;
+    }
+
     && .Mui-focused fieldset {
       min-height: 67px;
       border-width: 2px !important;
@@ -67,7 +74,6 @@ const StyledTextField = styled(TextField)`
       font-size: 16px;
       line-height: 24px;
       letter-spacing: -0.025em;
-      color: #242426;
       display: flex;
       align-items: center;
       box-sizing: border-box;
@@ -77,13 +83,13 @@ const StyledTextField = styled(TextField)`
 
     && textarea,
     input {
+      color: rgba(0, 0, 0, 0.4);
       &::placeholder {
         font-family: "Gilroy Semibold";
         font-weight: 500;
         font-size: 17.7561px;
         line-height: 27px;
-        color: #000000;
-        opacity: 0.4;
+        color: rgba(0, 0, 0, 0.2);
         display: flex;
         align-items: center;
       }
@@ -105,7 +111,7 @@ const StyledTextField = styled(TextField)`
       border-style: solid;
 
       && textarea {
-        min-height: 132px;
+        min-height: 211px;
       }
     }
 
@@ -114,11 +120,11 @@ const StyledTextField = styled(TextField)`
       font-size: 16px;
       line-height: 24px;
       letter-spacing: -0.025em;
-      color: #242426;
-      min-height: 132px;
-      height: 132px;
-      max-height: 132px;
+      min-height: 211px;
+      height: 211px;
+      max-height: 211px;
       overflow-y: auto !important;
+      padding: 20px 33px 20px 33px;
     }
   }
 `;
@@ -148,21 +154,28 @@ const TextFieldLabel = styled(Typography)`
 
 const OptionsBox = styled(Box)`
   && {
+    padding-left: 6px;
+    cursor: pointer;
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    margin-bottom: 12.4733px;
+    &:hover {
+      background-color: #e5e7eb;
+    }
   }
 `;
+
 const StyledOption = styled.option`
   && {
     cursor: pointer;
-    font-family: "Poppins";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 18px;
-    padding: 9px 24px 9px 19px;
-    color: #09110e;
+    font-family: "Gilroy Medium";
+    font-size: 0.875rem;
+    line-height: 16px;
+    letter-spacing: 0.02rem;
+    color: #878787;
+    padding: 4px 24px 4px 5px;
+    text-align: center;
     &:hover {
       background: #e5e7eb;
     }

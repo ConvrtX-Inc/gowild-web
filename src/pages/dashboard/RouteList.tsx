@@ -43,12 +43,12 @@ const RouteList: FC = () => {
           Authorization: `bearer ${token}`,
         },
       };
-      const apiResponse = await axios.get(URL, CONFIG);
-      console.log("Route Lists", apiResponse.data);
-      dispatch(setRouteListIsLoading(false));
 
+      const apiResponse = await axios.get(URL, CONFIG);
+      // console.log("Route Lists", apiResponse.data);
       if (mounted.current) {
         setRouteLists(apiResponse.data);
+        dispatch(setRouteListIsLoading(false));
       }
     } catch (err) {
       console.error(err);
@@ -57,8 +57,9 @@ const RouteList: FC = () => {
 
   //INITIAL LOAD LIST
   useEffect(() => {
+    dispatch(setRouteListIsLoading(true));
     getRouteLists();
-  }, [getRouteLists]);
+  }, [getRouteLists, dispatch]);
 
   //REFRESH LIST
   useEffect(() => {

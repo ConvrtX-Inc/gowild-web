@@ -22,6 +22,7 @@ import DeleteIcon from "../../icons/RouteListDelete";
 import { NormalRoute } from "../../types/route-lists";
 import Scrollbar from "../Scrollbar";
 import { TreasureChest } from "src/types/treasurechest";
+import { TableCellStyled } from "src/shared-styled-components/dashboard";
 
 type TableItems = NormalRoute[] | TreasureChest[];
 type TableItem = NormalRoute | TreasureChest;
@@ -215,17 +216,26 @@ const TableList: FC<TableListProps> = (props) => {
   return (
     <>
       <Scrollbar>
-        <Box>
+        <Box
+          sx={{
+            overflow: "auto",
+          }}
+        >
           <Table>
             <TableHead>
               <TableRow>
-                <TableHeaderCell padding="checkbox">
+                {/* <TableHeaderCell
+                  padding="checkbox"
+                  sx={{
+                    padding: "0 !important",
+                  }}
+                >
                   <StyledCheckbox
                     checked={selectedAllItems}
                     indeterminate={selectedSomeItems}
                     onChange={handleSelectAllItems}
                   />
-                </TableHeaderCell>
+                </TableHeaderCell> */}
                 {headers.map((header) => (
                   <TableHeaderCell key={header}>{header}</TableHeaderCell>
                 ))}
@@ -236,7 +246,7 @@ const TableList: FC<TableListProps> = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {!loading &&
+              {!loading ? (
                 items.length > 0 &&
                 paginatedItems.map((item) => {
                   const isItemSelected = selectedItems.includes(item.id);
@@ -246,15 +256,23 @@ const TableList: FC<TableListProps> = (props) => {
                       key={item.id}
                       selected={isItemSelected}
                     >
-                      <TableCellStyled padding="checkbox">
-                        <StyledCheckbox
-                          checked={isItemSelected}
-                          onChange={(event) =>
-                            handleSelectOneItem(event, item.id)
-                          }
-                          value={isItemSelected}
-                        />
-                      </TableCellStyled>
+                      {/* <TableCellStyled padding="checkbox">
+                        <Box
+                          sx={{
+                            width: 66,
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <StyledCheckbox
+                            checked={isItemSelected}
+                            onChange={(event) =>
+                              handleSelectOneItem(event, item.id)
+                            }
+                            value={isItemSelected}
+                          />
+                        </Box>
+                      </TableCellStyled> */}
 
                       {rowElementsBuilder(item).map((elem, i) =>
                         cloneElement(elem, {
@@ -263,7 +281,11 @@ const TableList: FC<TableListProps> = (props) => {
                       )}
 
                       <TableCellStyled align="right">
-                        <Box>
+                        <Box
+                          sx={{
+                            textAlign: "right",
+                          }}
+                        >
                           <IconButton
                             aria-describedby={id}
                             onClick={(e) => handleClick(e, item)}
@@ -290,18 +312,28 @@ const TableList: FC<TableListProps> = (props) => {
                       </TableCellStyled>
                     </StyledTableRow>
                   );
-                })}
+                })
+              ) : (
+                <TableRow sx={{ width: "100%" }}>
+                  <TableCell
+                    sx={{
+                      borderBottom: "none",
+                      position: "relative",
+                      height: "142px",
+                    }}
+                  >
+                    <DefaultLoadingBox>
+                      <CircularProgress />
+                    </DefaultLoadingBox>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
           {!loading && items.length === 0 && (
             <EmptyTableBox m={2}>
               <Typography variant="h5">Empty...</Typography>
             </EmptyTableBox>
-          )}
-          {loading && (
-            <LoadingBox>
-              <CircularProgress size={100} />
-            </LoadingBox>
           )}
         </Box>
       </Scrollbar>
@@ -338,13 +370,11 @@ const EmptyTableBox = styled(Box)`
   }
 `;
 
-const LoadingBox = styled(Box)`
+const DefaultLoadingBox = styled(Box)`
   && {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 3rem 0;
-
+    position: absolute;
+    top: 48.49px;
+    left: calc(19vw + 239px);
     && .MuiCircularProgress-svg {
       color: #2995a8;
     }
@@ -353,7 +383,6 @@ const LoadingBox = styled(Box)`
 
 const StyledCheckbox = styled(Checkbox)`
   && {
-    width: 66px;
     padding: 0;
     color: #ffe4dc;
     &.Mui-checked {
@@ -375,7 +404,8 @@ const StyledTableRow = styled(TableRow)`
 
 const StyledPopOver = styled(Popover)`
   && .MuiPopover-paper {
-    padding: 15px 4px 0 10px;
+    width: 171px;
+    padding: 7.59px 4px 0 4px;
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
@@ -387,24 +417,14 @@ const StyledPopOver = styled(Popover)`
 const TableHeaderCell = styled(TableCell)`
   && {
     background-color: #ff7851;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    padding-left: 0;
+    padding: 15px 18px;
+    text-align: center;
     font-family: "Inter";
     font-weight: 600;
     font-size: 0.75rem;
     line-height: 15px;
     letter-spacing: 0.05em;
     color: #ffffff;
-  }
-`;
-
-const TableCellStyled = styled(TableCell)`
-  && {
-    border-color: #efefef;
-    padding-top: 42.5px;
-    padding-bottom: 49.5px;
-    padding-left: 0;
   }
 `;
 

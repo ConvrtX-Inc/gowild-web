@@ -54,57 +54,62 @@ const UploadImage: FC<UploadImageProps> = ({
   return (
     <>
       <TextFieldLabel>{label}</TextFieldLabel>
-      {ToggleImageDropZone(
-        <UploadBox>
-          {!imageFile && (sizeError || error) ? (
-            <ImgBoxError>
-              {sizeError ? (
+      <FlexCenterBox>
+        {ToggleImageDropZone(
+          <FlexCenterBox>
+            <UploadBox>
+              {!imageFile && (sizeError || error) ? (
+                <ImgBoxError>
+                  {sizeError ? (
+                    <>
+                      <ErrorMsg>File must be 1MB size or less</ErrorMsg>
+                      <TryAgainButton
+                        sx={{ mt: 1 }}
+                        onClick={(e) => setSizeError(false)}
+                        variant="outlined"
+                      >
+                        Try again
+                      </TryAgainButton>{" "}
+                    </>
+                  ) : (
+                    <>
+                      <ErrorMsg>{error}</ErrorMsg>
+                      <TryAgainButton sx={{ mt: 1 }} variant="outlined">
+                        Upload
+                      </TryAgainButton>{" "}
+                    </>
+                  )}
+                </ImgBoxError>
+              ) : imageFile ? (
                 <>
-                  <ErrorMsg>File must be 1MB size or less</ErrorMsg>
-                  <TryAgainButton
-                    sx={{ mt: 1 }}
-                    onClick={(e) => setSizeError(false)}
-                    variant="outlined"
+                  <IconButton
+                    sx={{
+                      position: "absolute",
+                      right: "-21px",
+                      top: "-20px",
+                    }}
+                    onClick={handleRemove}
                   >
-                    Try again
-                  </TryAgainButton>{" "}
+                    <XIcon fontSize="small" />
+                  </IconButton>
+                  <Box
+                    component="img"
+                    src={URL.createObjectURL(imageFile)}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "22.2px",
+                    }}
+                  />
                 </>
               ) : (
-                <>
-                  <ErrorMsg>{error}</ErrorMsg>
-                  <TryAgainButton sx={{ mt: 1 }} variant="outlined">
-                    Upload
-                  </TryAgainButton>{" "}
-                </>
+                <StyledUploadIcon />
               )}
-            </ImgBoxError>
-          ) : imageFile ? (
-            <>
-              <IconButton
-                sx={{
-                  position: "absolute",
-                  right: "-21px",
-                  top: "-20px",
-                }}
-                onClick={handleRemove}
-              >
-                <XIcon fontSize="small" />
-              </IconButton>
-              <Box
-                component="img"
-                src={URL.createObjectURL(imageFile)}
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            </>
-          ) : (
-            <StyledUploadIcon />
-          )}
-        </UploadBox>
-      )}
+            </UploadBox>
+          </FlexCenterBox>
+        )}
+      </FlexCenterBox>
     </>
   );
 };
@@ -129,6 +134,7 @@ const ErrorMsg = styled(Box)`
     line-height: 16px;
     letter-spacing: 0.5px;
     color: #f44336;
+    text-align: center;
   }
 `;
 
@@ -149,6 +155,7 @@ const StyledUploadIcon = styled(UploadIcon)`
 const UploadBox = styled(Box)`
   && {
     height: 178px;
+    width: 129px;
     border-radius: 22.2px;
     border: 2px solid #f3f3f3;
     margin-top: 6px;
@@ -158,7 +165,6 @@ const UploadBox = styled(Box)`
     align-items: center;
     cursor: pointer;
     position: relative;
-
     &:hover {
       border-color: #2995a8;
       color: #2995a8;
@@ -168,3 +174,19 @@ const UploadBox = styled(Box)`
     }
   }
 `;
+
+export const FlexCenterBox = styled(Box)`
+  && {
+    display: flex;
+    justify-content: center;
+  }
+`;
+
+export const StyledElements = {
+  ImgBoxError,
+  ErrorMsg,
+  TryAgainButton,
+  StyledUploadIcon,
+  UploadBox,
+  FlexCenterBox,
+};
