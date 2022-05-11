@@ -12,6 +12,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   FormHelperText,
   Grid,
 } from "@mui/material";
@@ -28,12 +29,14 @@ const RouteViewForm: FC<any> = (props) => {
   console.log("VIEW FORM PROPS: ", singleRoute);
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const scrollToEvents = useRef<HTMLSpanElement>();
+  const scrollRef = useRef<HTMLSpanElement>();
 
-  // useEffect(() => {
-  //   if (scrollRef?.current) {
-  //     scrollRef.current.scrollIntoView();
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (scrollRef?.current) {
+      scrollRef.current.scrollIntoView();
+    }
+  }, []);
+
   const scrollToHistoricalEvents = () => {
     scrollToEvents.current.scrollIntoView();
   };
@@ -126,6 +129,7 @@ const RouteViewForm: FC<any> = (props) => {
         values,
       }): JSX.Element => (
         <StyledForm onSubmit={handleSubmit} {...props}>
+          <span ref={scrollRef} />
           <Grid container spacing={3}>
             <Grid item lg={12} md={6} xs={12}>
               <Card>
@@ -147,19 +151,47 @@ const RouteViewForm: FC<any> = (props) => {
                         </FlexiBox>
                       </LegendBox>
                       <FieldLabel>Starting Point</FieldLabel>
-                      <ViewField sx={{ mt: "26px" }}>
-                        {values.startPtLong}°
-                      </ViewField>
-                      <ViewField sx={{ mt: "60px", mb: "40px" }}>
-                        {values.startPtLat}°
-                      </ViewField>
+                      <Box sx={{ mt: "26px" }}>
+                        <SubLabel sx={{ mb: "6px" }}>Longitude</SubLabel>
+                        <ViewField>
+                          {values.startPtLong ? (
+                            `${values.startPtLong}°`
+                          ) : (
+                            <StyledCircularProgress size={17.7561} />
+                          )}
+                        </ViewField>
+                      </Box>
+                      <Box sx={{ mt: "20px", mb: "20px" }}>
+                        <SubLabel sx={{ mb: "6px" }}>Latitude</SubLabel>
+                        <ViewField>
+                          {values.startPtLat ? (
+                            `${values.startPtLat}°`
+                          ) : (
+                            <CircularProgress size={17.7561} />
+                          )}
+                        </ViewField>
+                      </Box>
                       <FieldLabel>End Point</FieldLabel>
-                      <ViewField sx={{ mt: "26px" }}>
-                        {values.endPtLong}°
-                      </ViewField>
-                      <ViewField sx={{ mt: "60px", mb: "40px" }}>
-                        {values.endPtLat}°
-                      </ViewField>
+                      <Box sx={{ mt: "26px" }}>
+                        <SubLabel sx={{ mb: "6px" }}>Longitude</SubLabel>
+                        <ViewField>
+                          {values.endPtLong ? (
+                            `${values.endPtLong}°`
+                          ) : (
+                            <CircularProgress size={17.7561} />
+                          )}
+                        </ViewField>
+                      </Box>
+                      <Box sx={{ mt: "20px", mb: "20px" }}>
+                        <SubLabel sx={{ mb: "6px" }}>Latitude</SubLabel>
+                        <ViewField>
+                          {values.endPtLat ? (
+                            `${values.endPtLat}°`
+                          ) : (
+                            <CircularProgress size={17.7561} />
+                          )}
+                        </ViewField>
+                      </Box>
                       <Box
                         sx={{
                           width: "289px",
@@ -176,24 +208,39 @@ const RouteViewForm: FC<any> = (props) => {
                             mb: "20px",
                           }}
                         >
-                          <img
-                            height="90px"
-                            width="90px"
-                            src={singleRoute.img_url}
-                            alt="route-img"
-                          />
+                          {singleRoute.img_url ? (
+                            <img
+                              height="90px"
+                              width="90px"
+                              src={singleRoute.img_url}
+                              alt="route-img"
+                            />
+                          ) : (
+                            <StyledCircularProgress
+                              size={17.7561}
+                              sx={{ opacity: "0.4" }}
+                            />
+                          )}
                         </Box>
                       </Box>
                       <FieldLabel sx={{ mt: "14px" }}>Title</FieldLabel>
                       <ViewField sx={{ mt: "26px", mb: "40px" }}>
-                        {values.raceTitle}
+                        {values.raceTitle ? (
+                          values.raceTitle
+                        ) : (
+                          <CircularProgress size={17.7561} />
+                        )}
                       </ViewField>
                       <FieldLabel>Description</FieldLabel>
                       <ViewField
                         sx={{ height: "100px", mt: "26px", pr: "70px" }}
                       >
                         <Scrollbar>
-                          <Box>{values.description}</Box>
+                          {values.description ? (
+                            <Box>{values.description}</Box>
+                          ) : (
+                            <CircularProgress size={17.7561} />
+                          )}
                         </Scrollbar>
                       </ViewField>
                       <Box
@@ -238,15 +285,32 @@ const RouteViewForm: FC<any> = (props) => {
                         height: "982px",
                         width: "100%",
                         borderRadius: "20px",
+                        position: "relative",
+                        border: "1px solid rgba(0,0,0,0.1)",
                       }}
                     >
                       {Object.keys(singleRoute).length !== 0 &&
-                        Object.keys(historicalEvents).length !== 0 && (
-                          <RouteViewMap
-                            loadRouteMarkers={singleRoute}
-                            loadEventMarkers={historicalEvents}
-                          />
-                        )}
+                      Object.keys(historicalEvents).length !== 0 ? (
+                        <RouteViewMap
+                          loadRouteMarkers={singleRoute}
+                          loadEventMarkers={historicalEvents}
+                        />
+                      ) : (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "491px",
+                            left: "330px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <StyledCircularProgress />
+                          Loading Map
+                        </Box>
+                      )}
                     </Box>
                   </RowBox>
                   {/* -----------------------------HISTORICAL------------------------------------- */}
@@ -271,7 +335,7 @@ const RouteViewForm: FC<any> = (props) => {
                       <Scrollbar>
                         {/* ---------------------------------------------------------------- ACCORDION */}
                         <span ref={scrollToEvents} />
-                        {historicalEvents.length > 0 &&
+                        {historicalEvents.length > 0 ? (
                           historicalEvents.map((historical, index) => (
                             <StyledAccordion square={true} key={historical.id}>
                               <AccordionSummary
@@ -332,7 +396,13 @@ const RouteViewForm: FC<any> = (props) => {
                                 {historical.description}
                               </AccordionDetails>
                             </StyledAccordion>
-                          ))}
+                          ))
+                        ) : (
+                          <StyledCircularProgress
+                            sx={{ opacity: "0.4" }}
+                            size={17.7561}
+                          />
+                        )}
                         {/* ----------------------------------------------------------------------- ACCORDION END */}
                       </Scrollbar>
                     </Box>
@@ -396,6 +466,24 @@ const FieldLabel = styled(Box)`
     font-size: 16px;
     line-height: 18px;
     color: #22333b;
+  }
+`;
+
+const SubLabel = styled(Box)`
+  && {
+    font-family: "Gilroy Medium";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 17.7561px;
+    line-height: 27px;
+    color: #000000;
+    opacity: 0.4;
+  }
+`;
+
+const StyledCircularProgress = styled(CircularProgress)`
+  && {
+    color: #2995a8;
   }
 `;
 

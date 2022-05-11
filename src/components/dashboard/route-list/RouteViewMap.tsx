@@ -74,7 +74,7 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
   maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
     console.log("OVERLAY COMPLETE DRAWING MGR ");
     for (var i = 0; i < markers.length; i++) {
-      // show current marker
+      // show current marker/s
       markers[i].setMap(map);
     }
   });
@@ -218,7 +218,7 @@ const RouteViewMap = (props) => {
           libraries: ["drawing"],
         }}
         defaultCenter={location}
-        defaultZoom={16}
+        defaultZoom={15}
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={({ map, maps }) =>
           apiIsLoaded(map, maps, loadRouteMarkers, loadEventMarkers)
