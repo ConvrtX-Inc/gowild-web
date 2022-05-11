@@ -61,7 +61,7 @@ const RouteCreateForm: FC = (props) => {
   //     scrollRef.current.scrollIntoView();
   //   }
   // }, []);
-  
+
   const scrollToHistoricalEvents = () => {
     scrollToEvents.current.scrollIntoView();
   };
@@ -317,10 +317,10 @@ const RouteCreateForm: FC = (props) => {
             user_id: userId,
             route_name: values.raceTitle,
             route_photo: "byte64img",
-            start_point_long: values.startPtLong,
-            start_point_lat: values.startPtLat,
-            stop_point_long: values.endPtLong,
-            stop_point_lat: values.endPtLat,
+            start_point_long: Number(values.startPtLong),
+            start_point_lat: Number(values.startPtLat),
+            stop_point_long: Number(values.endPtLong),
+            stop_point_lat: Number(values.endPtLat),
             img_url: firebaseImgUrl,
             description: values.description,
           };
