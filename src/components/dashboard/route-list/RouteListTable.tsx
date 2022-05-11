@@ -373,14 +373,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       minWidth: "322px",
                     }}
                   >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      NAME
-                    </Box>
+                    <CenteredBox>NAME</CenteredBox>
                   </TableHeaderCell>
                   <TableHeaderCell
                     sx={{
@@ -389,7 +382,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       maxWidth: "140px",
                     }}
                   >
-                    DATE CREATED
+                    <CenteredBox>DATE CREATED</CenteredBox>
                   </TableHeaderCell>
                   <TableHeaderCell
                     sx={{
@@ -398,10 +391,10 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       maxWidth: "234px",
                     }}
                   >
-                    <Box>
+                    <CenteredBox>
                       <Box>STARTING POINT</Box>
                       <Box>LONG / LAT</Box>
-                    </Box>
+                    </CenteredBox>
                   </TableHeaderCell>
                   <TableHeaderCell
                     sx={{
@@ -410,10 +403,10 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       maxWidth: "266.85px",
                     }}
                   >
-                    <Box>
+                    <CenteredBox>
                       <Box>END POINT</Box>
                       <Box>LONG / LAT</Box>
-                    </Box>
+                    </CenteredBox>
                   </TableHeaderCell>
                   <TableHeaderCell align="left"></TableHeaderCell>
                 </TableRow>
@@ -484,15 +477,21 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                         </GroupBox>
                       </TableCellStyled>
                       <TableCellStyled>
-                        <Typography400>
-                          {formatDate(normalRoute.created_date)}
-                        </Typography400>
+                        <CenteredBox>
+                          <Typography400>
+                            {formatDate(normalRoute.created_date)}
+                          </Typography400>
+                        </CenteredBox>
                       </TableCellStyled>
                       <TableCellStyled>
-                        <Typography400>{`${normalRoute.start_point_long}/${normalRoute.start_point_lat}`}</Typography400>
+                        <CenteredBox>
+                          <Typography400>{`${normalRoute.start_point_long}/${normalRoute.start_point_lat}`}</Typography400>
+                        </CenteredBox>
                       </TableCellStyled>
                       <TableCellStyled>
-                        <Typography400>{`${normalRoute.stop_point_long}/${normalRoute.stop_point_lat}`}</Typography400>
+                        <CenteredBox>
+                          <Typography400>{`${normalRoute.stop_point_long}/${normalRoute.stop_point_lat}`}</Typography400>
+                        </CenteredBox>
                       </TableCellStyled>
                       <TableCellStyled align="right">
                         <Box>
@@ -725,6 +724,15 @@ const TableCellStyled = styled(TableCell)`
     padding-top: 23px;
     padding-bottom: 23px;
     padding-left: 0;
+  }
+`;
+
+const CenteredBox = styled(Box)`
+  && {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
 `;
 

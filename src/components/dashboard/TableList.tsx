@@ -182,18 +182,18 @@ const TableList: FC<TableListProps> = (props) => {
     setSelectedItems(event.target.checked ? items.map((item) => item.id) : []);
   };
 
-  const handleSelectOneItem = (
-    event: ChangeEvent<HTMLInputElement>,
-    itemId: string
-  ): void => {
-    if (!selectedItems.includes(itemId)) {
-      setSelectedItems((prevSelected) => [...prevSelected, itemId]);
-    } else {
-      setSelectedItems((prevSelected) =>
-        prevSelected.filter((id) => id !== itemId)
-      );
-    }
-  };
+  // const handleSelectOneItem = (
+  //   event: ChangeEvent<HTMLInputElement>,
+  //   itemId: string
+  // ): void => {
+  //   if (!selectedItems.includes(itemId)) {
+  //     setSelectedItems((prevSelected) => [...prevSelected, itemId]);
+  //   } else {
+  //     setSelectedItems((prevSelected) =>
+  //       prevSelected.filter((id) => id !== itemId)
+  //     );
+  //   }
+  // };
 
   const handlePageChange = (
     event: MouseEvent<HTMLButtonElement> | null,
@@ -381,18 +381,18 @@ const DefaultLoadingBox = styled(Box)`
   }
 `;
 
-const StyledCheckbox = styled(Checkbox)`
-  && {
-    padding: 0;
-    color: #ffe4dc;
-    &.Mui-checked {
-      color: #2955a0;
-    }
-    &.MuiCheckbox-indeterminate {
-      color: #2955a0;
-    }
-  }
-`;
+// const StyledCheckbox = styled(Checkbox)`
+//   && {
+//     padding: 0;
+//     color: #ffe4dc;
+//     &.Mui-checked {
+//       color: #2955a0;
+//     }
+//     &.MuiCheckbox-indeterminate {
+//       color: #2955a0;
+//     }
+//   }
+// `;
 
 const StyledTableRow = styled(TableRow)`
   && {

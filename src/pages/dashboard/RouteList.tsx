@@ -85,7 +85,7 @@ const RouteList: FC = () => {
       >
         <StyledContainer
           maxWidth={settings.compact ? "xl" : false}
-          sx={{ pl: "28px !important", pr: "89px !important" }}
+          sx={{ pl: "28px !important", pr: "28px !important" }}
         >
           <Grid container justifyContent="space-between">
             <Grid item>
