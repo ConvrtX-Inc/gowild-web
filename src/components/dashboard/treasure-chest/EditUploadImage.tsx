@@ -1,12 +1,10 @@
-import { Box, Button, IconButton } from "@material-ui/core";
+import { Box, IconButton } from "@material-ui/core";
 import { FC, useEffect, useState } from "react";
-import { default as UploadIcon } from "src/icons/Upload";
 import { TextFieldLabel } from "src/shared-styled-components/dashboard";
 import styled from "styled-components";
 import ImageDropzone from "../ImageDropzone";
 import XIcon from "../../../icons/X";
 import { StyledElements } from "./UploadImage";
-import { borderRadius } from "@material-ui/system";
 
 interface EditUploadImageProps {
   label: string;
@@ -53,88 +51,83 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
   return (
     <>
       <TextFieldLabel>{label}</TextFieldLabel>
-      <ImageDropzone accept="image/*" onDrop={handleDrop}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <StyledElements.UploadBox>
-            {!replaceImage ? (
-              <>
-                <Box
-                  component="img"
-                  src={imgURL}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "22.2px",
-                  }}
-                />
-                <ReUploadBox>
-                  <StyledElements.StyledUploadIcon />
-                </ReUploadBox>
-              </>
-            ) : !imageFile && (sizeError || error) ? (
-              <StyledElements.ImgBoxError>
-                {sizeError ? (
-                  <>
-                    <StyledElements.ErrorMsg>
-                      File must be 1MB size or less
-                    </StyledElements.ErrorMsg>
-                    <StyledElements.TryAgainButton
-                      sx={{ mt: 1 }}
-                      onClick={(e) => setSizeError(false)}
-                      variant="outlined"
-                    >
-                      Try again
-                    </StyledElements.TryAgainButton>{" "}
-                  </>
-                ) : (
-                  <>
-                    <StyledElements.ErrorMsg>
-                      {error}
-                    </StyledElements.ErrorMsg>
-                    <StyledElements.TryAgainButton
-                      sx={{ mt: 1 }}
-                      variant="outlined"
-                    >
-                      Upload
-                    </StyledElements.TryAgainButton>{" "}
-                  </>
-                )}
-              </StyledElements.ImgBoxError>
-            ) : imageFile ? (
-              <>
-                <IconButton
-                  sx={{
-                    position: "absolute",
-                    right: "-21px",
-                    top: "-20px",
-                  }}
-                  onClick={handleRemove}
-                >
-                  <XIcon fontSize="small" />
-                </IconButton>
-                <Box
-                  component="img"
-                  src={URL.createObjectURL(imageFile)}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "22.2px",
-                  }}
-                />
-              </>
-            ) : (
-              <StyledElements.StyledUploadIcon />
-            )}
-          </StyledElements.UploadBox>
-        </Box>
-      </ImageDropzone>
+      <StyledElements.FlexCenterBox>
+        <ImageDropzone accept="image/*" onDrop={handleDrop}>
+          <StyledElements.FlexCenterBox>
+            <StyledElements.UploadBox>
+              {!replaceImage ? (
+                <>
+                  <Box
+                    component="img"
+                    src={imgURL}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "22.2px",
+                    }}
+                  />
+                  <ReUploadBox>
+                    <StyledElements.StyledUploadIcon />
+                  </ReUploadBox>
+                </>
+              ) : !imageFile && (sizeError || error) ? (
+                <StyledElements.ImgBoxError>
+                  {sizeError ? (
+                    <>
+                      <StyledElements.ErrorMsg>
+                        File must be 1MB size or less
+                      </StyledElements.ErrorMsg>
+                      <StyledElements.TryAgainButton
+                        sx={{ mt: 1 }}
+                        onClick={(e) => setSizeError(false)}
+                        variant="outlined"
+                      >
+                        Try again
+                      </StyledElements.TryAgainButton>{" "}
+                    </>
+                  ) : (
+                    <>
+                      <StyledElements.ErrorMsg>{error}</StyledElements.ErrorMsg>
+                      <StyledElements.TryAgainButton
+                        sx={{ mt: 1 }}
+                        variant="outlined"
+                      >
+                        Upload
+                      </StyledElements.TryAgainButton>{" "}
+                    </>
+                  )}
+                </StyledElements.ImgBoxError>
+              ) : imageFile ? (
+                <>
+                  <IconButton
+                    sx={{
+                      position: "absolute",
+                      right: "-21px",
+                      top: "-20px",
+                    }}
+                    onClick={handleRemove}
+                  >
+                    <XIcon fontSize="small" />
+                  </IconButton>
+                  <Box
+                    component="img"
+                    src={URL.createObjectURL(imageFile)}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "22.2px",
+                    }}
+                  />
+                </>
+              ) : (
+                <StyledElements.StyledUploadIcon />
+              )}
+            </StyledElements.UploadBox>
+          </StyledElements.FlexCenterBox>
+        </ImageDropzone>
+      </StyledElements.FlexCenterBox>
     </>
   );
 };

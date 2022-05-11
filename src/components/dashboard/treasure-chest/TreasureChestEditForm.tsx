@@ -5,7 +5,7 @@ import {
   StyledTextField,
   TextFieldLabel,
 } from "src/shared-styled-components/dashboard";
-import { Sponsor, TreasureChest } from "src/types/treasurechest";
+import { TreasureChest } from "src/types/treasurechest";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";

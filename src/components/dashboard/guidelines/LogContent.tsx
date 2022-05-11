@@ -1,8 +1,8 @@
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { format } from "date-fns";
-import { FC, useEffect, useState } from "react";
-import { Guideline, GuidelineLog } from "src/types/guidelines";
+import { FC } from "react";
+import { GuidelineLog } from "src/types/guidelines";
 import styled from "styled-components";
 import LogItem from "./LogItem";
 
