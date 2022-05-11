@@ -31,6 +31,7 @@ const VerifyCode = Loadable(
 // Dashboard pages
 const Overview = Loadable(lazy(() => import("./pages/dashboard/Overview")));
 const RouteList = Loadable(lazy(() => import("./pages/dashboard/RouteList")));
+
 const RouteListCreate = Loadable(
   lazy(() => import("./pages/dashboard/RouteListCreate"))
 );
@@ -39,6 +40,23 @@ const RouteListEdit = Loadable(
 );
 const RouteListView = Loadable(
   lazy(() => import("./pages/dashboard/RouteListView"))
+);
+
+const Guidelines = Loadable(lazy(() => import("./pages/dashboard/Guidelines")));
+
+const TreasureChestList = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestList"))
+);
+const CreateTreasureChest = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestCreate"))
+);
+
+const ViewTreasureChest = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestView"))
+);
+
+const EditTreasureChest = Loadable(
+  lazy(() => import("./pages/dashboard/TreasureChestEdit"))
 );
 
 // const Chat = Loadable(lazy(() => import("./pages/dashboard/Chat")));
@@ -129,6 +147,31 @@ const routes: PartialRouteObject[] = [
           {
             path: "view",
             element: <RouteListView />,
+          },
+        ],
+      },
+      {
+        path: "/guidelines",
+        element: <Guidelines />,
+      },
+      {
+        path: "/treasure-chest-list",
+        children: [
+          {
+            path: "/",
+            element: <TreasureChestList />,
+          },
+          {
+            path: "new",
+            element: <CreateTreasureChest />,
+          },
+          {
+            path: "view/:id",
+            element: <ViewTreasureChest />,
+          },
+          {
+            path: "edit/:id",
+            element: <EditTreasureChest />,
           },
         ],
       },
