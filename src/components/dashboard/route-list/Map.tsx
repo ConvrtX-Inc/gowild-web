@@ -7,12 +7,7 @@ import styled from "styled-components";
 import ReactDOM from "react-dom";
 import $ from "jquery";
 
-let startingPt;
-let finishingPt;
 let initialLocation;
-let initialLat = [];
-let initialLong = [];
-console.log(initialLat);
 const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -21,83 +16,102 @@ const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
         position.coords.longitude
       );
       map.setCenter(initialLocation);
-      initialLat.push(initialLocation.lat());
-      initialLong.push(initialLocation.lng());
-      console.log("Geo Initial Lat", initialLat[0]);
-
-      startingPt = new maps.Marker({
-        position: { lat: initialLat[0] + 0.002, lng: initialLong[0] },
-        icon: "/static/route-list/start-pt.png",
-        map,
-        draggable: true,
-      });
-
-      startingPt.addListener("dragend", () => {
-        const lat = startingPt.getPosition().lat();
-        const long = startingPt.getPosition().lng();
-        setStartPt(lat, long);
-        console.log("Normal Route Start Pt: ", lat, long);
-      });
-
-      finishingPt = new maps.Marker({
-        position: { lat: initialLat[0], lng: initialLong[0] },
-        icon: "/static/route-list/finish-pt.png",
-        map,
-        draggable: true,
-      });
-
-      finishingPt.addListener("dragend", () => {
-        const lat = finishingPt.getPosition().lat();
-        const long = finishingPt.getPosition().lng();
-        setEndPt(lat, long);
-        console.log("Normal Route End Pt: ", lat, long);
-      });
     });
   }
-  const toggleButton = document.createElement("button");
 
+  // Creating START POINT Marker👇 =======================================
+  // Overlay Button Control
+  const startPtButton = document.createElement("button");
   var startPtMarker;
-  toggleButton.textContent = "Start Pt";
-  toggleButton.classList.add("custom-map-control-button");
-  toggleButton.addEventListener("click", () => {
-    maps.event.addListener(map, "click", (event) => {
-      console.log("Triggered Start PT listener");
-      placeMarker(event.latLng);
-      maps.event.clearListeners(map);
-    });
+  startPtButton.classList.add("starting-pt-control-button");
+  startPtButton.setAttribute("type", "button");
+
+  startPtButton.addEventListener("click", () => {
+    console.log("Start Pt Button Clicked:", startPtMarker);
+    if (startPtMarker === undefined) {
+      maps.event.addListener(map, "click", (event) => {
+        console.log("Triggered Start PT listener", event.latLng);
+        placeStartPtMarker(event.latLng);
+        setStartPt(event.latLng.lat(), event.latLng.lng());
+        maps.event.clearListeners(map);
+      });
+    } else {
+      return;
+    }
   });
-  function placeMarker(location) {
+
+  //Function to Add START PT Marker
+  const placeStartPtMarker = (location) => {
     startPtMarker = new maps.Marker({
       position: location,
       icon: "/static/route-list/start-pt.png",
       map: map,
       draggable: true,
     });
-  }
+    startPtMarker.setMap(map);
+    //Delete Marker
+    maps.event.addListener(startPtMarker, "click", () => {
+      console.log("START PT MARKER IS CLICKED");
+      startPtMarker.setMap(null);
+      startPtMarker = undefined;
+    });
 
-  map.controls[maps.ControlPosition.TOP_LEFT].push(toggleButton);
-  // // Creating START POINT Marker👇
-  // const drawingManager2 = new maps.drawing.DrawingManager({
-  //   drawingMode: maps.drawing.OverlayType.MARKER,
-  //   drawingControl: true,
-  //   drawingControlOptions: {
-  //     position: maps.ControlPosition.LEFT_TOP,
-  //     drawingModes: ["marker"],
-  //   },
-  //   markerOptions: {
-  //     icon: "/static/route-list/start-pt.png",
-  //     draggable: true,
-  //   },
-  // });
-  // drawingManager2.setMap(map);
-  // drawingManager2.setDrawingMode(null);
-  // maps.event.addListener(
-  //   drawingManager2,
-  //   "overlaycomplete",
-  //   function (marker) {}
-  // );
+    startPtMarker.addListener("dragend", () => {
+      let lat = startPtMarker.getPosition().lat();
+      let long = startPtMarker.getPosition().lng();
+      setStartPt(lat, long);
+      console.log("Start Pt Marker: ", lat, long);
+    });
+  };
+  map.controls[maps.ControlPosition.RIGHT_TOP].push(startPtButton);
 
-  // Creating Historical Event Markers👇
+  // Creating END POINT Marker👇 =======================================
+  // Overlay Button Control
+  const endPtButton = document.createElement("button");
+  var endPtMarker;
+  endPtButton.classList.add("ending-pt-control-button");
+  endPtButton.setAttribute("type", "button");
+
+  endPtButton.addEventListener("click", () => {
+    console.log("End Pt Button Clicked:", endPtMarker);
+    if (endPtMarker === undefined) {
+      maps.event.addListener(map, "click", (event) => {
+        console.log("Triggered End PT listener", event.latLng);
+        placeEndPtMarker(event.latLng);
+        setEndPt(event.latLng.lat(), event.latLng.lng());
+        maps.event.clearListeners(map);
+      });
+    } else {
+      return;
+    }
+  });
+
+  //Function to Add End PT Marker
+  const placeEndPtMarker = (location) => {
+    endPtMarker = new maps.Marker({
+      position: location,
+      icon: "/static/route-list/end-pt.png",
+      map: map,
+      draggable: true,
+    });
+    endPtMarker.setMap(map);
+    //Delete Marker
+    maps.event.addListener(endPtMarker, "click", () => {
+      console.log("END PT MARKER IS CLICKED");
+      endPtMarker.setMap(null);
+      endPtMarker = undefined;
+    });
+
+    endPtMarker.addListener("dragend", () => {
+      let lat = endPtMarker.getPosition().lat();
+      let long = endPtMarker.getPosition().lng();
+      setEndPt(lat, long);
+      console.log("End Pt Marker: ", lat, long);
+    });
+  };
+  map.controls[maps.ControlPosition.RIGHT_TOP].push(endPtButton);
+
+  // Creating Historical Event Markers👇 =======================================
   const drawingManager = new maps.drawing.DrawingManager({
     drawingMode: maps.drawing.OverlayType.MARKER,
     drawingControl: true,
@@ -280,13 +294,55 @@ const MapWrapper = styled.div`
   }
 
   div.gmnoprint[role="menubar"] {
-    top: 70px !important;
+    top: 134px !important;
   }
 
+  //START POINT OVERLAY CONTROL
+  button[class="starting-pt-control-button"] {
+    top: 75px !important;
+    right: 10px !important;
+    height: 27px;
+    width: 27px;
+    border: 0;
+    background-color: #c4c4c4 !important;
+    cursor: pointer;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    padding-top: 3px;
+  }
+  button[class="starting-pt-control-button"] span {
+    display: none !important;
+  }
+  button[class="starting-pt-control-button"]::before {
+    content: url("/static/route-list/control-start-pt.png");
+  }
+
+  //END POINT OVERLAY CONTROL
+  button[class="ending-pt-control-button"] {
+    top: 107px !important;
+    right: 10px !important;
+    height: 27px;
+    width: 27px;
+    border: 0;
+    background-color: #c4c4c4 !important;
+    cursor: pointer;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    padding-top: 3px;
+  }
+  button[class="ending-pt-control-button"] span {
+    display: none !important;
+  }
+  button[class="ending-pt-control-button"]::before {
+    content: url("/static/route-list/control-end-pt.png");
+  }
+
+  //HISTORICAL EVENT POINT OVERLAY CONTROL
   button[title="Stop drawing"] {
     display: none !important;
   }
-
   button[title="Add a marker"] {
     height: 27px;
     width: 27px;
