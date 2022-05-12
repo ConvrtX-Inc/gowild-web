@@ -726,7 +726,11 @@ const RouteEditForm: FC<any> = (props) => {
                             <StyledAccordion
                               square={true}
                               key={historical.id}
-                              expanded={expanded === `panel${index}`}
+                              expanded={
+                                eventIsEditing && expanded === `panel${index}`
+                                  ? true
+                                  : expanded === `panel${index}`
+                              }
                               onChange={handleAccordionChange(`panel${index}`)}
                             >
                               <AccordionSummary
@@ -765,7 +769,8 @@ const RouteEditForm: FC<any> = (props) => {
                                   <AccordionTitle sx={{ mb: "15px" }}>
                                     Title
                                   </AccordionTitle>
-                                  {eventIsEditing ? (
+                                  {eventIsEditing &&
+                                  expanded === `panel${index}` ? (
                                     <Box>
                                       <AccordionValue
                                         sx={{
