@@ -78,7 +78,7 @@ const TreasureChestList: FC = () => {
     }
   }, [mounted]);
 
-  const handleRowAction = async (actionType: RowAction, id) => {
+  const handleRowAction = async (actionType: RowAction, id, cb: () => void) => {
     try {
       switch (actionType) {
         case RowAction.VIEW: {
@@ -91,8 +91,11 @@ const TreasureChestList: FC = () => {
         }
         case RowAction.DELETE: {
           setActionLoading(true);
-          await onDelete(id);
+          const res = await onDelete(id);
+          cb();
           setActionLoading(false);
+          if (res.status === 200)
+            setTreasureChests((tc) => tc.filter((t) => t.id !== id));
           break;
         }
       }
@@ -116,9 +119,7 @@ const TreasureChestList: FC = () => {
         Authorization: `bearer ${token}`,
       },
     };
-    const res = await axios.delete(`${API_URL}/${id}`, CONFIG);
-    if (res.status === 200)
-      setTreasureChests((tc) => tc.filter((t) => t.id !== id));
+    return await axios.delete(`${API_URL}/${id}`, CONFIG);
   };
 
   useEffect(() => {
@@ -185,9 +186,8 @@ const TreasureChestList: FC = () => {
         : rowOptions.map((option) => (
             <OptionsBox
               key={`${tc.id}-${option.label}`}
-              onClick={async () => {
-                await handleRowAction(option.label, tc.id);
-                if (option.label === RowAction.DELETE) handleClose();
+              onClick={async (e) => {
+                await handleRowAction(option.label, tc.id, handleClose);
               }}
             >
               {option.icon}

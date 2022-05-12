@@ -17,6 +17,12 @@ import format from "date-fns/format";
 import EditSponsorList, { SponsorState } from "./EditSponsorList";
 import { StyledElements } from "./TreasureChestCreateForm";
 
+const location = {
+  address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
+  lat: 54.06291864840513,
+  lng: -128.6423159788208,
+};
+
 const TreasureChestSchema = Yup.object().shape({
   title: Yup.string().required("Please enter a title."),
   description: Yup.string().required("Please enter a description."),
@@ -220,8 +226,9 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({
                       setFieldValue("tLocationLat", lat.toFixed(4));
                       setFieldValue("tLocationLong", long.toFixed(4));
                     }}
-                    lat={Number(editTreasure.location_lat)}
-                    lng={Number(editTreasure.location_long)}
+                    lat={Number(values.tLocationLat)}
+                    lng={Number(values.tLocationLong)}
+                    defaultLocation={location}
                   />
                 ) : (
                   <Box
