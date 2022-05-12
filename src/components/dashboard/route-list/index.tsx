@@ -5,3 +5,4 @@ export { default as RouteViewForm } from "./RouteViewForm";
 
 export { default as Map } from "./Map";
 export { default as RouteViewMap } from "./RouteViewMap";
+export { default as RouteEditMap } from "./RouteEditMap";

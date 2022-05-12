@@ -7,9 +7,17 @@ import styled from "styled-components";
 // import ReactDOM from "react-dom";
 // import $ from "jquery";
 
-const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
+const apiIsLoaded = (
+  map,
+  maps,
+  setStartPt,
+  setEndPt,
+  setHistoricalEventPt,
+  loadRouteMarkers,
+  loadEventMarkers
+) => {
   // Load One Normal Route Markers 👇
-  console.log("Google Map Api is Loaded: ", loadEventMarkers);
+  console.log("(EDIT) Google Map Api is Loaded: ", loadEventMarkers);
   const startingPt = new maps.Marker({
     position: {
       lat: Number(loadRouteMarkers.start_point_lat),
@@ -46,7 +54,7 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
   var markers = [];
   const drawingManager = new maps.drawing.DrawingManager({
     drawingMode: maps.drawing.OverlayType.MARKER,
-    drawingControl: false,
+    drawingControl: true,
     drawingControlOptions: {
       position: maps.ControlPosition.RIGHT_TOP,
       drawingModes: ["marker"],
@@ -193,9 +201,15 @@ const createMapOptions = (maps: any) => {
   };
 };
 
-const RouteViewMap = (props) => {
-  const { loadRouteMarkers, loadEventMarkers } = props;
-  console.log("EVENT VIEW MAP PROPS: ", loadEventMarkers);
+const RouteEditMap = (props) => {
+  const {
+    setStartPt,
+    setEndPt,
+    setHistoricalEventPt,
+    loadRouteMarkers,
+    loadEventMarkers,
+  } = props;
+  console.log("EVENT EDIT MAP PROPS: ", loadEventMarkers);
 
   const startToEndDiffLong =
     Number(loadRouteMarkers.start_point_long) -
@@ -225,7 +239,15 @@ const RouteViewMap = (props) => {
         defaultZoom={15}
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={({ map, maps }) =>
-          apiIsLoaded(map, maps, loadRouteMarkers, loadEventMarkers)
+          apiIsLoaded(
+            map,
+            maps,
+            setStartPt,
+            setEndPt,
+            setHistoricalEventPt,
+            loadRouteMarkers,
+            loadEventMarkers
+          )
         }
         options={createMapOptions}
       ></GoogleMapReact>
@@ -233,7 +255,7 @@ const RouteViewMap = (props) => {
   );
 };
 
-export default RouteViewMap;
+export default RouteEditMap;
 
 const MapWrapper = styled.div`
   width: 100%;

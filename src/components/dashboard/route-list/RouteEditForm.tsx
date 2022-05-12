@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import Scrollbar from "../../Scrollbar";
-import Map from "./Map";
+import RouteEditMap from "./RouteEditMap";
 import FileDropzone from "../../FileDropzone";
 import FileDropzoneHistorical from "../../FileDropzoneHistorical";
 import StartingPtIcon from "../../../icons/LocationStartingPt";
@@ -45,8 +45,10 @@ const RouteEditForm: FC<any> = (props) => {
   console.log("EDIT FORM PROPS: ", singleRoute);
   const dispatch = useDispatch();
   const [
+    ,
     // b64files
-    , setB64files] = useState<any>("");
+    setB64files,
+  ] = useState<any>("");
   const [files, setFiles] = useState<any[]>([]);
   const [isImgLoaded, setIsImgLoaded] = useState(true);
   const [
@@ -58,6 +60,9 @@ const RouteEditForm: FC<any> = (props) => {
   const [eventId, setEventId] = useState<string>("");
   const [gmapMarkerUid, setGmapMarkerUid] = useState("");
   const [historicalEvents, setHistoricalEvents] = useState([]);
+  const [loadGmapAfterGetEvents, setLoadGmapAfterGetEvents] = useState(false);
+  const [eventIsEditing, setEventIsEditing] = useState(false);
+  const [expanded, setExpanded] = useState<string | false>(false);
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef<HTMLSpanElement>();
   const scrollToEvents = useRef<HTMLSpanElement>();
@@ -162,9 +167,11 @@ const RouteEditForm: FC<any> = (props) => {
         Authorization: `Bearer ${accessToken}`,
       },
     };
+    setLoadGmapAfterGetEvents(false);
     const apiResponse = await axios.get(URL, CONFIG);
     console.log("GET Historical Events", apiResponse.data.data);
     setHistoricalEvents(apiResponse.data.data);
+    setLoadGmapAfterGetEvents(true);
   }, [singleRoute.id]);
 
   useEffect(() => {
@@ -278,6 +285,20 @@ const RouteEditForm: FC<any> = (props) => {
       );
     });
   };
+
+  const handleEditSelectedEvent = () => {
+    setEventIsEditing(true);
+  };
+
+  const handleSaveSelectedEvent = () => {
+    setEventIsEditing(false);
+  };
+
+  const handleAccordionChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
   return (
     <Formik
       enableReinitialize={true}
@@ -572,26 +593,48 @@ const RouteEditForm: FC<any> = (props) => {
                         height: "982px",
                         width: "100%",
                         borderRadius: "20px",
+                        position: "relative",
+                        border: "1px solid rgba(0,0,0,0.1)",
                       }}
                     >
-                      <Map
-                        setStartPt={(lat, long) => {
-                          console.log("StartPt props", lat, long);
-                          setFieldValue("startPtLat", lat.toFixed(4));
-                          setFieldValue("startPtLong", long.toFixed(4));
-                        }}
-                        setEndPt={(lat, long) => {
-                          console.log("EndPt props", lat, long);
-                          setFieldValue("endPtLat", lat.toFixed(4));
-                          setFieldValue("endPtLong", long.toFixed(4));
-                        }}
-                        setHistoricalEventPt={(lat, long, closureUid) => {
-                          console.log("Event Pt props", lat, long);
-                          setFieldValue("histoLat", lat.toFixed(4));
-                          setFieldValue("histoLong", long.toFixed(4));
-                          setGmapMarkerUid(closureUid);
-                        }}
-                      />
+                      {Object.keys(singleRoute).length !== 0 &&
+                      loadGmapAfterGetEvents ? (
+                        <RouteEditMap
+                          loadRouteMarkers={singleRoute}
+                          loadEventMarkers={historicalEvents}
+                          setStartPt={(lat, long) => {
+                            console.log("StartPt props", lat, long);
+                            setFieldValue("startPtLat", lat.toFixed(4));
+                            setFieldValue("startPtLong", long.toFixed(4));
+                          }}
+                          setEndPt={(lat, long) => {
+                            console.log("EndPt props", lat, long);
+                            setFieldValue("endPtLat", lat.toFixed(4));
+                            setFieldValue("endPtLong", long.toFixed(4));
+                          }}
+                          setHistoricalEventPt={(lat, long, closureUid) => {
+                            console.log("Event Pt props", lat, long);
+                            setFieldValue("histoLat", lat.toFixed(4));
+                            setFieldValue("histoLong", long.toFixed(4));
+                            setGmapMarkerUid(closureUid);
+                          }}
+                        />
+                      ) : (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "491px",
+                            left: "330px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <StyledCircularProgress />
+                          Loading Map
+                        </Box>
+                      )}
                     </Box>
                   </RowBox>
                   {/* -----------------------------HISTORICAL------------------------------------- */}
@@ -680,12 +723,17 @@ const RouteEditForm: FC<any> = (props) => {
                         <span ref={scrollToEvents} />
                         {historicalEvents.length > 0 &&
                           historicalEvents.map((historical, index) => (
-                            <StyledAccordion square={true} key={historical.id}>
+                            <StyledAccordion
+                              square={true}
+                              key={historical.id}
+                              expanded={expanded === `panel${index}`}
+                              onChange={handleAccordionChange(`panel${index}`)}
+                            >
                               <AccordionSummary
                                 sx={{ pl: "36px" }}
                                 expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1a-content"
-                                id="panel1a-header"
+                                aria-controls={`panel${index}a-content`}
+                                id={`panel${index}a-header`}
                               >
                                 <Box
                                   sx={{
@@ -711,14 +759,51 @@ const RouteEditForm: FC<any> = (props) => {
                                     display: "flex",
                                     flexDirection: "column",
                                     mr: "81px",
+                                    position: "relative",
                                   }}
                                 >
                                   <AccordionTitle sx={{ mb: "15px" }}>
                                     Title
                                   </AccordionTitle>
-                                  <AccordionValue>
-                                    {historical.event_title}
-                                  </AccordionValue>
+                                  {eventIsEditing ? (
+                                    <Box>
+                                      <AccordionValue
+                                        sx={{
+                                          visibility: "none",
+                                          // color: "transparent !important",
+                                        }}
+                                      >
+                                        {historical.event_title}
+                                      </AccordionValue>
+                                      <EditEventTextField
+                                        sx={{
+                                          width: `${
+                                            historical.event_title.length + 1
+                                          }ch`,
+                                        }}
+                                        error={Boolean(
+                                          touched.histoTitle &&
+                                            errors.histoTitle
+                                        )}
+                                        fullWidth
+                                        helperText={
+                                          touched.histoTitle &&
+                                          errors.histoTitle
+                                        }
+                                        placeholder="Historical Item"
+                                        name="histoTitle"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={historical.event_title}
+                                        autoComplete="off"
+                                        variant="outlined"
+                                      />
+                                    </Box>
+                                  ) : (
+                                    <AccordionValue>
+                                      {historical.event_title}
+                                    </AccordionValue>
+                                  )}
                                 </Box>
                                 <Box
                                   sx={{
@@ -738,9 +823,21 @@ const RouteEditForm: FC<any> = (props) => {
                               <AccordionDetails sx={{ pl: "36px", pt: "16px" }}>
                                 {historical.description}
                               </AccordionDetails>
-                              <SaveChangesButton variant="contained">
-                                Edit
-                              </SaveChangesButton>
+                              {eventIsEditing ? (
+                                <SaveChangesButton
+                                  variant="contained"
+                                  onClick={handleSaveSelectedEvent}
+                                >
+                                  Save Changes
+                                </SaveChangesButton>
+                              ) : (
+                                <SaveChangesButton
+                                  variant="contained"
+                                  onClick={handleEditSelectedEvent}
+                                >
+                                  Edit
+                                </SaveChangesButton>
+                              )}
                             </StyledAccordion>
                           ))}
                         {/* ----------------------------------------------------------------------- ACCORDION END */}
@@ -938,6 +1035,12 @@ const FieldLabel = styled(Box)`
     font-size: 16px;
     line-height: 18px;
     color: #22333b;
+  }
+`;
+
+const StyledCircularProgress = styled(CircularProgress)`
+  && {
+    color: #2995a8;
   }
 `;
 
@@ -1144,6 +1247,59 @@ const AccordionValue = styled(Box)`
     font-size: 20px;
     line-height: 18px;
     color: #22333b;
+  }
+`;
+
+const EditEventTextField = styled(TextField)`
+  && {
+    /* margin-top: 6px;
+    margin-bottom: 20px; */
+    position: absolute;
+    top: 67px;
+    left: -15px;
+    background: #ffffff;
+    font-family: "Gilroy Semibold";
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 18px;
+    color: #22333b;
+    border-radius: 10px;
+    && .Mui-focused fieldset {
+      height: 35px;
+      border-width: 2px !important;
+      border-color: #2995a8;
+      border-style: solid;
+    }
+    && input {
+      height: 35px;
+      padding: 10px 14px 7px 13px;
+      font-family: "Gilroy Semibold";
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 18px;
+      color: #22333b;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      border: 2px solid #f3f3f3;
+      border-radius: 10px;
+      &::placeholder {
+        font-family: "Gilroy Semibold";
+        font-weight: 400;
+        font-size: 20px;
+        line-height: 18px;
+        color: #22333b;
+        display: flex;
+        align-items: center;
+      }
+    }
+    && fieldset {
+      height: 35px;
+      /* margin-top: 2px; */
+      border-style: hidden;
+      border-radius: 10px;
+      /* border: 0; */
+    }
   }
 `;
 
