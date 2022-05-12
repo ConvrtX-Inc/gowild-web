@@ -733,7 +733,7 @@ const RouteEditForm: FC<any> = (props) => {
                               }
                               onChange={handleAccordionChange(`panel${index}`)}
                             >
-                              <AccordionSummary
+                              <StyledAccordionSummary
                                 sx={{ pl: "36px" }}
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls={`panel${index}a-content`}
@@ -746,7 +746,9 @@ const RouteEditForm: FC<any> = (props) => {
                                     mr: "81px",
                                   }}
                                 >
-                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                  <AccordionTitle
+                                    sx={{ mb: `${expanded ? 44 : 15}px` }}
+                                  >
                                     Historical Event
                                   </AccordionTitle>
                                   <Box sx={{ display: "flex" }}>
@@ -766,17 +768,20 @@ const RouteEditForm: FC<any> = (props) => {
                                     position: "relative",
                                   }}
                                 >
-                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                  <AccordionTitle
+                                    sx={{ mb: `${expanded ? 44 : 15}px` }}
+                                  >
                                     Title
                                   </AccordionTitle>
                                   {eventIsEditing &&
                                   expanded === `panel${index}` ? (
                                     <Box>
                                       <AccordionValue
-                                        sx={{
-                                          visibility: "none",
-                                          // color: "transparent !important",
-                                        }}
+                                        sx={
+                                          {
+                                            // color: "transparent !important",
+                                          }
+                                        }
                                       >
                                         {historical.event_title}
                                       </AccordionValue>
@@ -795,11 +800,12 @@ const RouteEditForm: FC<any> = (props) => {
                                           touched.histoTitle &&
                                           errors.histoTitle
                                         }
-                                        placeholder="Historical Item"
+                                        placeholder={historical.event_title}
                                         name="histoTitle"
-                                        onBlur={handleBlur}
+                                        onClick={(e) => e.stopPropagation()}
+                                        // onBlur={handleBlur}
                                         onChange={handleChange}
-                                        value={historical.event_title}
+                                        value={values.histoTitle}
                                         autoComplete="off"
                                         variant="outlined"
                                       />
@@ -817,14 +823,16 @@ const RouteEditForm: FC<any> = (props) => {
                                     mr: "81px",
                                   }}
                                 >
-                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                  <AccordionTitle
+                                    sx={{ mb: `${expanded ? 44 : 15}px` }}
+                                  >
                                     Sub Title
                                   </AccordionTitle>
                                   <AccordionValue>
                                     {historical.event_subtitle}
                                   </AccordionValue>
                                 </Box>
-                              </AccordionSummary>
+                              </StyledAccordionSummary>
                               <AccordionDetails sx={{ pl: "36px", pt: "16px" }}>
                                 {historical.description}
                               </AccordionDetails>
@@ -1236,6 +1244,14 @@ const StyledAccordion = styled(Accordion)`
   }
 `;
 
+const StyledAccordionSummary = styled(AccordionSummary)`
+  && {
+    &.Mui-focusVisible {
+      background-color: transparent;
+    }
+  }
+`;
+
 const AccordionTitle = styled(Box)`
   && {
     font-family: "Gilroy Regular";
@@ -1260,7 +1276,7 @@ const EditEventTextField = styled(TextField)`
     /* margin-top: 6px;
     margin-bottom: 20px; */
     position: absolute;
-    top: 67px;
+    top: 50px;
     left: -15px;
     background: #ffffff;
     font-family: "Gilroy Semibold";
@@ -1296,11 +1312,12 @@ const EditEventTextField = styled(TextField)`
         color: #22333b;
         display: flex;
         align-items: center;
+        opacity: 1;
       }
     }
     && fieldset {
       height: 35px;
-      /* margin-top: 2px; */
+      margin-top: 3px;
       border-style: hidden;
       border-radius: 10px;
       /* border: 0; */

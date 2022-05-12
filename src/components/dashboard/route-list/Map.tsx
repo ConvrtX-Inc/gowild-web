@@ -7,38 +7,95 @@ import styled from "styled-components";
 import ReactDOM from "react-dom";
 import $ from "jquery";
 
-// let startingPt;
-// let finishingPt;
-
+let startingPt;
+let finishingPt;
+let initialLocation;
+let initialLat = [];
+let initialLong = [];
+console.log(initialLat);
 const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
-  // Creating One Normal Route Markers 👇
-  const startingPt = new maps.Marker({
-    position: { lat: 54.06547503649533, lng: -128.64594232540892 },
-    icon: "/static/route-list/start-pt.png",
-    map,
-    draggable: true,
-  });
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      initialLocation = new maps.LatLng(
+        position.coords.latitude,
+        position.coords.longitude
+      );
+      map.setCenter(initialLocation);
+      initialLat.push(initialLocation.lat());
+      initialLong.push(initialLocation.lng());
+      console.log("Geo Initial Lat", initialLat[0]);
 
-  const finishingPt = new maps.Marker({
-    position: { lat: 54.06459354113623, lng: -128.64242326718139 },
-    icon: "/static/route-list/finish-pt.png",
-    map,
-    draggable: true,
-  });
+      startingPt = new maps.Marker({
+        position: { lat: initialLat[0] + 0.002, lng: initialLong[0] },
+        icon: "/static/route-list/start-pt.png",
+        map,
+        draggable: true,
+      });
 
-  startingPt.addListener("dragend", () => {
-    const lat = startingPt.getPosition().lat();
-    const long = startingPt.getPosition().lng();
-    setStartPt(lat, long);
-    console.log("Normal Route Start Pt: ", lat, long);
-  });
+      startingPt.addListener("dragend", () => {
+        const lat = startingPt.getPosition().lat();
+        const long = startingPt.getPosition().lng();
+        setStartPt(lat, long);
+        console.log("Normal Route Start Pt: ", lat, long);
+      });
 
-  finishingPt.addListener("dragend", () => {
-    const lat = finishingPt.getPosition().lat();
-    const long = finishingPt.getPosition().lng();
-    setEndPt(lat, long);
-    console.log("Normal Route End Pt: ", lat, long);
+      finishingPt = new maps.Marker({
+        position: { lat: initialLat[0], lng: initialLong[0] },
+        icon: "/static/route-list/finish-pt.png",
+        map,
+        draggable: true,
+      });
+
+      finishingPt.addListener("dragend", () => {
+        const lat = finishingPt.getPosition().lat();
+        const long = finishingPt.getPosition().lng();
+        setEndPt(lat, long);
+        console.log("Normal Route End Pt: ", lat, long);
+      });
+    });
+  }
+  const toggleButton = document.createElement("button");
+
+  var startPtMarker;
+  toggleButton.textContent = "Start Pt";
+  toggleButton.classList.add("custom-map-control-button");
+  toggleButton.addEventListener("click", () => {
+    maps.event.addListener(map, "click", (event) => {
+      console.log("Triggered Start PT listener");
+      placeMarker(event.latLng);
+      maps.event.clearListeners(map);
+    });
   });
+  function placeMarker(location) {
+    startPtMarker = new maps.Marker({
+      position: location,
+      icon: "/static/route-list/start-pt.png",
+      map: map,
+      draggable: true,
+    });
+  }
+
+  map.controls[maps.ControlPosition.TOP_LEFT].push(toggleButton);
+  // // Creating START POINT Marker👇
+  // const drawingManager2 = new maps.drawing.DrawingManager({
+  //   drawingMode: maps.drawing.OverlayType.MARKER,
+  //   drawingControl: true,
+  //   drawingControlOptions: {
+  //     position: maps.ControlPosition.LEFT_TOP,
+  //     drawingModes: ["marker"],
+  //   },
+  //   markerOptions: {
+  //     icon: "/static/route-list/start-pt.png",
+  //     draggable: true,
+  //   },
+  // });
+  // drawingManager2.setMap(map);
+  // drawingManager2.setDrawingMode(null);
+  // maps.event.addListener(
+  //   drawingManager2,
+  //   "overlaycomplete",
+  //   function (marker) {}
+  // );
 
   // Creating Historical Event Markers👇
   const drawingManager = new maps.drawing.DrawingManager({
