@@ -28,6 +28,7 @@ const RouteViewForm: FC<any> = (props) => {
   const { singleRoute } = props;
   console.log("VIEW FORM PROPS: ", singleRoute);
   const [historicalEvents, setHistoricalEvents] = useState([]);
+  const [loadGmapAfterGetEvents, setLoadGmapAfterGetEvents] = useState(false);
   const scrollToEvents = useRef<HTMLSpanElement>();
   const scrollRef = useRef<HTMLSpanElement>();
 
@@ -50,9 +51,11 @@ const RouteViewForm: FC<any> = (props) => {
         Authorization: `Bearer ${accessToken}`,
       },
     };
+    setLoadGmapAfterGetEvents(false);
     const apiResponse = await axios.get(URL, CONFIG);
     console.log("GET Historical Events", apiResponse.data.data);
     setHistoricalEvents(apiResponse.data.data);
+    setLoadGmapAfterGetEvents(true);
   }, [singleRoute.id]);
 
   useEffect(() => {
@@ -290,7 +293,7 @@ const RouteViewForm: FC<any> = (props) => {
                       }}
                     >
                       {Object.keys(singleRoute).length !== 0 &&
-                      Object.keys(historicalEvents).length !== 0 ? (
+                      loadGmapAfterGetEvents ? (
                         <RouteViewMap
                           loadRouteMarkers={singleRoute}
                           loadEventMarkers={historicalEvents}
@@ -397,6 +400,8 @@ const RouteViewForm: FC<any> = (props) => {
                               </AccordionDetails>
                             </StyledAccordion>
                           ))
+                        ) : loadGmapAfterGetEvents ? (
+                          "No Historical Events"
                         ) : (
                           <StyledCircularProgress
                             sx={{ opacity: "0.4" }}

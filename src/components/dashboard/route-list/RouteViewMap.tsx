@@ -10,7 +10,6 @@ import styled from "styled-components";
 const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
   // Load One Normal Route Markers 👇
   console.log("API IS LOADED: ", loadEventMarkers);
-  console.log(loadEventMarkers[0].event_lat);
   const startingPt = new maps.Marker({
     position: {
       lat: Number(loadRouteMarkers.start_point_lat),
@@ -68,8 +67,13 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
           lng: Number(loadEventMarkers[i].event_long),
         },
         map,
+        id: loadEventMarkers[i].closure_uid,
       })
     );
+
+    maps.event.addListener(markers[i], "click", function () {
+      console.log("CLICKED", loadEventMarkers[i].closure_uid);
+    });
   }
   maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
     console.log("OVERLAY COMPLETE DRAWING MGR ");
