@@ -25,39 +25,7 @@ const apiIsLoaded = (
   loadRouteMarkers,
   loadEventMarkers
 ) => {
-  // Load One Normal Route Markers 👇
   console.log("(EDIT) Google Map Api is Loaded: ", loadEventMarkers);
-  // const startingPt = new maps.Marker({
-  //   position: {
-  //     lat: Number(loadRouteMarkers.start_point_lat),
-  //     lng: Number(loadRouteMarkers.start_point_long),
-  //   },
-  //   icon: "/static/route-list/start-pt.png",
-  //   map,
-  //   draggable: false,
-  // });
-
-  // const finishingPt = new maps.Marker({
-  //   position: {
-  //     lat: Number(loadRouteMarkers.stop_point_lat),
-  //     lng: Number(loadRouteMarkers.stop_point_long),
-  //   },
-  //   icon: "/static/route-list/finish-pt.png",
-  //   map,
-  //   draggable: false,
-  // });
-
-  // startingPt.addListener("click", () => {
-  //   const lat = startingPt.getPosition().lat();
-  //   const long = startingPt.getPosition().lng();
-  //   console.log("Normal Route Start Pt: ", lat, long);
-  // });
-
-  // finishingPt.addListener("click", () => {
-  //   const lat = finishingPt.getPosition().lat();
-  //   const long = finishingPt.getPosition().lng();
-  //   console.log("Normal Route End Pt: ", lat, long);
-  // });
 
   // Creating START POINT Marker👇 ==================================================
   // Overlay Button Control
@@ -85,10 +53,13 @@ const apiIsLoaded = (
   });
 
   startPtButton.addEventListener("click", () => {
-    console.log("Start Pt Button Clicked:", startPtMarker);
+    console.log(
+      "(Edit Mode) Start Pt Button Control Activated:",
+      startPtMarker
+    );
     if (startPtMarker === undefined) {
       maps.event.addListener(map, "click", (event) => {
-        console.log("Triggered Start PT listener", event.latLng);
+        console.log("(Edit Mode) Place Start Pt Marker", event.latLng);
         placeStartPtMarker(event.latLng);
 
         setStartPt(event.latLng.lat(), event.latLng.lng());
@@ -111,7 +82,7 @@ const apiIsLoaded = (
 
     //Delete Marker
     maps.event.addListener(startPtMarker, "click", () => {
-      console.log("START PT MARKER IS CLICKED");
+      console.log("(Edit Mode) Start Pt marker clicked and deleted.");
       startPtMarker.setMap(null);
       startPtMarker = undefined;
       setStartPt("", "");
@@ -125,7 +96,9 @@ const apiIsLoaded = (
   };
   map.controls[maps.ControlPosition.RIGHT_TOP].push(startPtButton);
   maps.event.addListenerOnce(map, "tilesloaded", () => {
-    console.log("TILESLOADED START PT FUNCTION TRIGGERED");
+    console.log(
+      "(Edit Mode) Google Map Tiles loaded and placed START pt marker."
+    );
     placeStartPtMarker({
       lat: Number(loadRouteMarkers.start_point_lat),
       lng: Number(loadRouteMarkers.start_point_long),
@@ -158,7 +131,7 @@ const apiIsLoaded = (
   });
 
   endPtButton.addEventListener("click", () => {
-    console.log("End Pt Button Clicked:", endPtMarker);
+    console.log("(Edit Mode) End Pt Button Control Activated:", endPtMarker);
     if (endPtMarker === undefined) {
       maps.event.addListener(map, "click", (event) => {
         console.log("Triggered End PT listener", event.latLng);
@@ -182,7 +155,7 @@ const apiIsLoaded = (
     endPtMarker.setMap(map);
     //Delete Marker
     maps.event.addListener(endPtMarker, "click", () => {
-      console.log("END PT MARKER IS CLICKED");
+      console.log("(Edit Mode) End pt marker clicked and deleted.");
       endPtMarker.setMap(null);
       endPtMarker = undefined;
       setEndPt("", "");
@@ -197,7 +170,9 @@ const apiIsLoaded = (
   };
   map.controls[maps.ControlPosition.RIGHT_TOP].push(endPtButton);
   maps.event.addListenerOnce(map, "tilesloaded", () => {
-    console.log("TILESLOADED END PT FUNCTION TRIGGERED");
+    console.log(
+      "(Edit Mode) Google Map Tiles loaded and placed END pt marker."
+    );
     placeEndPtMarker({
       lat: Number(loadRouteMarkers.stop_point_lat),
       lng: Number(loadRouteMarkers.stop_point_long),
@@ -231,13 +206,12 @@ const apiIsLoaded = (
         id: loadEventMarkers[i].closure_uid,
       })
     );
-
+    //IN PROGRESS LINKING MARKERS
     maps.event.addListener(markers[i], "click", function () {
       console.log("CLICKED", loadEventMarkers[i].closure_uid);
     });
   }
   maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
-    console.log("OVERLAY COMPLETE DRAWING MGR ");
     for (var i = 0; i < markers.length; i++) {
       // show current marker/s
       markers[i].setMap(map);
@@ -246,7 +220,6 @@ const apiIsLoaded = (
 
   maps.event.addListener(drawingManager, "markercomplete", function (marker) {
     //Disable Add Marker Controls after first drop on the map
-    console.log("THE DRAWING MANAGER: ", drawingManager);
     drawingManager.setDrawingMode(null);
 
     //Extracting Google Map Marker UID object key
@@ -261,8 +234,8 @@ const apiIsLoaded = (
     const firstLat = marker.position.lat();
     const firstLong = marker.position.lng();
     setHistoricalEventPt(firstLat, firstLong, combinedString);
-    console.log(`ADDED MARKER: `, extractedPropName);
-    console.log("UID to be stored: ", combinedString);
+    console.log("(Edit Mode) ADDED MARKER: ", extractedPropName);
+    console.log("(Edit Mode) UID to be stored: ", combinedString);
 
     //Change Event Marker Position
     maps.event.addListener(marker, "dragend", function () {
@@ -369,7 +342,6 @@ const RouteEditMap: React.FC<any> = (props) => {
   const [mapAPI, setMap] = useState(null);
   const [mapsAPI, setMaps] = useState(null);
   const startPtMarker = useRef(null);
-  console.log("EVENT EDIT MAP PROPS: ", loadEventMarkers);
 
   const startToEndDiffLong =
     Number(loadRouteMarkers.start_point_long) -

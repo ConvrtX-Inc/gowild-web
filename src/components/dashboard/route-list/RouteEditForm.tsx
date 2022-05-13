@@ -819,7 +819,7 @@ const RouteEditForm: FC<any> = (props) => {
                                         placeholder={historical.event_title}
                                         name="histoTitle"
                                         onClick={(e) => e.stopPropagation()}
-                                        // onBlur={handleBlur}
+                                        onBlur={handleBlur}
                                         onChange={handleChange}
                                         value={values.histoTitle}
                                         autoComplete="off"
