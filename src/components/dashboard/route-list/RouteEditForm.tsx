@@ -66,7 +66,20 @@ const RouteEditForm: FC<any> = (props) => {
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef<HTMLSpanElement>();
   const scrollToEvents = useRef<HTMLSpanElement>();
+  const [routeHistoFields, setRouteHistoFields] = useState([]);
 
+  const handleChangeHistoFields = (e, i) => {
+    const { value, name } = e.target;
+
+    const newState = [...routeHistoFields];
+    newState[i] = {
+      ...newState[i],
+      [name]: value,
+    };
+
+    console.log("HISTO FIELDS", newState);
+    setHistoricalEvents(newState);
+  };
   // useEffect(() => {
   //   if (scrollRef?.current) {
   //     scrollRef.current.scrollIntoView();
@@ -171,6 +184,7 @@ const RouteEditForm: FC<any> = (props) => {
     const apiResponse = await axios.get(URL, CONFIG);
     console.log("GET Historical Events", apiResponse.data.data);
     setHistoricalEvents(apiResponse.data.data);
+    setRouteHistoFields(apiResponse.data.data);
     setLoadGmapAfterGetEvents(true);
   }, [singleRoute.id]);
 
@@ -800,12 +814,16 @@ const RouteEditForm: FC<any> = (props) => {
                                         }
                                       >
                                         {historical.event_title}
+                                        {console.log(
+                                          historical.event_title.length
+                                        )}
                                       </AccordionValue>
                                       <EditEventTextField
                                         sx={{
-                                          width: `${
-                                            historical.event_title.length + 1
-                                          }ch`,
+                                          // width: `${
+                                          //   historical.event_title.length + 1
+                                          // }ch`,
+                                          width: "100px",
                                         }}
                                         error={Boolean(
                                           touched.histoTitle &&
@@ -816,12 +834,14 @@ const RouteEditForm: FC<any> = (props) => {
                                           touched.histoTitle &&
                                           errors.histoTitle
                                         }
-                                        placeholder={historical.event_title}
-                                        name="histoTitle"
+                                        // placeholder={historical.event_title}
+                                        name={`event_title`}
                                         onClick={(e) => e.stopPropagation()}
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
-                                        value={values.histoTitle}
+                                        onChange={(e) =>
+                                          handleChangeHistoFields(e, index)
+                                        }
+                                        value={historical.event_title}
                                         autoComplete="off"
                                         variant="outlined"
                                       />
@@ -1291,8 +1311,9 @@ const EditEventTextField = styled(TextField)`
   && {
     /* margin-top: 6px;
     margin-bottom: 20px; */
+    height: 40px;
     position: absolute;
-    top: 50px;
+    top: 51px;
     left: -15px;
     background: #ffffff;
     font-family: "Gilroy Semibold";
@@ -1302,14 +1323,15 @@ const EditEventTextField = styled(TextField)`
     color: #22333b;
     border-radius: 10px;
     && .Mui-focused fieldset {
-      height: 35px;
+      height: 40px !important;
       border-width: 2px !important;
       border-color: #2995a8;
       border-style: solid;
+      border-radius: 10px;
     }
     && input {
-      height: 35px;
-      padding: 10px 14px 7px 13px;
+      height: 40px !important;
+      padding: 10px 14px 10px 13px;
       font-family: "Gilroy Semibold";
       font-weight: 400;
       font-size: 20px;
@@ -1332,7 +1354,7 @@ const EditEventTextField = styled(TextField)`
       }
     }
     && fieldset {
-      height: 35px;
+      height: 40px !important;
       margin-top: 3px;
       border-style: hidden;
       border-radius: 10px;
