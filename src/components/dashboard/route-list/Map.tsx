@@ -163,6 +163,7 @@ let apiIsLoaded = (
       console.log("END PT MARKER IS CLICKED");
       endPtMarker.setMap(null);
       endPtMarker = undefined;
+      setEndPt("", "");
     });
 
     endPtMarker.addListener("dragend", () => {

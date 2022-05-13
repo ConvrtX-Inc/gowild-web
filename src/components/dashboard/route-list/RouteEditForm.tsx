@@ -317,14 +317,14 @@ const RouteEditForm: FC<any> = (props) => {
         submit: null,
       }}
       validationSchema={Yup.object().shape({
-        startPtLong: Yup.number().max(80).required("This field is required"),
-        startPtLat: Yup.number().max(80).required("This field is required"),
-        endPtLong: Yup.number().max(80).required("This field is required"),
-        endPtLat: Yup.number().max(80).required("This field is required"),
+        startPtLong: Yup.number().required("This field is required"),
+        startPtLat: Yup.number().required("This field is required"),
+        endPtLong: Yup.number().required("This field is required"),
+        endPtLat: Yup.number().required("This field is required"),
         raceTitle: Yup.string().max(80).required("This field is required"),
         description: Yup.string().max(255).required("This field is required"),
-        histoLong: Yup.number().max(80),
-        histoLat: Yup.number().max(80),
+        histoLong: Yup.number(),
+        histoLat: Yup.number(),
         histoTitle: Yup.string().max(80),
         histoSubTitle: Yup.string().max(80),
         histoDescription: Yup.string().max(80),
@@ -343,14 +343,14 @@ const RouteEditForm: FC<any> = (props) => {
           const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${singleRoute.id}`;
           const DATA = {
             user_id: userId,
-            route_name: values.raceTitle,
+            route_name: values.raceTitle.trim(),
             route_photo: "byte64image",
-            start_point_long: values.startPtLong,
-            start_point_lat: values.startPtLat,
-            stop_point_long: values.endPtLong,
-            stop_point_lat: values.endPtLat,
+            start_point_long: Number(values.startPtLong),
+            start_point_lat: Number(values.startPtLat),
+            stop_point_long: Number(values.endPtLong),
+            stop_point_lat: Number(values.endPtLat),
             img_url: firebaseImgUrl,
-            description: values.description,
+            description: values.description.trim(),
           };
           const CONFIG = {
             headers: {
@@ -602,18 +602,34 @@ const RouteEditForm: FC<any> = (props) => {
                         <RouteEditMap
                           loadRouteMarkers={singleRoute}
                           loadEventMarkers={historicalEvents}
+                          onChangeStartPtLat={Number(values.startPtLat)}
+                          onChangeStartPtLong={Number(values.startPtLong)}
+                          onChangeEndPtLat={Number(values.endPtLat)}
+                          onChangeEndPtLong={Number(values.endPtLong)}
                           setStartPt={(lat, long) => {
-                            console.log("StartPt props", lat, long);
+                            if (lat === "" && long === "") {
+                              setFieldValue("startPtLat", "");
+                              setFieldValue("startPtLong", "");
+                              return;
+                            }
                             setFieldValue("startPtLat", lat.toFixed(4));
                             setFieldValue("startPtLong", long.toFixed(4));
                           }}
                           setEndPt={(lat, long) => {
-                            console.log("EndPt props", lat, long);
+                            if (lat === "" && long === "") {
+                              setFieldValue("endPtLat", "");
+                              setFieldValue("endPtLong", "");
+                              return;
+                            }
                             setFieldValue("endPtLat", lat.toFixed(4));
                             setFieldValue("endPtLong", long.toFixed(4));
                           }}
                           setHistoricalEventPt={(lat, long, closureUid) => {
-                            console.log("Event Pt props", lat, long);
+                            if (lat === "" && long === "") {
+                              setFieldValue("histoLat", "");
+                              setFieldValue("histoLong", "");
+                              return;
+                            }
                             setFieldValue("histoLat", lat.toFixed(4));
                             setFieldValue("histoLong", long.toFixed(4));
                             setGmapMarkerUid(closureUid);

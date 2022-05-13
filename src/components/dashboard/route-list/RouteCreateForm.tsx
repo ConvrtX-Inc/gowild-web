@@ -315,14 +315,14 @@ const RouteCreateForm: FC = (props) => {
           const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route`;
           const DATA = {
             user_id: userId,
-            route_name: values.raceTitle,
+            route_name: values.raceTitle.trim(),
             route_photo: "byte64img",
             start_point_long: Number(values.startPtLong),
             start_point_lat: Number(values.startPtLat),
             stop_point_long: Number(values.endPtLong),
             stop_point_lat: Number(values.endPtLat),
             img_url: firebaseImgUrl,
-            description: values.description,
+            description: values.description.trim(),
           };
           const CONFIG = {
             headers: {
@@ -556,6 +556,11 @@ const RouteCreateForm: FC = (props) => {
                           setFieldValue("endPtLong", long.toFixed(4));
                         }}
                         setHistoricalEventPt={(lat, long, closureUid) => {
+                          if (lat === "" && long === "") {
+                            setFieldValue("histoLat", "");
+                            setFieldValue("histoLong", "");
+                            return;
+                          }
                           setFieldValue("histoLat", lat.toFixed(4));
                           setFieldValue("histoLong", long.toFixed(4));
                           setGmapMarkerUid(closureUid);
