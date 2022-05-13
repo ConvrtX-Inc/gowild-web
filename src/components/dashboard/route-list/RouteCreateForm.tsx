@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import type { FC } from "react";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
@@ -533,11 +533,23 @@ const RouteCreateForm: FC = (props) => {
                       }}
                     >
                       <Map
+                        onChangeStartPtLat={values.startPtLat}
+                        onChangeStartPtLong={values.startPtLong}
                         setStartPt={(lat, long) => {
+                          if (lat === "" && long === "") {
+                            setFieldValue("startPtLat", "");
+                            setFieldValue("startPtLong", "");
+                            return;
+                          }
                           setFieldValue("startPtLat", lat.toFixed(4));
                           setFieldValue("startPtLong", long.toFixed(4));
                         }}
                         setEndPt={(lat, long) => {
+                          if (lat === "" && long === "") {
+                            setFieldValue("endPtLat", "");
+                            setFieldValue("endPtLong", "");
+                            return;
+                          }
                           setFieldValue("endPtLat", lat.toFixed(4));
                           setFieldValue("endPtLong", long.toFixed(4));
                         }}

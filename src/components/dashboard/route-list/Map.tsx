@@ -1,14 +1,23 @@
 import "dotenv/config";
-import React from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { renderToString } from "react-dom/server";
 import GoogleMapReact from "google-map-react";
 import { Box, Button } from "@mui/material";
 import styled from "styled-components";
 import ReactDOM from "react-dom";
 import $ from "jquery";
+import { debounce } from "lodash";
 
 let initialLocation;
-const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
+let apiIsLoaded = (
+  map,
+  maps,
+  onChangeStartPtLat,
+  onChangeStartPtLong,
+  setStartPt,
+  setEndPt,
+  setHistoricalEventPt
+) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
       initialLocation = new maps.LatLng(
@@ -16,8 +25,11 @@ const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
         position.coords.longitude
       );
       map.setCenter(initialLocation);
+      console.log("Initial Location: ", initialLocation);
     });
   }
+
+  console.log("Inside apiIsLoaded: ", onChangeStartPtLat, onChangeStartPtLong);
 
   // Creating START POINT Marker👇 =======================================
   // Overlay Button Control
@@ -25,6 +37,27 @@ const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
   var startPtMarker;
   startPtButton.classList.add("starting-pt-control-button");
   startPtButton.setAttribute("type", "button");
+  // const newPosition = {
+  //   onChangeStartPtLat,
+  //   onChangeStartPtLong,
+  // };
+  const inputField = document.getElementsByName("startPtLat")[0];
+  inputField.addEventListener("change", () => {
+    console.log("TRIGGERED INPUT CHANGE");
+  });
+  console.log(inputField);
+  if (
+    Boolean(onChangeStartPtLat) &&
+    Boolean(onChangeStartPtLong) &&
+    startPtMarker !== undefined
+  ) {
+    console.log(
+      "CONDITIONAL RENDERED",
+      onChangeStartPtLat,
+      onChangeStartPtLong
+    );
+    startPtMarker.setPosition(onChangeStartPtLat, onChangeStartPtLong);
+  }
 
   startPtButton.addEventListener("click", () => {
     console.log("Start Pt Button Clicked:", startPtMarker);
@@ -32,6 +65,7 @@ const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
       maps.event.addListener(map, "click", (event) => {
         console.log("Triggered Start PT listener", event.latLng);
         placeStartPtMarker(event.latLng);
+
         setStartPt(event.latLng.lat(), event.latLng.lng());
         maps.event.clearListeners(map);
       });
@@ -49,18 +83,19 @@ const apiIsLoaded = (map, maps, setStartPt, setEndPt, setHistoricalEventPt) => {
       draggable: true,
     });
     startPtMarker.setMap(map);
+
     //Delete Marker
     maps.event.addListener(startPtMarker, "click", () => {
       console.log("START PT MARKER IS CLICKED");
       startPtMarker.setMap(null);
       startPtMarker = undefined;
+      setStartPt("", "");
     });
 
     startPtMarker.addListener("dragend", () => {
       let lat = startPtMarker.getPosition().lat();
       let long = startPtMarker.getPosition().lng();
       setStartPt(lat, long);
-      console.log("Start Pt Marker: ", lat, long);
     });
   };
   map.controls[maps.ControlPosition.RIGHT_TOP].push(startPtButton);
@@ -237,8 +272,44 @@ const createMapOptions = (maps: any) => {
   };
 };
 
-const Map = (props) => {
-  const { setStartPt, setEndPt, setHistoricalEventPt } = props;
+const Map: React.FC<any> = (props) => {
+  const {
+    onChangeStartPtLat,
+    onChangeStartPtLong,
+    setStartPt,
+    setEndPt,
+    setHistoricalEventPt,
+  } = props;
+  const [mapAPI, setMap] = useState(null);
+  const [mapsAPI, setMaps] = useState(null);
+  const startPtMarker = useRef(null);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const setUp = useCallback(
+    debounce((map, maps) => {
+      if (startPtMarker) {
+        // startPtMarker.current.setMap(null);
+        startPtMarker.current = apiIsLoaded(
+          map,
+          maps,
+          onChangeStartPtLat,
+          onChangeStartPtLong,
+          setStartPt,
+          setEndPt,
+          setHistoricalEventPt
+        );
+      }
+    }, 1000),
+    [onChangeStartPtLat, onChangeStartPtLong]
+  );
+
+  useEffect(() => {
+    if (mapAPI && mapsAPI) {
+      setUp(mapAPI, mapsAPI);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setUp]);
+
   const location = {
     address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
     lat: 54.06291864840513,
@@ -255,9 +326,19 @@ const Map = (props) => {
         defaultCenter={location}
         defaultZoom={16}
         yesIWantToUseGoogleMapApiInternals
-        onGoogleApiLoaded={({ map, maps }) =>
-          apiIsLoaded(map, maps, setStartPt, setEndPt, setHistoricalEventPt)
-        }
+        onGoogleApiLoaded={({ map, maps }) => {
+          startPtMarker.current = apiIsLoaded(
+            map,
+            maps,
+            onChangeStartPtLat,
+            onChangeStartPtLong,
+            setStartPt,
+            setEndPt,
+            setHistoricalEventPt
+          );
+          setMap(map);
+          setMaps(maps);
+        }}
         options={createMapOptions}
       ></GoogleMapReact>
     </MapWrapper>
