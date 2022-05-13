@@ -533,8 +533,10 @@ const RouteCreateForm: FC = (props) => {
                       }}
                     >
                       <Map
-                        onChangeStartPtLat={values.startPtLat}
-                        onChangeStartPtLong={values.startPtLong}
+                        onChangeStartPtLat={Number(values.startPtLat)}
+                        onChangeStartPtLong={Number(values.startPtLong)}
+                        onChangeEndPtLat={Number(values.endPtLat)}
+                        onChangeEndPtLong={Number(values.endPtLong)}
                         setStartPt={(lat, long) => {
                           if (lat === "" && long === "") {
                             setFieldValue("startPtLat", "");

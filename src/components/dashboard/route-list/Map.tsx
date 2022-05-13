@@ -9,11 +9,17 @@ import $ from "jquery";
 import { debounce } from "lodash";
 
 let initialLocation;
+let startLat;
+let startLong;
+let endLat;
+let endLong;
 let apiIsLoaded = (
   map,
   maps,
   onChangeStartPtLat,
   onChangeStartPtLong,
+  onChangeEndPtLat,
+  onChangeEndPtLong,
   setStartPt,
   setEndPt,
   setHistoricalEventPt
@@ -25,39 +31,43 @@ let apiIsLoaded = (
         position.coords.longitude
       );
       map.setCenter(initialLocation);
-      console.log("Initial Location: ", initialLocation);
     });
   }
+  console.log(
+    "INSIDE API IS LOADED END PT: ",
+    onChangeEndPtLat,
+    onChangeEndPtLong
+  );
+  //Set the variable into latest value
+  startLat = onChangeStartPtLat;
+  startLong = onChangeStartPtLong;
+  endLat = onChangeEndPtLat;
+  endLong = onChangeEndPtLong;
 
-  console.log("Inside apiIsLoaded: ", onChangeStartPtLat, onChangeStartPtLong);
-
-  // Creating START POINT Marker👇 =======================================
+  // Creating START POINT Marker👇 ==================================================
   // Overlay Button Control
   const startPtButton = document.createElement("button");
   var startPtMarker;
   startPtButton.classList.add("starting-pt-control-button");
   startPtButton.setAttribute("type", "button");
-  // const newPosition = {
-  //   onChangeStartPtLat,
-  //   onChangeStartPtLong,
-  // };
-  const inputField = document.getElementsByName("startPtLat")[0];
-  inputField.addEventListener("change", () => {
-    console.log("TRIGGERED INPUT CHANGE");
+
+  //Connect START PT LAT/LONG FIELD
+  const inputStartLatField = document.getElementsByName("startPtLat")[0];
+  const inputStartLongField = document.getElementsByName("startPtLong")[0];
+
+  const handleChangeStartPtMarkerPosition = () => {
+    if (startPtMarker !== undefined) {
+      startPtMarker.setPosition(new maps.LatLng(startLat, startLong));
+      map.panTo(new maps.LatLng(startLat, startLong));
+    }
+  };
+  // Receive Current Position not the Previous Position
+  inputStartLatField.addEventListener("input", () => {
+    setTimeout(handleChangeStartPtMarkerPosition, 500);
   });
-  console.log(inputField);
-  if (
-    Boolean(onChangeStartPtLat) &&
-    Boolean(onChangeStartPtLong) &&
-    startPtMarker !== undefined
-  ) {
-    console.log(
-      "CONDITIONAL RENDERED",
-      onChangeStartPtLat,
-      onChangeStartPtLong
-    );
-    startPtMarker.setPosition(onChangeStartPtLat, onChangeStartPtLong);
-  }
+  inputStartLongField.addEventListener("input", () => {
+    setTimeout(handleChangeStartPtMarkerPosition, 500);
+  });
 
   startPtButton.addEventListener("click", () => {
     console.log("Start Pt Button Clicked:", startPtMarker);
@@ -100,12 +110,30 @@ let apiIsLoaded = (
   };
   map.controls[maps.ControlPosition.RIGHT_TOP].push(startPtButton);
 
-  // Creating END POINT Marker👇 =======================================
+  // Creating END POINT Marker👇 ==================================================
   // Overlay Button Control
   const endPtButton = document.createElement("button");
   var endPtMarker;
   endPtButton.classList.add("ending-pt-control-button");
   endPtButton.setAttribute("type", "button");
+
+  //Connect START PT LAT/LONG FIELD
+  const inputEndLatField = document.getElementsByName("endPtLat")[0];
+  const inputEndLongField = document.getElementsByName("endPtLong")[0];
+
+  const handleChangeEndPtMarkerPosition = () => {
+    if (endPtMarker !== undefined) {
+      endPtMarker.setPosition(new maps.LatLng(endLat, endLong));
+      map.panTo(new maps.LatLng(endLat, endLong));
+    }
+  };
+  // Receive Current Position not the Previous Position
+  inputEndLatField.addEventListener("input", () => {
+    setTimeout(handleChangeEndPtMarkerPosition, 500);
+  });
+  inputEndLongField.addEventListener("input", () => {
+    setTimeout(handleChangeEndPtMarkerPosition, 500);
+  });
 
   endPtButton.addEventListener("click", () => {
     console.log("End Pt Button Clicked:", endPtMarker);
@@ -146,7 +174,7 @@ let apiIsLoaded = (
   };
   map.controls[maps.ControlPosition.RIGHT_TOP].push(endPtButton);
 
-  // Creating Historical Event Markers👇 =======================================
+  // Creating Historical Event Markers👇 ==================================================
   const drawingManager = new maps.drawing.DrawingManager({
     drawingMode: maps.drawing.OverlayType.MARKER,
     drawingControl: true,
@@ -276,6 +304,8 @@ const Map: React.FC<any> = (props) => {
   const {
     onChangeStartPtLat,
     onChangeStartPtLong,
+    onChangeEndPtLat,
+    onChangeEndPtLong,
     setStartPt,
     setEndPt,
     setHistoricalEventPt,
@@ -294,21 +324,27 @@ const Map: React.FC<any> = (props) => {
           maps,
           onChangeStartPtLat,
           onChangeStartPtLong,
+          onChangeEndPtLat,
+          onChangeEndPtLong,
           setStartPt,
           setEndPt,
           setHistoricalEventPt
         );
       }
-    }, 1000),
-    [onChangeStartPtLat, onChangeStartPtLong]
+    }, 500),
+    [
+      onChangeStartPtLat,
+      onChangeStartPtLong,
+      onChangeEndPtLat,
+      onChangeEndPtLong,
+    ]
   );
 
   useEffect(() => {
     if (mapAPI && mapsAPI) {
       setUp(mapAPI, mapsAPI);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setUp]);
+  }, [mapAPI, mapsAPI, setUp]);
 
   const location = {
     address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
@@ -332,6 +368,8 @@ const Map: React.FC<any> = (props) => {
             maps,
             onChangeStartPtLat,
             onChangeStartPtLong,
+            onChangeEndPtLat,
+            onChangeEndPtLong,
             setStartPt,
             setEndPt,
             setHistoricalEventPt
