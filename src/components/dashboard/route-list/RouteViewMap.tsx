@@ -25,7 +25,7 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
       lat: Number(loadRouteMarkers.stop_point_lat),
       lng: Number(loadRouteMarkers.stop_point_long),
     },
-    icon: "/static/route-list/finish-pt.png",
+    icon: "/static/route-list/end-pt.png",
     map,
     draggable: false,
   });
