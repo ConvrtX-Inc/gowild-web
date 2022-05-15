@@ -10,21 +10,26 @@ import styled from "styled-components";
 const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
   // Load One Normal Route Markers 👇
   console.log("Google Map Api is Loaded: ", loadEventMarkers);
+
+  var startPt = new maps.LatLng(
+    Number(loadRouteMarkers.start_point_lat),
+    Number(loadRouteMarkers.start_point_long)
+  );
+
+  var endPt = new maps.LatLng(
+    Number(loadRouteMarkers.stop_point_lat),
+    Number(loadRouteMarkers.stop_point_long)
+  );
+
   const startingPt = new maps.Marker({
-    position: {
-      lat: Number(loadRouteMarkers.start_point_lat),
-      lng: Number(loadRouteMarkers.start_point_long),
-    },
+    position: startPt,
     icon: "/static/route-list/start-pt.png",
     map,
     draggable: false,
   });
 
   const finishingPt = new maps.Marker({
-    position: {
-      lat: Number(loadRouteMarkers.stop_point_lat),
-      lng: Number(loadRouteMarkers.stop_point_long),
-    },
+    position: endPt,
     icon: "/static/route-list/end-pt.png",
     map,
     draggable: false,
@@ -40,6 +45,20 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
     const lat = finishingPt.getPosition().lat();
     const long = finishingPt.getPosition().lng();
     console.log("Normal Route End Pt: ", lat, long);
+  });
+
+  maps.event.addListenerOnce(map, "tilesloaded", () => {
+    console.log("Google Map Tiles loaded and FIT BOUNDS.");
+    var bounds = new maps.LatLngBounds();
+    bounds.extend(startPt);
+    bounds.extend(endPt);
+    for (let i = 0; i < loadEventMarkers.length; i++) {
+      bounds.extend({
+        lat: Number(loadEventMarkers[i].event_lat),
+        lng: Number(loadEventMarkers[i].event_long),
+      });
+    }
+    map.fitBounds(bounds);
   });
 
   // Creating Historical Event Markers👇

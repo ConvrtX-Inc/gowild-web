@@ -26,7 +26,15 @@ const apiIsLoaded = (
   loadEventMarkers
 ) => {
   console.log("(EDIT) Google Map Api is Loaded: ", loadEventMarkers);
+  var startPt = new maps.LatLng(
+    Number(loadRouteMarkers.start_point_lat),
+    Number(loadRouteMarkers.start_point_long)
+  );
 
+  var endPt = new maps.LatLng(
+    Number(loadRouteMarkers.stop_point_lat),
+    Number(loadRouteMarkers.stop_point_long)
+  );
   // Creating START POINT Marker👇 ==================================================
   // Overlay Button Control
   const startPtButton = document.createElement("button");
@@ -99,10 +107,7 @@ const apiIsLoaded = (
     console.log(
       "(Edit Mode) Google Map Tiles loaded and placed START pt marker."
     );
-    placeStartPtMarker({
-      lat: Number(loadRouteMarkers.start_point_lat),
-      lng: Number(loadRouteMarkers.start_point_long),
-    });
+    placeStartPtMarker(startPt);
   });
 
   // Creating END POINT Marker👇 ==================================================
@@ -173,10 +178,22 @@ const apiIsLoaded = (
     console.log(
       "(Edit Mode) Google Map Tiles loaded and placed END pt marker."
     );
-    placeEndPtMarker({
-      lat: Number(loadRouteMarkers.stop_point_lat),
-      lng: Number(loadRouteMarkers.stop_point_long),
-    });
+    placeEndPtMarker(endPt);
+  });
+
+  // AUTOMATICALLY FIT GOOGLE MAP BASE ON AVAILABLE MARKERS Start/End/Event
+  maps.event.addListenerOnce(map, "tilesloaded", () => {
+    console.log("Google Map Tiles loaded and FIT BOUNDS.");
+    var bounds = new maps.LatLngBounds();
+    bounds.extend(startPt);
+    bounds.extend(endPt);
+    for (let i = 0; i < loadEventMarkers.length; i++) {
+      bounds.extend({
+        lat: Number(loadEventMarkers[i].event_lat),
+        lng: Number(loadEventMarkers[i].event_long),
+      });
+    }
+    map.fitBounds(bounds);
   });
   // Creating Historical Event Markers👇 ==================================================
   var markers = [];
