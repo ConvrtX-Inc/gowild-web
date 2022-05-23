@@ -1,5 +1,5 @@
-import "dotenv/config";
 import React from "react";
+import type { FC } from "react";
 // import { renderToString } from "react-dom/server";
 import GoogleMapReact from "google-map-react";
 // import { Box, Button } from "@mui/material";
@@ -9,49 +9,52 @@ import styled from "styled-components";
 
 const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
   // Load One Normal Route Markers 👇
-  console.log("Google Map Api is Loaded: ", loadEventMarkers);
+  console.log("(View-Map) Google Map Api is Loaded: ", loadEventMarkers);
 
-  var startPt = new maps.LatLng(
+  const startPtLatLng = new maps.LatLng(
     Number(loadRouteMarkers.start_point_lat),
     Number(loadRouteMarkers.start_point_long)
   );
 
-  var endPt = new maps.LatLng(
+  const endPtLatLng = new maps.LatLng(
     Number(loadRouteMarkers.stop_point_lat),
     Number(loadRouteMarkers.stop_point_long)
   );
 
-  const startingPt = new maps.Marker({
-    position: startPt,
+  const startingPtMarker = new maps.Marker({
+    position: startPtLatLng,
     icon: "/static/route-list/start-pt.png",
     map,
     draggable: false,
   });
 
-  const finishingPt = new maps.Marker({
-    position: endPt,
+  const finishingPtMarker = new maps.Marker({
+    position: endPtLatLng,
     icon: "/static/route-list/end-pt.png",
     map,
     draggable: false,
   });
 
-  startingPt.addListener("click", () => {
-    const lat = startingPt.getPosition().lat();
-    const long = startingPt.getPosition().lng();
-    console.log("Normal Route Start Pt: ", lat, long);
+  startingPtMarker.addListener("click", () => {
+    const lat = startingPtMarker.getPosition().lat();
+    const long = startingPtMarker.getPosition().lng();
+    console.log(`(View-Map) Starting Pt Lat: ${lat}, Long: ${long}`);
   });
 
-  finishingPt.addListener("click", () => {
-    const lat = finishingPt.getPosition().lat();
-    const long = finishingPt.getPosition().lng();
-    console.log("Normal Route End Pt: ", lat, long);
+  finishingPtMarker.addListener("click", () => {
+    const lat = finishingPtMarker.getPosition().lat();
+    const long = finishingPtMarker.getPosition().lng();
+    console.log(`(View-Map) Finishing Pt Lat: ${lat}, Long: ${long}`);
   });
 
+  // Automatically zoom and fit google map viewport based on available markers
   maps.event.addListenerOnce(map, "tilesloaded", () => {
-    console.log("Google Map Tiles loaded and FIT BOUNDS.");
-    var bounds = new maps.LatLngBounds();
-    bounds.extend(startPt);
-    bounds.extend(endPt);
+    console.log(
+      "(View-Map) Google Map Tiles loaded [Automatically zoom and fit based on all markers]"
+    );
+    const bounds = new maps.LatLngBounds();
+    bounds.extend(startPtLatLng);
+    bounds.extend(endPtLatLng);
     for (let i = 0; i < loadEventMarkers.length; i++) {
       bounds.extend({
         lat: Number(loadEventMarkers[i].event_lat),
@@ -62,7 +65,7 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
   });
 
   // Creating Historical Event Markers👇
-  var markers = [];
+  const markers = [];
   const drawingManager = new maps.drawing.DrawingManager({
     drawingMode: maps.drawing.OverlayType.MARKER,
     drawingControl: false,
@@ -70,13 +73,14 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
       position: maps.ControlPosition.RIGHT_TOP,
       drawingModes: ["marker"],
     },
-    // markerOptions: {
-    //   icon: "/static/route-list/event-pt.png",
-    //   draggable: true,
-    // },
   });
   drawingManager.setMap(map);
   drawingManager.setDrawingMode(null);
+
+  console.log("(View-Map) Placing Event Markers....  ");
+  if (loadEventMarkers.length === 0) {
+    console.log("(View-Map) No Events found!");
+  }
   for (let i = 0; i < loadEventMarkers.length; i++) {
     markers.push(
       new maps.Marker({
@@ -89,18 +93,20 @@ const apiIsLoaded = (map, maps, loadRouteMarkers, loadEventMarkers) => {
         id: loadEventMarkers[i].closure_uid,
       })
     );
+    console.log(
+      "(View-Map) Total Num of Event Markers: ",
+      loadEventMarkers.length
+    );
+    if (i === loadEventMarkers.length - 1) {
+      console.log("(View-Map) Placing Event Markers Complete  ");
+    }
 
     maps.event.addListener(markers[i], "click", function () {
-      console.log("CLICKED", loadEventMarkers[i].closure_uid);
+      console.log(
+        `(View-Map) Event Marker ${loadEventMarkers[i].closure_uid} clicked`
+      );
     });
   }
-  maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
-    console.log("OVERLAY COMPLETE DRAWING MGR ");
-    for (var i = 0; i < markers.length; i++) {
-      // show current marker/s
-      markers[i].setMap(map);
-    }
-  });
 
   // maps.event.addListener(drawingManager, "markercomplete", function (marker) {
   //   //Disable Add Marker Controls after first drop on the map
@@ -212,9 +218,10 @@ const createMapOptions = (maps: any) => {
   };
 };
 
-const RouteViewMap = (props) => {
+const RouteViewMap: FC<any> = (props) => {
   const { loadRouteMarkers, loadEventMarkers } = props;
-  console.log("EVENT VIEW MAP PROPS: ", loadEventMarkers);
+  console.log("(View-Map) Load route markers props: ", loadRouteMarkers);
+  console.log("(View-Map) Load event markers props: ", loadEventMarkers);
 
   const startToEndDiffLong =
     Number(loadRouteMarkers.start_point_long) -
@@ -252,7 +259,7 @@ const RouteViewMap = (props) => {
   );
 };
 
-export default RouteViewMap;
+export default React.memo(RouteViewMap);
 
 const MapWrapper = styled.div`
   width: 100%;

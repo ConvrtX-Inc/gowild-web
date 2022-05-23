@@ -12,11 +12,11 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import { RouteViewForm } from "../../components/dashboard/route-list";
 import useMounted from "../../hooks/useMounted";
-import NotificationIcon from "../../icons/WorkspaceNotification";
 import useSettings from "../../hooks/useSettings";
 import gtm from "../../lib/gtm";
+import { RouteViewForm } from "../../components/dashboard/route-list";
+import NotificationIcon from "../../icons/WorkspaceNotification";
 import type { SingleRoute } from "../../types/route-lists";
 import { setRouteListIsLoading } from "../../slices/route-list";
 import { useDispatch } from "../../store";
@@ -43,7 +43,10 @@ const RouteListView: FC = () => {
         },
       };
       const apiResponse = await axios.get(URL, CONFIG);
-      console.log("Route Lists", apiResponse.data);
+      // console.log(
+      //   "(Route View Page): Get One Route API response: ",
+      //   apiResponse.data
+      // );
       dispatch(setRouteListIsLoading(false));
 
       if (mounted.current) {
@@ -106,6 +109,7 @@ const RouteListView: FC = () => {
 
 export default RouteListView;
 
+// STYLED COMPONENTS (CSS)
 const StyledContainer = styled(Container)`
   && {
     padding-left: "70px !important";

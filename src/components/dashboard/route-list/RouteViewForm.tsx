@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import type { FC } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -26,7 +26,6 @@ import ExpandMoreIcon from "../../../icons/ExpandAccordion";
 
 const RouteViewForm: FC<any> = (props) => {
   const { singleRoute } = props;
-  console.log("VIEW FORM PROPS: ", singleRoute);
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const [loadGmapAfterGetEvents, setLoadGmapAfterGetEvents] = useState(false);
   const scrollToEvents = useRef<HTMLSpanElement>();
@@ -43,7 +42,9 @@ const RouteViewForm: FC<any> = (props) => {
   };
 
   const getHistoricalEvents = useCallback(async () => {
-    console.log("Get Historical Events by ID loaded: ", singleRoute.id);
+    // console.log(
+    //   `(View-Form) Getting Historical Events of Route-ID#${singleRoute.id}...: `
+    // );
     const accessToken = sessionStorage.getItem("token");
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events?filter=route_id||$eq||${singleRoute.id}`;
     const CONFIG = {
@@ -53,7 +54,10 @@ const RouteViewForm: FC<any> = (props) => {
     };
     setLoadGmapAfterGetEvents(false);
     const apiResponse = await axios.get(URL, CONFIG);
-    console.log("GET Historical Events", apiResponse.data.data);
+    // console.log(
+    //   "(View-Form) Historical Events Api Response: ",
+    //   apiResponse.data.data
+    // );
     setHistoricalEvents(apiResponse.data.data);
     setLoadGmapAfterGetEvents(true);
   }, [singleRoute.id]);

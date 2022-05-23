@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import type { FC } from "react";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
@@ -825,19 +825,19 @@ const RouteEditForm: FC<any> = (props) => {
                                           // }ch`,
                                           width: "100px",
                                         }}
-                                        error={Boolean(
-                                          touched.histoTitle &&
-                                            errors.histoTitle
-                                        )}
+                                        // error={Boolean(
+                                        //   touched.histoTitle &&
+                                        //     errors.histoTitle
+                                        // )}
                                         fullWidth
-                                        helperText={
-                                          touched.histoTitle &&
-                                          errors.histoTitle
-                                        }
+                                        // helperText={
+                                        //   touched.histoTitle &&
+                                        //   errors.histoTitle
+                                        // }
                                         // placeholder={historical.event_title}
                                         name={`event_title`}
                                         onClick={(e) => e.stopPropagation()}
-                                        onBlur={handleBlur}
+                                        // onBlur={handleBlur}
                                         onChange={(e) =>
                                           handleChangeHistoFields(e, index)
                                         }

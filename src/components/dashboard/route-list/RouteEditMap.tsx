@@ -12,6 +12,7 @@ let startLat;
 let startLong;
 let endLat;
 let endLong;
+
 const apiIsLoaded = (
   map,
   maps,
@@ -25,20 +26,28 @@ const apiIsLoaded = (
   loadRouteMarkers,
   loadEventMarkers
 ) => {
-  console.log("(EDIT) Google Map Api is Loaded: ", loadEventMarkers);
-  var startPt = new maps.LatLng(
+  console.log("(Edit-Map) Google Map Api is Loaded: ", loadEventMarkers);
+  //Set the variable into latest value
+  startLat = onChangeStartPtLat;
+  startLong = onChangeStartPtLong;
+  endLat = onChangeEndPtLat;
+  endLong = onChangeEndPtLong;
+
+  var startPtLatLng = new maps.LatLng(
     Number(loadRouteMarkers.start_point_lat),
     Number(loadRouteMarkers.start_point_long)
   );
 
-  var endPt = new maps.LatLng(
+  var endPtLatLng = new maps.LatLng(
     Number(loadRouteMarkers.stop_point_lat),
     Number(loadRouteMarkers.stop_point_long)
   );
+
   // Creating START POINT Marker👇 ==================================================
   // Overlay Button Control
   const startPtButton = document.createElement("button");
   var startPtMarker;
+  console.log("START PT MARKER [before] tiles loaded", startPtMarker);
   startPtButton.classList.add("starting-pt-control-button");
   startPtButton.setAttribute("type", "button");
 
@@ -52,7 +61,7 @@ const apiIsLoaded = (
       map.panTo(new maps.LatLng(startLat, startLong));
     }
   };
-  // Receive Current Position not the Previous Position
+  // Change the position of Marker on every input in the text field
   inputStartLatField.addEventListener("input", () => {
     setTimeout(handleChangeStartPtMarkerPosition, 500);
   });
@@ -61,15 +70,11 @@ const apiIsLoaded = (
   });
 
   startPtButton.addEventListener("click", () => {
-    console.log(
-      "(Edit Mode) Start Pt Button Control Activated:",
-      startPtMarker
-    );
+    console.log("(Edit-Map) Start Pt Button Control Activated:", startPtMarker);
     if (startPtMarker === undefined) {
       maps.event.addListener(map, "click", (event) => {
-        console.log("(Edit Mode) Place Start Pt Marker", event.latLng);
+        console.log("(Edit-Map) Place Start Pt Marker", event.latLng);
         placeStartPtMarker(event.latLng);
-
         setStartPt(event.latLng.lat(), event.latLng.lng());
         maps.event.clearListeners(map);
       });
@@ -90,7 +95,7 @@ const apiIsLoaded = (
 
     //Delete Marker
     maps.event.addListener(startPtMarker, "click", () => {
-      console.log("(Edit Mode) Start Pt marker clicked and deleted.");
+      console.log("(Edit-Map) Start Pt marker clicked and deleted.");
       startPtMarker.setMap(null);
       startPtMarker = undefined;
       setStartPt("", "");
@@ -102,101 +107,102 @@ const apiIsLoaded = (
       setStartPt(lat, long);
     });
   };
+
   map.controls[maps.ControlPosition.RIGHT_TOP].push(startPtButton);
+
   maps.event.addListenerOnce(map, "tilesloaded", () => {
     console.log(
-      "(Edit Mode) Google Map Tiles loaded and placed START pt marker."
+      "(Edit-Map) Google Map Tiles loaded and placed START pt marker."
     );
-    placeStartPtMarker(startPt);
+    placeStartPtMarker(startPtLatLng);
   });
 
-  // Creating END POINT Marker👇 ==================================================
-  // Overlay Button Control
-  const endPtButton = document.createElement("button");
-  var endPtMarker;
-  endPtButton.classList.add("ending-pt-control-button");
-  endPtButton.setAttribute("type", "button");
+  // // Creating END POINT Marker👇 ==================================================
+  // // Overlay Button Control
+  // const endPtButton = document.createElement("button");
+  // var endPtMarker;
+  // endPtButton.classList.add("ending-pt-control-button");
+  // endPtButton.setAttribute("type", "button");
 
-  //Connect START PT LAT/LONG FIELD
-  const inputEndLatField = document.getElementsByName("endPtLat")[0];
-  const inputEndLongField = document.getElementsByName("endPtLong")[0];
+  // //Connect START PT LAT/LONG FIELD
+  // const inputEndLatField = document.getElementsByName("endPtLat")[0];
+  // const inputEndLongField = document.getElementsByName("endPtLong")[0];
 
-  const handleChangeEndPtMarkerPosition = () => {
-    if (endPtMarker !== undefined) {
-      endPtMarker.setPosition(new maps.LatLng(endLat, endLong));
-      map.panTo(new maps.LatLng(endLat, endLong));
-    }
-  };
-  // Receive Current Position not the Previous Position
-  inputEndLatField.addEventListener("input", () => {
-    setTimeout(handleChangeEndPtMarkerPosition, 500);
-  });
-  inputEndLongField.addEventListener("input", () => {
-    setTimeout(handleChangeEndPtMarkerPosition, 500);
-  });
+  // const handleChangeEndPtMarkerPosition = () => {
+  //   if (endPtMarker !== undefined) {
+  //     endPtMarker.setPosition(new maps.LatLng(endLat, endLong));
+  //     map.panTo(new maps.LatLng(endLat, endLong));
+  //   }
+  // };
+  // // Receive Current Position not the Previous Position
+  // inputEndLatField.addEventListener("input", () => {
+  //   setTimeout(handleChangeEndPtMarkerPosition, 500);
+  // });
+  // inputEndLongField.addEventListener("input", () => {
+  //   setTimeout(handleChangeEndPtMarkerPosition, 500);
+  // });
 
-  endPtButton.addEventListener("click", () => {
-    console.log("(Edit Mode) End Pt Button Control Activated:", endPtMarker);
-    if (endPtMarker === undefined) {
-      maps.event.addListener(map, "click", (event) => {
-        console.log("Triggered End PT listener", event.latLng);
-        placeEndPtMarker(event.latLng);
-        setEndPt(event.latLng.lat(), event.latLng.lng());
-        maps.event.clearListeners(map);
-      });
-    } else {
-      return;
-    }
-  });
+  // endPtButton.addEventListener("click", () => {
+  //   console.log("(Edit-Map) End Pt Button Control Activated:", endPtMarker);
+  //   if (endPtMarker === undefined) {
+  //     maps.event.addListener(map, "click", (event) => {
+  //       console.log("(Edit-Map) Triggered End PT listener", event.latLng);
+  //       placeEndPtMarker(event.latLng);
+  //       setEndPt(event.latLng.lat(), event.latLng.lng());
+  //       maps.event.clearListeners(map);
+  //     });
+  //   } else {
+  //     return;
+  //   }
+  // });
 
-  //Function to Add End PT Marker
-  const placeEndPtMarker = (location) => {
-    endPtMarker = new maps.Marker({
-      position: location,
-      icon: "/static/route-list/end-pt.png",
-      map: map,
-      draggable: true,
-    });
-    endPtMarker.setMap(map);
-    //Delete Marker
-    maps.event.addListener(endPtMarker, "click", () => {
-      console.log("(Edit Mode) End pt marker clicked and deleted.");
-      endPtMarker.setMap(null);
-      endPtMarker = undefined;
-      setEndPt("", "");
-    });
+  // //Function to Add End PT Marker
+  // const placeEndPtMarker = (location) => {
+  //   endPtMarker = new maps.Marker({
+  //     position: location,
+  //     icon: "/static/route-list/end-pt.png",
+  //     map: map,
+  //     draggable: true,
+  //   });
+  //   endPtMarker.setMap(map);
+  //   //Delete Marker
+  //   maps.event.addListener(endPtMarker, "click", () => {
+  //     console.log("(Edit-Map) End pt marker clicked and deleted.");
+  //     endPtMarker.setMap(null);
+  //     endPtMarker = undefined;
+  //     setEndPt("", "");
+  //   });
 
-    endPtMarker.addListener("dragend", () => {
-      let lat = endPtMarker.getPosition().lat();
-      let long = endPtMarker.getPosition().lng();
-      setEndPt(lat, long);
-      console.log("End Pt Marker: ", lat, long);
-    });
-  };
-  map.controls[maps.ControlPosition.RIGHT_TOP].push(endPtButton);
-  maps.event.addListenerOnce(map, "tilesloaded", () => {
-    console.log(
-      "(Edit Mode) Google Map Tiles loaded and placed END pt marker."
-    );
-    placeEndPtMarker(endPt);
-  });
+  //   endPtMarker.addListener("dragend", () => {
+  //     let lat = endPtMarker.getPosition().lat();
+  //     let long = endPtMarker.getPosition().lng();
+  //     setEndPt(lat, long);
+  //     console.log("(Edit-Map) End Pt Marker: ", lat, long);
+  //   });
+  // };
+  // map.controls[maps.ControlPosition.RIGHT_TOP].push(endPtButton);
+  // maps.event.addListenerOnce(map, "tilesloaded", () => {
+  //   console.log("(Edit-Map) Google Map Tiles loaded and placed END pt marker.");
+  //   placeEndPtMarker(endPtLatLng);
+  // });
 
-  // AUTOMATICALLY FIT GOOGLE MAP BASE ON AVAILABLE MARKERS Start/End/Event
-  maps.event.addListenerOnce(map, "tilesloaded", () => {
-    console.log("Google Map Tiles loaded and FIT BOUNDS.");
-    var bounds = new maps.LatLngBounds();
-    bounds.extend(startPt);
-    bounds.extend(endPt);
-    for (let i = 0; i < loadEventMarkers.length; i++) {
-      bounds.extend({
-        lat: Number(loadEventMarkers[i].event_lat),
-        lng: Number(loadEventMarkers[i].event_long),
-      });
-    }
-    map.fitBounds(bounds);
-  });
+  // // Automatically zoom and fit google map viewport based on available markers
+  // maps.event.addListenerOnce(map, "tilesloaded", () => {
+  //   console.log("(Edit-Map) Google Map Tiles loaded and FIT BOUNDS.");
+  //   const bounds = new maps.LatLngBounds();
+  //   bounds.extend(startPtLatLng);
+  //   bounds.extend(endPtLatLng);
+  //   for (let i = 0; i < loadEventMarkers.length; i++) {
+  //     bounds.extend({
+  //       lat: Number(loadEventMarkers[i].event_lat),
+  //       lng: Number(loadEventMarkers[i].event_long),
+  //     });
+  //   }
+  //   map.fitBounds(bounds);
+  // });
+
   // Creating Historical Event Markers👇 ==================================================
-  var markers = [];
+  const markers = [];
   const drawingManager = new maps.drawing.DrawingManager({
     drawingMode: maps.drawing.OverlayType.MARKER,
     drawingControl: true,
@@ -225,10 +231,14 @@ const apiIsLoaded = (
     );
     //IN PROGRESS LINKING MARKERS
     maps.event.addListener(markers[i], "click", function () {
-      console.log("CLICKED", loadEventMarkers[i].closure_uid);
+      console.log(
+        "(Edit-Map) Clicked Event marker: ",
+        loadEventMarkers[i].closure_uid
+      );
     });
   }
   maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
+    console.log("(Edit-Map) Triggered Overlay Complete Listener");
     for (var i = 0; i < markers.length; i++) {
       // show current marker/s
       markers[i].setMap(map);
@@ -259,7 +269,7 @@ const apiIsLoaded = (
       var lat = marker.getPosition().lat();
       var long = marker.getPosition().lng();
       console.log(
-        `Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
+        `(Edit-Map) Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
       );
       setHistoricalEventPt(lat, long, combinedString);
     });
@@ -270,7 +280,7 @@ const apiIsLoaded = (
       var lat = marker.getPosition().lat();
       var long = marker.getPosition().lng();
       console.log(
-        `Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
+        `(Edit-Map) Marker Selected: ${closureUidValue}, Lat: ${lat} Long: ${long}`
       );
 
       // const handleClick = () => {
@@ -358,7 +368,7 @@ const RouteEditMap: React.FC<any> = (props) => {
   } = props;
   const [mapAPI, setMap] = useState(null);
   const [mapsAPI, setMaps] = useState(null);
-  const startPtMarker = useRef(null);
+  const markers = useRef(null);
 
   const startToEndDiffLong =
     Number(loadRouteMarkers.start_point_long) -
@@ -380,9 +390,9 @@ const RouteEditMap: React.FC<any> = (props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const setUp = useCallback(
     debounce((map, maps) => {
-      if (startPtMarker) {
-        // startPtMarker.current.setMap(null);
-        startPtMarker.current = apiIsLoaded(
+      if (markers) {
+        // markers.current.setMap(null);
+        markers.current = apiIsLoaded(
           map,
           maps,
           onChangeStartPtLat,
@@ -406,10 +416,11 @@ const RouteEditMap: React.FC<any> = (props) => {
   );
 
   useEffect(() => {
+    console.log("Map and Maps API", mapAPI, mapsAPI);
     if (mapAPI && mapsAPI) {
       setUp(mapAPI, mapsAPI);
     }
-  }, [mapAPI, mapsAPI, setUp]);
+  }, [setUp]);
 
   return (
     <MapWrapper>
@@ -422,7 +433,7 @@ const RouteEditMap: React.FC<any> = (props) => {
         defaultZoom={15}
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={({ map, maps }) => {
-          startPtMarker.current = apiIsLoaded(
+          markers.current = apiIsLoaded(
             map,
             maps,
             onChangeStartPtLat,
@@ -444,7 +455,8 @@ const RouteEditMap: React.FC<any> = (props) => {
   );
 };
 
-export default RouteEditMap;
+// export default RouteEditMap;
+export default React.memo(RouteEditMap);
 
 const MapWrapper = styled.div`
   width: 100%;
