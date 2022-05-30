@@ -77,10 +77,10 @@ const DashboardContentWrapper: FC<DashboardContentWrapperProps> = ({
 export default DashboardContentWrapper;
 
 const StyledContainer = styled(Container)`
-  && {
+  /* && {
     padding-left: "70px !important";
     padding-right: "60px !important";
-  }
+  } */
 `;
 
 const ContentTitleTypography = styled(Typography)`

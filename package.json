@@ -71,6 +71,7 @@
     "i18next": "^19.8.7",
     "jquery": "^3.6.0",
     "lodash": "^4.17.20",
+    "material-ui-phone-number": "^3.0.0",
     "nprogress": "^0.2.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
