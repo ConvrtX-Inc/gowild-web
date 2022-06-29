@@ -17,6 +17,12 @@ import TMap from "./TreasureChestMap";
 import { CircularProgress } from "@mui/material";
 import { uploadImgToFirebase } from "src/utils/firebaseUtils";
 
+const location = {
+  address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
+  lat: 54.06291864840513,
+  lng: -128.6423159788208,
+};
+
 const TreasureChestSchema = Yup.object().shape({
   title: Yup.string().required("Please enter a title."),
   description: Yup.string().required("Please enter a description."),
@@ -45,8 +51,8 @@ type ChestFormObject = Yup.InferType<typeof TreasureChestSchema>;
 const initFormObject = {
   title: "",
   description: "",
-  tLocationLat: "",
-  tLocationLong: "",
+  tLocationLat: String(location.lat.toFixed(4)),
+  tLocationLong: String(location.lng.toFixed(4)),
   eventDate: "",
   eventTime: "",
   numParticipants: "",
@@ -180,6 +186,9 @@ const TreasureChestCreateForm: FC = (props) => {
                     setFieldValue("tLocationLat", lat.toFixed(4));
                     setFieldValue("tLocationLong", long.toFixed(4));
                   }}
+                  defaultLocation={location}
+                  lat={Number(values.tLocationLat)}
+                  lng={Number(values.tLocationLong)}
                 />
               </Box>
               <Box>

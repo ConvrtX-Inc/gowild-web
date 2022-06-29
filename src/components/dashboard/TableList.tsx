@@ -23,9 +23,10 @@ import { NormalRoute } from "../../types/route-lists";
 import Scrollbar from "../Scrollbar";
 import { TreasureChest } from "src/types/treasurechest";
 import { TableCellStyled } from "src/shared-styled-components/dashboard";
+import { EndUser } from "src/types/end-user";
 
-type TableItems = NormalRoute[] | TreasureChest[];
-type TableItem = NormalRoute | TreasureChest;
+type TableItems = NormalRoute[] | TreasureChest[] | EndUser[];
+type TableItem = NormalRoute | TreasureChest | EndUser;
 interface TableListProps {
   headers: string[];
   items: TableItems;
@@ -148,7 +149,7 @@ const TableList: FC<TableListProps> = (props) => {
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [page, setPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(6);
+  const [limit, setLimit] = useState<number>(10);
   const [
     query,
     // setQuery
@@ -344,7 +345,7 @@ const TableList: FC<TableListProps> = (props) => {
         onRowsPerPageChange={handleLimitChange}
         page={page}
         rowsPerPage={limit}
-        rowsPerPageOptions={[6, 10, 25]}
+        rowsPerPageOptions={[10, 25, 50]}
       />
       <Box sx={{ display: "flex", position: "relative" }}>
         <HiddenCheckBox

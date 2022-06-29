@@ -1,59 +1,89 @@
 import "dotenv/config";
-import { FC } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import GoogleMapReact from "google-map-react";
 import styled from "styled-components";
+import { debounce } from "lodash";
 
-const location = {
-  address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
-  lat: 54.06291864840513,
-  lng: -128.6423159788208,
-};
-
-let chestLocPoint;
-const apiIsLoaded = (map, maps, lat, lng, handleChestLoc) => {
-  chestLocPoint = new maps.Marker({
+const createMarker = (
+  map,
+  maps,
+  lat,
+  lng,
+  callback: (lat: number, lng: number) => void
+) => {
+  const marker = new maps.Marker({
     position: {
-      lat: lat,
-      lng: lng,
+      lat,
+      lng,
     },
     icon: "/static/treasure-chest/chest.svg",
     map,
     draggable: true,
   });
 
-  chestLocPoint.addListener("dragend", () => {
-    const lat = chestLocPoint.getPosition().lat();
-    const long = chestLocPoint.getPosition().lng();
-    handleChestLoc(lat, long);
+  marker.addListener("dragend", () => {
+    const lat = marker.getPosition().lat();
+    const long = marker.getPosition().lng();
+    callback(lat, long);
   });
+  return marker;
 };
 
 interface TreasureChestMapProps {
   handleChestLoc: (lat, long) => void;
   lat?: number;
   lng?: number;
+  defaultLocation: {
+    lat: number;
+    lng: number;
+    address: string;
+  };
 }
 
-const TMap: FC<TreasureChestMapProps> = ({ handleChestLoc, lat, lng }) => {
+const TMap: FC<TreasureChestMapProps> = ({
+  handleChestLoc,
+  lat,
+  lng,
+  defaultLocation,
+}) => {
+  const [mapAPI, setMap] = useState(null);
+  const [mapsAPI, setMaps] = useState(null);
+  const chestMarker = useRef(null);
+  const setUp = useCallback(
+    debounce((map, maps) => {
+      if (chestMarker) {
+        chestMarker.current.setMap(null);
+        chestMarker.current = createMarker(map, maps, lat, lng, handleChestLoc);
+      }
+    }, 1000),
+    [lat, lng]
+  );
+
+  useEffect(() => {
+    if (mapAPI && mapsAPI) setUp(mapAPI, mapsAPI);
+  }, [setUp]);
+
   return (
     <GoogleMapReactCore
       bootstrapURLKeys={{ key: `${process.env.REACT_APP_GOOGLE_KEY}` }}
-      defaultCenter={location}
+      defaultCenter={defaultLocation}
       center={{
-        lat: lat || location.lat,
-        lng: lng || location.lng,
+        lat: lat || defaultLocation.lat,
+        lng: lng || defaultLocation.lng,
       }}
       defaultZoom={16}
       yesIWantToUseGoogleMapApiInternals
-      onGoogleApiLoaded={({ map, maps }) =>
-        apiIsLoaded(
+      onGoogleApiLoaded={({ map, maps }) => {
+        chestMarker.current = createMarker(
           map,
           maps,
-          lat || location.lat,
-          lng || location.lng,
+          lat || defaultLocation.lat,
+          lng || defaultLocation.lng,
           handleChestLoc
-        )
-      }
+        );
+        setMap(map);
+        setMaps(maps);
+      }}
       options={{ scrollwheel: true }}
     ></GoogleMapReactCore>
   );
