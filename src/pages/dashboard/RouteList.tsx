@@ -37,7 +37,7 @@ const RouteList: FC = () => {
   const getRouteLists = useCallback(async () => {
     try {
       const token = sessionStorage.getItem("token");
-      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route`;
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route?sort=created_date%2CDESC`;
       const CONFIG = {
         headers: {
           Authorization: `bearer ${token}`,
@@ -47,6 +47,7 @@ const RouteList: FC = () => {
       const apiResponse = await axios.get(URL, CONFIG);
       // console.log("Route Lists", apiResponse.data);
       if (mounted.current) {
+        //console.log(apiResponse.data);
         setRouteLists(apiResponse.data);
         dispatch(setRouteListIsLoading(false));
       }

@@ -53,7 +53,7 @@ interface actionOption {
 const sortOptions: SortOption[] = [
   {
     label: "View",
-    value: "updated_date|asc",
+    value: "updated_date|desc",
     icon: <ViewIcon fontSize="large" />,
   },
   {
