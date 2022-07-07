@@ -59,10 +59,6 @@ const EditTreasureChest = Loadable(
   lazy(() => import("./pages/dashboard/TreasureChestEdit"))
 );
 
-const EndUserList = Loadable(
-  lazy(() => import("./pages/dashboard/EndUserList"))
-)
-
 // const Chat = Loadable(lazy(() => import("./pages/dashboard/Chat")));
 
 // Error pages
@@ -179,15 +175,6 @@ const routes: PartialRouteObject[] = [
           },
         ],
       },
-      {
-        path: "/users-list",
-        children: [
-          {
-            path: "/",
-            element: <EndUserList/>
-          }
-        ]
-      }
       // {
       //   path: "chat",
       //   children: [

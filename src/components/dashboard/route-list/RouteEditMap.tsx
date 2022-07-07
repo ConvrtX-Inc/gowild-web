@@ -119,10 +119,10 @@ const apiIsLoaded = (
 
   // // Creating END POINT Marker👇 ==================================================
   // // Overlay Button Control
-  // const endPtButton = document.createElement("button");
-  // var endPtMarker;
-  // endPtButton.classList.add("ending-pt-control-button");
-  // endPtButton.setAttribute("type", "button");
+   const endPtButton = document.createElement("button");
+   var endPtMarker;
+   endPtButton.classList.add("ending-pt-control-button");
+   endPtButton.setAttribute("type", "button");
 
   // //Connect START PT LAT/LONG FIELD
   // const inputEndLatField = document.getElementsByName("endPtLat")[0];
@@ -142,49 +142,49 @@ const apiIsLoaded = (
   //   setTimeout(handleChangeEndPtMarkerPosition, 500);
   // });
 
-  // endPtButton.addEventListener("click", () => {
-  //   console.log("(Edit-Map) End Pt Button Control Activated:", endPtMarker);
-  //   if (endPtMarker === undefined) {
-  //     maps.event.addListener(map, "click", (event) => {
-  //       console.log("(Edit-Map) Triggered End PT listener", event.latLng);
-  //       placeEndPtMarker(event.latLng);
-  //       setEndPt(event.latLng.lat(), event.latLng.lng());
-  //       maps.event.clearListeners(map);
-  //     });
-  //   } else {
-  //     return;
-  //   }
-  // });
+   endPtButton.addEventListener("click", () => {
+     console.log("(Edit-Map) End Pt Button Control Activated:", endPtMarker);
+     if (endPtMarker === undefined) {
+       maps.event.addListener(map, "click", (event) => {
+         console.log("(Edit-Map) Triggered End PT listener", event.latLng);
+         placeEndPtMarker(event.latLng);
+         setEndPt(event.latLng.lat(), event.latLng.lng());
+         maps.event.clearListeners(map);
+       });
+     } else {
+       return;
+     }
+   });
 
   // //Function to Add End PT Marker
-  // const placeEndPtMarker = (location) => {
-  //   endPtMarker = new maps.Marker({
-  //     position: location,
-  //     icon: "/static/route-list/end-pt.png",
-  //     map: map,
-  //     draggable: true,
-  //   });
-  //   endPtMarker.setMap(map);
-  //   //Delete Marker
-  //   maps.event.addListener(endPtMarker, "click", () => {
-  //     console.log("(Edit-Map) End pt marker clicked and deleted.");
-  //     endPtMarker.setMap(null);
-  //     endPtMarker = undefined;
-  //     setEndPt("", "");
-  //   });
+   const placeEndPtMarker = (location) => {
+     endPtMarker = new maps.Marker({
+       position: location,
+       icon: "/static/route-list/end-pt.png",
+       map: map,
+       draggable: true,
+     });
+     endPtMarker.setMap(map);
+     //Delete Marker
+     maps.event.addListener(endPtMarker, "click", () => {
+       console.log("(Edit-Map) End pt marker clicked and deleted.");
+       endPtMarker.setMap(null);
+       endPtMarker = undefined;
+       setEndPt("", "");
+     });
 
-  //   endPtMarker.addListener("dragend", () => {
-  //     let lat = endPtMarker.getPosition().lat();
-  //     let long = endPtMarker.getPosition().lng();
-  //     setEndPt(lat, long);
-  //     console.log("(Edit-Map) End Pt Marker: ", lat, long);
-  //   });
-  // };
-  // map.controls[maps.ControlPosition.RIGHT_TOP].push(endPtButton);
-  // maps.event.addListenerOnce(map, "tilesloaded", () => {
-  //   console.log("(Edit-Map) Google Map Tiles loaded and placed END pt marker.");
-  //   placeEndPtMarker(endPtLatLng);
-  // });
+     endPtMarker.addListener("dragend", () => {
+       let lat = endPtMarker.getPosition().lat();
+       let long = endPtMarker.getPosition().lng();
+       setEndPt(lat, long);
+       console.log("(Edit-Map) End Pt Marker: ", lat, long);
+     });
+   };
+   map.controls[maps.ControlPosition.RIGHT_TOP].push(endPtButton);
+   maps.event.addListenerOnce(map, "tilesloaded", () => {
+     console.log("(Edit-Map) Google Map Tiles loaded and placed END pt marker.");
+     placeEndPtMarker(endPtLatLng);
+   });
 
   // // Automatically zoom and fit google map viewport based on available markers
   // maps.event.addListenerOnce(map, "tilesloaded", () => {
