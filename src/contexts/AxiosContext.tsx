@@ -160,7 +160,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   const login = async (email: string, password: string): Promise<void> => {
     // const accessToken = await authApi.login({ email, password });
     // const user = await authApi.me(accessToken);
-    logger.debug('LOG IN TRIGGERED');
+    logger.info('LOG IN TRIGGERED');
     const user = [];
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/login`;
     const BODY = {

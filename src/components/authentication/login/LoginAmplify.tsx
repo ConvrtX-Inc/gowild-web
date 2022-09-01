@@ -10,6 +10,10 @@ import { getLogger } from 'src/utils/loggin';
 
 const loginAuthLogger = getLogger('Login Amplify');
 
+const validationSchema = Yup['object']().shape({
+  email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
+});
+
 const LoginAmplify: FC = (props) => {
   const mounted = useMounted();
   const navigate = useNavigate();
@@ -22,9 +26,7 @@ const LoginAmplify: FC = (props) => {
         password: 'qwerty123',
         submit: null
       }}
-      validationSchema={Yup['object']().shape({
-        email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
-      })}
+      validationSchema={validationSchema}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
           await login(values.email, values.password);
