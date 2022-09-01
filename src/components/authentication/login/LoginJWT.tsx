@@ -1,20 +1,18 @@
-import type { FC } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import * as Yup from "yup";
-import { Formik } from "formik";
-import {
-  Box,
-  Button,
-  FormHelperText,
-  InputAdornment,
-  Link,
-  TextField,
-} from "@mui/material";
-import styled from "styled-components";
-import useAuth from "../../../hooks/useAuth";
-import useMounted from "../../../hooks/useMounted";
-import PasswordIcon from "../../../icons/LoginPadlock";
-import EmailIcon from "../../../icons/LoginEmail";
+import * as Yup from 'yup';
+import useAuth from '../../../hooks/useAuth';
+import useMounted from '../../../hooks/useMounted';
+import EmailIcon from '../../../icons/LoginEmail';
+import PasswordIcon from '../../../icons/LoginPadlock';
+import { Box, Button, FormHelperText, InputAdornment, Link, TextField } from '@mui/material';
+import { Formik } from 'formik';
+import type { FC } from 'react';
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import { errorMessage } from 'src/utils/formik.utils';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const loginJWTLogger = getLogger('Login JWT');
 
 const LoginJWT: FC = (props) => {
   const mounted = useMounted();
@@ -25,21 +23,15 @@ const LoginJWT: FC = (props) => {
       initialValues={{
         // email: "test1@example.com",
         // password: "string",
-        email: "",
-        password: "",
-        submit: null,
+        email: '',
+        password: '',
+        submit: null
       }}
-      validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email("Must be a valid email")
-          .max(255)
-          .required("Email is required"),
-        password: Yup.string().max(255).required("Password is required"),
+      validationSchema={Yup['object']().shape({
+        email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+        password: Yup.string().max(255).required('Password is required')
       })}
-      onSubmit={async (
-        values,
-        { setErrors, setStatus, setSubmitting }
-      ): Promise<void> => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
           await login(values.email, values.password);
 
@@ -49,10 +41,9 @@ const LoginJWT: FC = (props) => {
           }
         } catch (err) {
           if (err.response.status === 422) {
-            err.message = "Invalid credentials";
+            err.message = 'Invalid credentials';
           }
-          console.error("Login JWT Error ", err.message);
-          console.error(err);
+          loginJWTLogger.error('Login JWT Error ', err);
           if (mounted.current) {
             setStatus({ success: false });
             setErrors({ submit: err.message });
@@ -68,42 +59,36 @@ const LoginJWT: FC = (props) => {
         handleSubmit,
         isSubmitting,
         touched,
-        values,
+        values
       }): JSX.Element => (
         <StyledForm noValidate onSubmit={handleSubmit} {...props}>
-          <FieldLabel sx={{ mb: "16px" }}>Email Address</FieldLabel>
+          <FieldLabel sx={{ mb: '16px' }}>Email Address</FieldLabel>
           <StyledTextField
             // autoFocus
-            autoComplete="off"
+            autoComplete='off'
             error={Boolean(touched.email && errors.email)}
             fullWidth
             helperText={touched.email && errors.email}
-            placeholder="Email"
+            placeholder='Email'
             InputProps={{
               startAdornment: (
-                <InputAdornment
-                  sx={{ pl: "18px", pr: "16px" }}
-                  position="start"
-                >
-                  <EmailIcon fontSize="medium" />
+                <InputAdornment sx={{ pl: '18px', pr: '16px' }} position='start'>
+                  <EmailIcon fontSize='medium' />
                 </InputAdornment>
-              ),
+              )
             }}
-            margin="normal"
-            name="email"
+            margin='normal'
+            name='email'
             onBlur={handleBlur}
             onChange={handleChange}
-            type="email"
+            type='email'
             value={values.email}
-            variant="outlined"
-            size="small"
+            variant='outlined'
+            size='small'
           />
           <RowBox>
-            <FieldLabel sx={{ mb: "5px" }}>Password</FieldLabel>
-            <StyledLink
-              component={RouterLink}
-              to="/authentication/password-recovery"
-            >
+            <FieldLabel sx={{ mb: '5px' }}>Password</FieldLabel>
+            <StyledLink component={RouterLink} to='/authentication/password-recovery'>
               <ActionTypography>Forgot password?</ActionTypography>
             </StyledLink>
           </RowBox>
@@ -111,36 +96,26 @@ const LoginJWT: FC = (props) => {
             error={Boolean(touched.password && errors.password)}
             fullWidth
             helperText={touched.password && errors.password}
-            placeholder="Password"
+            placeholder='Password'
             InputProps={{
               startAdornment: (
-                <InputAdornment
-                  sx={{ pl: "18px", pr: "16px" }}
-                  position="start"
-                >
-                  <PasswordIcon fontSize="small" />
+                <InputAdornment sx={{ pl: '18px', pr: '16px' }} position='start'>
+                  <PasswordIcon fontSize='small' />
                 </InputAdornment>
-              ),
+              )
             }}
-            margin="normal"
-            name="password"
+            margin='normal'
+            name='password'
             onBlur={handleBlur}
             onChange={handleChange}
-            type="password"
+            type='password'
             value={values.password}
-            variant="outlined"
-            size="small"
+            variant='outlined'
+            size='small'
           />
-          {errors.submit && (
-            <FormHelperText error>{errors.submit}</FormHelperText>
-          )}
+          {errors.submit && <FormHelperText error>{errorMessage(errors.submit)}</FormHelperText>}
           <Box>
-            <LoginButton
-              disabled={isSubmitting}
-              fullWidth
-              type="submit"
-              variant="contained"
-            >
+            <LoginButton disabled={isSubmitting} fullWidth type='submit' variant='contained'>
               Log In
             </LoginButton>
           </Box>
@@ -166,10 +141,10 @@ const LoginButton = styled(Button)`
   && {
     height: 57px;
     padding: 21px auto 17px auto;
-    background-image: url("/static/login/login-btn.webp");
+    background-image: url('/static/login/login-btn.webp');
     background-color: #00755e;
     border-radius: 10px;
-    font-family: "Gilroy Bold";
+    font-family: 'Gilroy Bold';
     font-size: 1rem;
     line-height: 19px;
     text-align: center;
@@ -179,7 +154,7 @@ const LoginButton = styled(Button)`
 
 const FieldLabel = styled(Box)`
   && {
-    font-family: "DM Sans";
+    font-family: 'DM Sans';
     font-style: normal;
     font-weight: 500;
     font-size: 0.875rem;
@@ -191,7 +166,7 @@ const FieldLabel = styled(Box)`
 
 const ActionTypography = styled(Box)`
   && {
-    font-family: "Poppins";
+    font-family: 'Poppins';
     font-style: normal;
     font-weight: 400;
     font-size: 0.875rem;
@@ -211,7 +186,7 @@ const RowBox = styled(Box)`
   }
 `;
 
-const StyledLink = styled(Link)`
+const StyledLink = styled(Link)<{ component: typeof RouterLink; to: string }>`
   && {
     text-decoration: none;
     margin: 0 0 12px auto;
@@ -226,7 +201,7 @@ const StyledTextField = styled(TextField)`
     border-radius: 16px;
 
     color: #292930;
-    font-family: "Poppins";
+    font-family: 'Poppins';
     font-style: normal;
     font-weight: 400;
     font-size: 18px;
@@ -238,7 +213,7 @@ const StyledTextField = styled(TextField)`
     }
     && input {
       height: 55px;
-      font-family: "Poppins";
+      font-family: 'Poppins';
       font-style: normal;
       font-weight: 400;
       font-size: 16px;
@@ -249,7 +224,7 @@ const StyledTextField = styled(TextField)`
       align-items: center;
       border: 0;
       &::placeholder {
-        font-family: "Poppins";
+        font-family: 'Poppins';
         font-style: normal;
         font-weight: 400;
         font-size: 18px;

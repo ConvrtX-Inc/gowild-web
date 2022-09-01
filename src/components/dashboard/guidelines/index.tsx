@@ -1,1 +1,1 @@
-export { default as GuidelinesContent } from "./GuidelinesContent";
+export { default as GuidelinesContent } from './GuidelinesContent';

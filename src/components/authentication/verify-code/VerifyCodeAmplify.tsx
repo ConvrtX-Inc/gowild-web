@@ -1,27 +1,29 @@
-import { useEffect, useRef } from "react";
-import type { FC } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import type { Location } from "history";
-import * as Yup from "yup";
-import { Formik } from "formik";
-import {
-  Box,
-  Button,
-  FormHelperText,
-  TextField,
-  Typography,
-} from "@mui/material";
-import useAuth from "../../../hooks/useAuth";
-import useMounted from "../../../hooks/useMounted";
+import * as Yup from 'yup';
+import useAuth from '../../../hooks/useAuth';
+import useMounted from '../../../hooks/useMounted';
+import { Box, Button, FormHelperText, TextField, Typography } from '@mui/material';
+import { Formik } from 'formik';
+import type { Location } from 'history';
+import { useEffect, useRef } from 'react';
+import type { FC } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { errorMessage } from 'src/utils/formik.utils';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('VerifyCodeAmplify');
 
 interface LocationState {
   username?: string;
 }
 
+interface CustomLocation extends Location {
+  state: LocationState;
+}
+
 const VerifyCodeAmplify: FC = () => {
   const mounted = useMounted();
   const { verifyCode } = useAuth() as any;
-  const location = useLocation() as Location<LocationState>;
+  const location = useLocation() as CustomLocation;
   const navigate = useNavigate();
   const itemsRef = useRef([]);
 
@@ -32,27 +34,21 @@ const VerifyCodeAmplify: FC = () => {
   return (
     <Formik
       initialValues={{
-        email: location.state?.username || "",
-        code: ["", "", "", "", "", ""],
-        submit: null,
+        email: location.state?.username || '',
+        code: ['', '', '', '', '', ''],
+        submit: null
       }}
-      validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email("Must be a valid email")
-          .max(255)
-          .required("Email is required"),
-        code: Yup.array().of(Yup.string().required("Code is required")),
+      validationSchema={Yup['object']().shape({
+        email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+        code: Yup['array']().of(Yup.string().required('Code is required'))
       })}
-      onSubmit={async (
-        values,
-        { setErrors, setStatus, setSubmitting }
-      ): Promise<void> => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
-          await verifyCode(values.email, values.code.join(""));
+          await verifyCode(values.email, values.code.join(''));
 
-          navigate("/authentication/login");
+          navigate('/authentication/login');
         } catch (err) {
-          console.error(err);
+          logger.error(err);
           if (mounted.current) {
             setStatus({ success: false });
             setErrors({ submit: err.message });
@@ -69,7 +65,7 @@ const VerifyCodeAmplify: FC = () => {
         isSubmitting,
         setFieldValue,
         touched,
-        values,
+        values
       }): JSX.Element => (
         <form noValidate onSubmit={handleSubmit}>
           {!location.state?.username ? (
@@ -78,64 +74,64 @@ const VerifyCodeAmplify: FC = () => {
               error={Boolean(touched.email && errors.email)}
               fullWidth
               helperText={touched.email && errors.email}
-              label="Email Address"
-              margin="normal"
-              name="email"
+              label='Email Address'
+              margin='normal'
+              name='email'
               onBlur={handleBlur}
               onChange={handleChange}
-              type="email"
+              type='email'
               value={values.email}
-              variant="outlined"
+              variant='outlined'
             />
           ) : (
             <TextField
               disabled
               fullWidth
-              margin="normal"
+              margin='normal'
               value={location.state.username}
-              variant="outlined"
+              variant='outlined'
             />
           )}
           <Typography
-            color="textSecondary"
+            color='textSecondary'
             sx={{
               mb: 2,
-              mt: 3,
+              mt: 3
             }}
-            variant="subtitle2"
+            variant='subtitle2'
           >
             Verification code
           </Typography>
           <Box
             sx={{
-              display: "grid",
-              columnGap: "16px",
-              gridTemplateColumns: "repeat(7, 1fr)",
-              pt: 1,
+              display: 'grid',
+              columnGap: '16px',
+              gridTemplateColumns: 'repeat(7, 1fr)',
+              pt: 1
             }}
           >
             {[1, 2, 3, 4, 5, 6].map((ref, i) => (
               <TextField
                 error={Boolean(
-                  Array.isArray(touched.code) &&
-                    touched.code.length === 6 &&
-                    errors.code
+                  Array.isArray(touched.code) && touched.code.length === 6 && errors.code
                 )}
                 fullWidth
-                inputRef={(el) => (itemsRef.current[i] = el)}
+                inputRef={(el) => {
+                  itemsRef.current[i] = el;
+                }}
                 // eslint-disable-next-line react/no-array-index-key
                 key={`code-${i}`}
                 name={`code[${i}]`}
                 onBlur={handleBlur}
                 onKeyDown={(event) => {
-                  if (event.code === "ENTER") {
+                  if (event.code === 'ENTER') {
                     if (values.code[i]) {
-                      setFieldValue(`code[${i}]`, "");
+                      setFieldValue(`code[${i}]`, '');
                       return;
                     }
 
                     if (i > 0) {
-                      setFieldValue(`code[${i}]`, "");
+                      setFieldValue(`code[${i}]`, '');
                       itemsRef.current[i - 1].focus();
                       return;
                     }
@@ -150,8 +146,8 @@ const VerifyCodeAmplify: FC = () => {
                   }
                 }}
                 onPaste={(event) => {
-                  const paste = event.clipboardData.getData("text");
-                  const pasteArray = paste.split("");
+                  const paste = event.clipboardData.getData('text');
+                  const pasteArray = paste.split('');
 
                   if (pasteArray.length !== 6) {
                     return;
@@ -166,45 +162,40 @@ const VerifyCodeAmplify: FC = () => {
                   });
 
                   if (valid) {
-                    setFieldValue("code", pasteArray);
+                    setFieldValue('code', pasteArray);
                     itemsRef.current[5].focus();
                   }
                 }}
                 value={values.code[i]}
                 sx={{
-                  display: "inline-block",
-                  textAlign: "center",
-                  "& .MuiInputBase-input": {
-                    textAlign: "center",
-                  },
+                  display: 'inline-block',
+                  textAlign: 'center',
+                  '& .MuiInputBase-input': {
+                    textAlign: 'center'
+                  }
                 }}
-                variant="outlined"
+                variant='outlined'
               />
             ))}
           </Box>
-          {Boolean(
-            Array.isArray(touched.code) &&
-              touched.code.length === 6 &&
-              errors.code
-          ) && (
-            <FormHelperText error sx={{ mx: "14px" }}>
-              {Array.isArray(errors.code) &&
-                errors.code.find((x) => x !== undefined)}
+          {Boolean(Array.isArray(touched.code) && touched.code.length === 6 && errors.code) && (
+            <FormHelperText error sx={{ mx: '14px' }}>
+              {Array.isArray(errors.code) && errors.code.find((x) => x !== undefined)}
             </FormHelperText>
           )}
           {errors.submit && (
             <Box sx={{ mt: 3 }}>
-              <FormHelperText error>{errors.submit}</FormHelperText>
+              <FormHelperText error>{errorMessage(errors.submit)}</FormHelperText>
             </Box>
           )}
           <Box sx={{ mt: 3 }}>
             <Button
-              color="primary"
+              color='primary'
               disabled={isSubmitting}
               fullWidth
-              size="large"
-              type="submit"
-              variant="contained"
+              size='large'
+              type='submit'
+              variant='contained'
             >
               Verify
             </Button>

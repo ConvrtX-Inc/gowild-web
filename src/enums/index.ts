@@ -1,2 +1,3 @@
-import GuidelineType from "./guidelinetype";
+import GuidelineType from './guidelinetype';
+
 export { GuidelineType };

@@ -1,7 +1,7 @@
-import React from "react";
-import { Box, CardMedia, IconButton } from "@mui/material";
-import styled from "styled-components";
-import XIcon from "../../../icons/CloseToaster";
+import XIcon from '../../../icons/CloseToaster';
+import { Box, CardMedia, IconButton } from '@mui/material';
+import React from 'react';
+import styled from 'styled-components';
 
 const PopOverToast = (props: any) => {
   const { customClick } = props;
@@ -11,7 +11,7 @@ const PopOverToast = (props: any) => {
   };
 
   return (
-    <StyledBox sx={{ background: "white" }}>
+    <StyledBox sx={{ background: 'white' }}>
       <FlexiBox>
         <Box>
           {/* <img
@@ -22,22 +22,20 @@ const PopOverToast = (props: any) => {
           /> */}
           <XWrapper>
             <IconButton onClick={handleClose}>
-              <XIcon fontSize="small" />
+              <XIcon fontSize='small' />
             </IconButton>
           </XWrapper>
           <CardMedia
             sx={{
-              height: "83px",
-              width: "98px",
-              mb: "15px",
-              backgroundSize: "auto",
+              height: '83px',
+              width: '98px',
+              mb: '15px',
+              backgroundSize: 'auto'
             }}
-            image="/static/login/password-recovery/EmailSent.svg"
+            image='/static/login/password-recovery/EmailSent.svg'
           />
         </Box>
-        <ToastTypography>
-          Your reset password link has been sent to your email.
-        </ToastTypography>
+        <ToastTypography>Your reset password link has been sent to your email.</ToastTypography>
       </FlexiBox>
     </StyledBox>
   );
@@ -60,7 +58,7 @@ const StyledBox = styled(Box)`
 
 const ToastTypography = styled(Box)`
   && {
-    font-family: "Poppins";
+    font-family: 'Poppins';
     font-weight: 500;
     font-size: 20px;
     line-height: 30px;

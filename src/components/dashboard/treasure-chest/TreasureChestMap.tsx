@@ -1,30 +1,24 @@
-import "dotenv/config";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
-import GoogleMapReact from "google-map-react";
-import styled from "styled-components";
-import { debounce } from "lodash";
+import 'dotenv/config';
+import GoogleMapReact from 'google-map-react';
+import { debounce } from 'lodash';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 
-const createMarker = (
-  map,
-  maps,
-  lat,
-  lng,
-  callback: (lat: number, lng: number) => void
-) => {
+const createMarker = (map, maps, lat, lng, callback: (lat: number, lng: number) => void) => {
   const marker = new maps.Marker({
     position: {
       lat,
-      lng,
+      lng
     },
-    icon: "/static/treasure-chest/chest.svg",
+    icon: '/static/treasure-chest/chest.svg',
     map,
-    draggable: true,
+    draggable: true
   });
 
-  marker.addListener("dragend", () => {
-    const lat = marker.getPosition().lat();
-    const long = marker.getPosition().lng();
-    callback(lat, long);
+  marker.addListener('dragend', () => {
+    const mLat = marker.getPosition().lat();
+    const mLong = marker.getPosition().lng();
+    callback(mLat, mLong);
   });
   return marker;
 };
@@ -40,12 +34,7 @@ interface TreasureChestMapProps {
   };
 }
 
-const TMap: FC<TreasureChestMapProps> = ({
-  handleChestLoc,
-  lat,
-  lng,
-  defaultLocation,
-}) => {
+const TMap: FC<TreasureChestMapProps> = ({ handleChestLoc, lat, lng, defaultLocation }) => {
   const [mapAPI, setMap] = useState(null);
   const [mapsAPI, setMaps] = useState(null);
   const chestMarker = useRef(null);
@@ -61,7 +50,7 @@ const TMap: FC<TreasureChestMapProps> = ({
 
   useEffect(() => {
     if (mapAPI && mapsAPI) setUp(mapAPI, mapsAPI);
-  }, [setUp]);
+  }, [setUp, mapAPI, mapsAPI]);
 
   return (
     <GoogleMapReactCore
@@ -69,7 +58,7 @@ const TMap: FC<TreasureChestMapProps> = ({
       defaultCenter={defaultLocation}
       center={{
         lat: lat || defaultLocation.lat,
-        lng: lng || defaultLocation.lng,
+        lng: lng || defaultLocation.lng
       }}
       defaultZoom={16}
       yesIWantToUseGoogleMapApiInternals
@@ -85,7 +74,7 @@ const TMap: FC<TreasureChestMapProps> = ({
         setMaps(maps);
       }}
       options={{ scrollwheel: true }}
-    ></GoogleMapReactCore>
+    />
   );
 };
 

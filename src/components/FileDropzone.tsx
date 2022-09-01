@@ -1,10 +1,11 @@
-import type { FC } from "react";
-import PropTypes from "prop-types";
-import { useDropzone } from "react-dropzone";
-import type { DropzoneOptions } from "react-dropzone";
-import { Box, Button, IconButton } from "@mui/material";
-import styled from "styled-components";
-import CrossIcon from "../icons/RouteListCross";
+import CrossIcon from '../icons/RouteListCross';
+import { Box, Button, IconButton } from '@mui/material';
+import PropTypes from 'prop-types';
+import type { FC } from 'react';
+import { useDropzone } from 'react-dropzone';
+import type { DropzoneOptions } from 'react-dropzone';
+import styled from 'styled-components';
+
 // import bytesToSize from "../utils/bytesToSize";
 
 interface FileDropzoneProps extends DropzoneOptions {
@@ -44,56 +45,56 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
     maxFiles,
     maxSize,
     minSize,
-    onDrop,
+    onDrop
   });
 
   return (
     <div {...other}>
       <Box
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           border: 0,
           borderRadius: 1,
-          borderColor: "divider",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          outline: "none",
+          borderColor: 'divider',
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          outline: 'none',
           p: 0,
           ...(isDragActive && {
-            backgroundColor: "action.active",
-            opacity: 0.5,
+            backgroundColor: 'action.active',
+            opacity: 0.5
           }),
-          "&:hover": {
+          '&:hover': {
             // backgroundColor: "action.hover",
-            cursor: `${files.length < 1 ? "pointer" : "auto"}`,
+            cursor: `${files.length < 1 ? 'pointer' : 'auto'}`
             // opacity: 0.5,
-          },
+          }
         }}
         {...getRootProps()}
       >
         {files.length < 1 && <input {...getInputProps()} />}
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            mb: "20px",
-            "& img": {
-              width: 100,
-            },
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            mb: '20px',
+            '& img': {
+              width: 100
+            }
           }}
         >
           {files.length > 0 ? (
-            <Box sx={{ position: "relative" }}>
+            <Box sx={{ position: 'relative' }}>
               {files[0].size > 1000000 ? (
                 <ImgBoxError>
                   <ErrorMsg>File must be 1MB size or less</ErrorMsg>
                   <TryAgainButton
                     sx={{ mt: 1 }}
                     onClick={() => onRemove && onRemove(files[0])}
-                    variant="outlined"
+                    variant='outlined'
                   >
                     Try again
                   </TryAgainButton>
@@ -101,16 +102,20 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
               ) : (
                 <>
                   <IconButton
-                    sx={{ position: "absolute", right: "-21px", top: "-20px" }}
+                    sx={{
+                      position: 'absolute',
+                      right: '-21px',
+                      top: '-20px'
+                    }}
                     onClick={() => onRemove && onRemove(files[0])}
                   >
-                    <CrossIcon fontSize="medium" />
+                    <CrossIcon fontSize='medium' />
                   </IconButton>
                   <img
-                    height="90px"
-                    width="90px"
-                    src={files.length > 0 ? URL.createObjectURL(files[0]) : ""}
-                    alt="route-img"
+                    height='90px'
+                    width='90px'
+                    src={files.length > 0 ? URL.createObjectURL(files[0]) : ''}
+                    alt='route-img'
                   />
                   {/* <ImageSize
                     sx={{ position: "absolute", top: "30px", right: "-80px" }}
@@ -122,12 +127,7 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
             </Box>
           ) : (
             <>
-              <img
-                width="53.92px"
-                height="38.56px"
-                alt="Select file"
-                src="/static/add_file.svg"
-              />
+              <img width='53.92px' height='38.56px' alt='Select file' src='/static/add_file.svg' />
               <CaptionTypo>Attach images of thumbnail</CaptionTypo>
             </>
           )}
@@ -138,12 +138,9 @@ const FileDropzone: FC<FileDropzoneProps> = (props) => {
 };
 
 FileDropzone.propTypes = {
-  accept: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.arrayOf(PropTypes.string),
-  ]),
+  accept: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   disabled: PropTypes.bool,
-  files: PropTypes.array,
+  files: PropTypes['array'],
   getFilesFromEvent: PropTypes.func,
   maxFiles: PropTypes.number,
   maxSize: PropTypes.number,
@@ -159,11 +156,11 @@ FileDropzone.propTypes = {
   onRemove: PropTypes.func,
   onRemoveAll: PropTypes.func,
   onUpload: PropTypes.func,
-  preventDropOnDocument: PropTypes.bool,
+  preventDropOnDocument: PropTypes.bool
 };
 
 FileDropzone.defaultProps = {
-  files: [],
+  files: []
 };
 
 export default FileDropzone;
@@ -171,7 +168,7 @@ export default FileDropzone;
 const CaptionTypo = styled(Box)`
   && {
     margin-top: 15.45px;
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-size: 0.875rem;
     line-height: 16px;
     letter-spacing: 0.5px;
@@ -200,7 +197,7 @@ const ImgBoxError = styled(Box)`
 
 const ErrorMsg = styled(Box)`
   && {
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-style: normal;
     font-size: 14px;
     line-height: 16px;

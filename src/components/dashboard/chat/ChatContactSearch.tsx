@@ -1,6 +1,4 @@
-import { forwardRef } from 'react';
-import type { ChangeEvent, FocusEvent } from 'react';
-import PropTypes from 'prop-types';
+import SearchIcon from '../../../icons/Search';
 import {
   Avatar,
   Box,
@@ -12,7 +10,9 @@ import {
   ListItemText,
   Typography
 } from '@mui/material';
-import SearchIcon from '../../../icons/Search';
+import PropTypes from 'prop-types';
+import { forwardRef } from 'react';
+import type { ChangeEvent, FocusEvent } from 'react';
 
 interface ChatContactSearchProps {
   isFocused?: boolean;
@@ -24,20 +24,8 @@ interface ChatContactSearchProps {
   results: any[];
 }
 
-const ChatContactSearch = forwardRef<HTMLDivElement, ChatContactSearchProps>((
-  props,
-  ref
-) => {
-  const {
-    isFocused,
-    onChange,
-    onClickAway,
-    onFocus,
-    onSelect,
-    query,
-    results,
-    ...other
-  } = props;
+const ChatContactSearch = forwardRef<HTMLDivElement, ChatContactSearchProps>((props, ref) => {
+  const { isFocused, onChange, onClickAway, onFocus, onSelect, query, results, ...other } = props;
 
   const handleSelect = (result: any): void => {
     if (onSelect) {
@@ -49,11 +37,7 @@ const ChatContactSearch = forwardRef<HTMLDivElement, ChatContactSearchProps>((
 
   return (
     <ClickAwayListener onClickAway={onClickAway}>
-      <Box
-        ref={ref}
-        sx={{ px: 1 }}
-        {...other}
-      >
+      <Box ref={ref} sx={{ px: 1 }} {...other}>
         <Box
           sx={{
             alignItems: 'center',
@@ -64,10 +48,7 @@ const ChatContactSearch = forwardRef<HTMLDivElement, ChatContactSearchProps>((
             px: 2
           }}
         >
-          <SearchIcon
-            color="action"
-            fontSize="small"
-          />
+          <SearchIcon color='action' fontSize='small' />
           <Box
             sx={{
               flexGrow: 1,
@@ -79,26 +60,19 @@ const ChatContactSearch = forwardRef<HTMLDivElement, ChatContactSearchProps>((
               disableUnderline
               onChange={onChange}
               onFocus={onFocus}
-              placeholder="Search contacts"
+              placeholder='Search contacts'
               value={query}
             />
           </Box>
         </Box>
         {displayResults && (
           <Box sx={{ mt: 2 }}>
-            <Typography
-              color="textSecondary"
-              variant="subtitle2"
-            >
+            <Typography color='textSecondary' variant='subtitle2'>
               Contacts
             </Typography>
             <List>
               {results.map((result) => (
-                <ListItem
-                  button
-                  key={result.id}
-                  onClick={(): void => handleSelect(result)}
-                >
+                <ListItem button key={result.id} onClick={(): void => handleSelect(result)}>
                   <ListItemAvatar>
                     <Avatar
                       src={result.avatar}
@@ -126,6 +100,8 @@ const ChatContactSearch = forwardRef<HTMLDivElement, ChatContactSearchProps>((
   );
 });
 
+ChatContactSearch.displayName = 'ChatContactSearch';
+
 ChatContactSearch.propTypes = {
   isFocused: PropTypes.bool,
   onChange: PropTypes.func,
@@ -133,7 +109,7 @@ ChatContactSearch.propTypes = {
   onFocus: PropTypes.func,
   onSelect: PropTypes.func,
   query: PropTypes.string,
-  results: PropTypes.array
+  results: PropTypes['array']
 };
 
 ChatContactSearch.defaultProps = {

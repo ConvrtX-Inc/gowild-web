@@ -1,6 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import type { AppThunk } from "../store";
+import type { AppThunk } from '../store';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 interface RouteListState {
   onDeleteOneRoute: boolean;
@@ -9,26 +9,20 @@ interface RouteListState {
 
 const initialState: RouteListState = {
   onDeleteOneRoute: false,
-  setIsLoading: true,
+  setIsLoading: true
 };
 
 const slice = createSlice({
-  name: "routeList",
+  name: 'routeList',
   initialState,
   reducers: {
-    refreshListOnDelete(
-      state: RouteListState,
-      action: PayloadAction<boolean>
-    ): void {
+    refreshListOnDelete(state: RouteListState, action: PayloadAction<boolean>): void {
       state.onDeleteOneRoute = action.payload;
     },
-    setRouteListIsLoading(
-      state: RouteListState,
-      action: PayloadAction<boolean>
-    ): void {
+    setRouteListIsLoading(state: RouteListState, action: PayloadAction<boolean>): void {
       state.setIsLoading = action.payload;
-    },
-  },
+    }
+  }
 });
 
 export const { reducer } = slice;

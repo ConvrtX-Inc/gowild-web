@@ -1,10 +1,14 @@
-import type { FC } from "react";
-import { useNavigate } from "react-router-dom";
-import * as Yup from "yup";
-import { Formik } from "formik";
-import { Box, Button, FormHelperText, TextField } from "@mui/material";
-import useAuth from "../../../hooks/useAuth";
-import useMounted from "../../../hooks/useMounted";
+import * as Yup from 'yup';
+import useAuth from '../../../hooks/useAuth';
+import useMounted from '../../../hooks/useMounted';
+import { Box, Button, FormHelperText, TextField } from '@mui/material';
+import { Formik } from 'formik';
+import type { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { errorMessage } from 'src/utils/formik.utils';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('PasswordRecoveryAmplify');
 
 const PasswordRecoveryAmplify: FC = () => {
   const mounted = useMounted();
@@ -14,29 +18,23 @@ const PasswordRecoveryAmplify: FC = () => {
   return (
     <Formik
       initialValues={{
-        email: "",
-        submit: null,
+        email: '',
+        submit: null
       }}
-      validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email("Must be a valid email")
-          .max(255)
-          .required("Email is required"),
+      validationSchema={Yup['object']().shape({
+        email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
       })}
-      onSubmit={async (
-        values,
-        { setErrors, setStatus, setSubmitting }
-      ): Promise<void> => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
           await passwordRecovery(values.email);
 
-          navigate("/authentication/password-reset", {
+          navigate('/authentication/password-reset', {
             state: {
-              username: values.email,
-            },
+              username: values.email
+            }
           });
         } catch (err) {
-          console.error(err);
+          logger.error(err);
           if (mounted.current) {
             setStatus({ success: false });
             setErrors({ submit: err.message });
@@ -52,7 +50,7 @@ const PasswordRecoveryAmplify: FC = () => {
         handleSubmit,
         isSubmitting,
         touched,
-        values,
+        values
       }): JSX.Element => (
         <form noValidate onSubmit={handleSubmit}>
           <TextField
@@ -60,28 +58,28 @@ const PasswordRecoveryAmplify: FC = () => {
             error={Boolean(touched.email && errors.email)}
             fullWidth
             helperText={touched.email && errors.email}
-            label="Email Address"
-            margin="normal"
-            name="email"
+            label='Email Address'
+            margin='normal'
+            name='email'
             onBlur={handleBlur}
             onChange={handleChange}
-            type="email"
+            type='email'
             value={values.email}
-            variant="outlined"
+            variant='outlined'
           />
           {errors.submit && (
             <Box sx={{ mt: 3 }}>
-              <FormHelperText error>{errors.submit}</FormHelperText>
+              <FormHelperText error>{errorMessage(errors.submit)}</FormHelperText>
             </Box>
           )}
           <Box sx={{ mt: 3 }}>
             <Button
-              color="primary"
+              color='primary'
               disabled={isSubmitting}
               fullWidth
-              size="large"
-              type="submit"
-              variant="contained"
+              size='large'
+              type='submit'
+              variant='contained'
             >
               Recover Password
             </Button>

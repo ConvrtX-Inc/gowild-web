@@ -1,9 +1,9 @@
-import type { FC, ReactNode } from "react";
-import { useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import PropTypes from "prop-types";
-import useAuth from "../hooks/useAuth";
-import Login from "../pages/authentication/Login";
+import useAuth from '../hooks/useAuth';
+import Login from '../pages/authentication/Login';
+import PropTypes from 'prop-types';
+import type { FC, ReactNode } from 'react';
+import { useState } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -35,7 +35,7 @@ const AuthGuard: FC<AuthGuardProps> = (props) => {
 };
 
 AuthGuard.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node
 };
 
 export default AuthGuard;

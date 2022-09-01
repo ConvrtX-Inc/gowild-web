@@ -1,6 +1,6 @@
-import type { FC } from 'react';
-import PropTypes from 'prop-types';
 import { experimentalStyled } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import type { FC } from 'react';
 
 interface StatusIndicatorProps {
   size?: 'small' | 'medium' | 'large';
@@ -28,22 +28,20 @@ const colors = {
 };
 
 const StatusIndicatorRoot = experimentalStyled('span')<StatusIndicatorRootProps>(
-  (
-    ({ styleProps }) => {
-      const size = sizes[styleProps.size];
-      const color = colors[styleProps.status];
+  ({ styleProps }) => {
+    const size = sizes[styleProps.size];
+    const color = colors[styleProps.status];
 
-      return {
-        backgroundColor: color,
-        borderRadius: '50%',
-        display: 'inline-block',
-        flexGrow: 0,
-        flexShrink: 0,
-        height: size,
-        width: size
-      };
-    }
-  )
+    return {
+      backgroundColor: color,
+      borderRadius: '50%',
+      display: 'inline-block',
+      flexGrow: 0,
+      flexShrink: 0,
+      height: size,
+      width: size
+    };
+  }
 );
 
 const StatusIndicator: FC<StatusIndicatorProps> = (props) => {
@@ -51,12 +49,7 @@ const StatusIndicator: FC<StatusIndicatorProps> = (props) => {
 
   const styleProps = { size, status };
 
-  return (
-    <StatusIndicatorRoot
-      styleProps={styleProps}
-      {...other}
-    />
-  );
+  return <StatusIndicatorRoot styleProps={styleProps} {...other} />;
 };
 
 StatusIndicator.propTypes = {

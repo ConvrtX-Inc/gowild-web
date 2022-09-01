@@ -1,33 +1,33 @@
-import type { FC } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import PropTypes from "prop-types";
-import { AppBar, Box, IconButton, Toolbar } from "@material-ui/core";
-import { experimentalStyled } from "@material-ui/core/styles";
-import type { AppBarProps } from "@material-ui/core";
-import MenuIcon from "../../icons/Menu";
-import AccountPopover from "./AccountPopover";
-import ContactsPopover from "./ContactsPopover";
-import ContentSearch from "./ContentSearch";
-import LanguagePopover from "./LanguagePopover";
-import Logo from "../Logo";
-import NotificationsPopover from "./NotificationsPopover";
+import MenuIcon from '../../icons/Menu';
+import Logo from '../Logo';
+import AccountPopover from './AccountPopover';
+import ContactsPopover from './ContactsPopover';
+import ContentSearch from './ContentSearch';
+import LanguagePopover from './LanguagePopover';
+import NotificationsPopover from './NotificationsPopover';
+import { AppBar, Box, IconButton, Toolbar } from '@material-ui/core';
+import type { AppBarProps } from '@material-ui/core';
+import { experimentalStyled } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import type { FC } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 interface DashboardNavbarProps extends AppBarProps {
   onSidebarMobileOpen?: () => void;
 }
 
 const DashboardNavbarRoot = experimentalStyled(AppBar)(({ theme }) => ({
-  ...(theme.palette.mode === "light" && {
+  ...(theme.palette.mode === 'light' && {
     backgroundColor: theme.palette.primary.main,
-    boxShadow: "none",
-    color: theme.palette.primary.contrastText,
+    boxShadow: 'none',
+    color: theme.palette.primary.contrastText
   }),
-  ...(theme.palette.mode === "dark" && {
+  ...(theme.palette.mode === 'dark' && {
     backgroundColor: theme.palette.background.paper,
     borderBottom: `1px solid ${theme.palette.divider}`,
-    boxShadow: "none",
+    boxShadow: 'none'
   }),
-  zIndex: theme.zIndex.drawer + 100,
+  zIndex: theme.zIndex.drawer + 100
 }));
 
 const DashboardNavbar: FC<DashboardNavbarProps> = (props) => {
@@ -37,32 +37,32 @@ const DashboardNavbar: FC<DashboardNavbarProps> = (props) => {
     <DashboardNavbarRoot {...other}>
       <Toolbar sx={{ minHeight: 64 }}>
         <IconButton
-          color="inherit"
+          color='inherit'
           onClick={onSidebarMobileOpen}
           sx={{
             display: {
-              lg: "none",
-            },
+              lg: 'none'
+            }
           }}
         >
-          <MenuIcon fontSize="small" />
+          <MenuIcon fontSize='small' />
         </IconButton>
-        <RouterLink to="/">
+        <RouterLink to='/'>
           <Logo
             sx={{
               display: {
-                lg: "inline",
-                xs: "none",
+                lg: 'inline',
+                xs: 'none'
               },
               height: 40,
-              width: 40,
+              width: 40
             }}
           />
         </RouterLink>
         <Box
           sx={{
             flexGrow: 1,
-            ml: 2,
+            ml: 2
           }}
         />
         <LanguagePopover />
@@ -84,7 +84,7 @@ const DashboardNavbar: FC<DashboardNavbarProps> = (props) => {
 };
 
 DashboardNavbar.propTypes = {
-  onSidebarMobileOpen: PropTypes.func,
+  onSidebarMobileOpen: PropTypes.func
 };
 
 export default DashboardNavbar;

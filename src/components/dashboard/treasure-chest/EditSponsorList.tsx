@@ -1,11 +1,14 @@
-import { Box, IconButton } from "@material-ui/core";
-import { FC } from "react";
-import WebLink from "src/icons/WebLink";
-import ImageDropzone from "../ImageDropzone";
-import XIcon from "../../../icons/X";
-import toast, { Toaster } from "react-hot-toast";
-import Refresh from "src/icons/Refresh";
-import { StyledElements } from "./SponsorList";
+import XIcon from '../../../icons/X';
+import ImageDropzone from '../ImageDropzone';
+import { StyledElements } from './SponsorList';
+import { Box, IconButton } from '@material-ui/core';
+import { FC } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import Refresh from 'src/icons/Refresh';
+import WebLink from 'src/icons/WebLink';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('EditSponsorList');
 
 export type SponsorState = {
   id?: string;
@@ -19,8 +22,8 @@ const createNewSponsor = (): SponsorState => {
   return {
     id: null,
     imageFile: null,
-    link: "",
-    img_url: "",
+    link: '',
+    img_url: ''
   };
 };
 
@@ -29,19 +32,17 @@ interface EditSponsorListProps {
   setSponsors: React.Dispatch<React.SetStateAction<SponsorState[]>>;
 }
 
-const EditSponsorList: FC<EditSponsorListProps> = ({
-  sponsors,
-  setSponsors,
-}) => {
+const EditSponsorList: FC<EditSponsorListProps> = ({ sponsors: sponsorsState, setSponsors }) => {
   const handleLinkTextChange = (e, index: number) => {
     setSponsors((sponsors) =>
       sponsors.map((sponsor, i) => {
-        if (i === index)
+        if (i === index) {
           return {
             ...sponsor,
             link: e.target.value,
-            updated: sponsor?.id ? true : false,
+            updated: !!sponsor?.id
           };
+        }
         return sponsor;
       })
     );
@@ -51,33 +52,35 @@ const EditSponsorList: FC<EditSponsorListProps> = ({
     try {
       const file: File = fileArr[0];
       if (file.size > 1000000) {
-        toast.error("File must be 1MB size or less");
+        toast.error('File must be 1MB size or less');
         return;
       }
       setSponsors((sponsors: SponsorState[]) =>
         sponsors.map((sponsor, i) => {
-          if (i === index)
+          if (i === index) {
             return {
               ...sponsor,
               imageFile: file,
-              updated: sponsor?.id ? true : false,
+              updated: !!sponsor?.id
             };
+          }
           return sponsor;
         })
       );
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
   };
 
   const handleRemove = (index): void => {
     setSponsors((sponsors) =>
       sponsors.map((sponsor, i) => {
-        if (i === index)
+        if (i === index) {
           return {
             ...sponsor,
-            imageFile: null,
+            imageFile: null
           };
+        }
         return sponsor;
       })
     );
@@ -88,7 +91,7 @@ const EditSponsorList: FC<EditSponsorListProps> = ({
   };
 
   const removeSponsor = (index: number) => {
-    if (sponsors[index]?.id) {
+    if (sponsorsState[index]?.id) {
       setSponsors((sponsors) =>
         sponsors.map((s, i) => {
           if (i !== index) {
@@ -96,7 +99,7 @@ const EditSponsorList: FC<EditSponsorListProps> = ({
           }
           return {
             ...s,
-            deleted: true,
+            deleted: true
           };
         })
       );
@@ -111,74 +114,73 @@ const EditSponsorList: FC<EditSponsorListProps> = ({
 
   return (
     <StyledElements.ListBox>
-      {sponsors.map((s: SponsorState, i) =>
-        !Boolean(s?.deleted) ? (
+      {sponsorsState.map((s, i) => {
+        return !s?.deleted ? (
           <StyledElements.SponsorBox key={i}>
             <IconButton
               sx={{
-                position: "absolute",
-                right: "-21px",
-                top: "-20px",
-                zIndex: "100",
+                position: 'absolute',
+                right: '-21px',
+                top: '-20px',
+                zIndex: '100'
               }}
               onClick={() => removeSponsor(i)}
             >
-              <XIcon fontSize="small" />
+              <XIcon fontSize='small' />
             </IconButton>
             {s?.imageFile || s.img_url ? (
-              <Box sx={{ position: "relative" }}>
+              <Box sx={{ position: 'relative' }}>
                 <IconButton
-                  sx={{ position: "absolute", right: "-21px", top: "-20px" }}
-                  onClick={(e) => {
+                  sx={{
+                    position: 'absolute',
+                    right: '-21px',
+                    top: '-20px'
+                  }}
+                  onClick={() => {
                     handleRemove(i);
                   }}
                 >
                   {s?.imageFile ? (
-                    <XIcon fontSize="small" />
+                    <XIcon fontSize='small' />
                   ) : (
                     <ImageDropzone
-                      accept="image/*"
+                      accept='image/*'
                       onDrop={(file: File[]) => {
                         handleDrop(file, i);
                       }}
                     >
-                      <Refresh fontSize="small" />
+                      <Refresh fontSize='small' />
                     </ImageDropzone>
                   )}
                 </IconButton>
                 <StyledElements.SponsorLogo
-                  component="img"
-                  src={
-                    s.imageFile ? URL.createObjectURL(s.imageFile) : s.img_url
-                  }
+                  component='img'
+                  src={s.imageFile ? URL.createObjectURL(s.imageFile) : s.img_url}
                 />
               </Box>
             ) : (
               <ImageDropzone
-                accept="image/*"
+                accept='image/*'
                 onDrop={(file: File[]) => {
                   handleDrop(file, i);
                 }}
               >
-                <StyledElements.SponsorPlaceHolder>
-                  {" "}
-                  add image{" "}
-                </StyledElements.SponsorPlaceHolder>
+                <StyledElements.SponsorPlaceHolder> add image </StyledElements.SponsorPlaceHolder>
               </ImageDropzone>
             )}
             <StyledElements.StyledTextField
               InputProps={{
-                startAdornment: <WebLink />,
+                startAdornment: <WebLink />
               }}
-              placeholder="link"
+              placeholder='link'
               value={s.link}
               onChange={(e) => handleLinkTextChange(e, i)}
             />
           </StyledElements.SponsorBox>
-        ) : null
-      )}
+        ) : null;
+      })}
       <StyledElements.AddMoreText onClick={handleAddMore}>
-        {sponsors.length > 0 ? "Add more" : "Add sponsor"}
+        {sponsorsState.length > 0 ? 'Add more' : 'Add sponsor'}
       </StyledElements.AddMoreText>
       <Toaster />
     </StyledElements.ListBox>

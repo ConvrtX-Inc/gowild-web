@@ -1,9 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import type { AppThunk } from "../store";
-import type { Contact, Thread, Participant } from "../types/chat";
-import objFromArray from "../utils/objFromArray";
-import { chatApi } from "../__fakeApi__/chatApi";
+import { chatApi } from '../__fakeApi__/chatApi';
+import type { AppThunk } from '../store';
+import type { Contact, Participant, Thread } from '../types/chat';
+import objFromArray from '../utils/objFromArray';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 interface ChatState {
   activeThreadId?: string;
@@ -23,18 +23,18 @@ const initialState: ChatState = {
   activeThreadId: null,
   contacts: {
     byId: {},
-    allIds: [],
+    allIds: []
   },
   threads: {
     byId: {},
-    allIds: [],
+    allIds: []
   },
   participants: [],
-  recipients: [],
+  recipients: []
 };
 
 const slice = createSlice({
-  name: "chat",
+  name: 'chat',
   initialState,
   reducers: {
     getContacts(state: ChatState, action: PayloadAction<Contact[]>): void {
@@ -75,17 +75,12 @@ const slice = createSlice({
     resetActiveThread(state: ChatState): void {
       state.activeThreadId = null;
     },
-    getParticipants(
-      state: ChatState,
-      action: PayloadAction<Participant[]>
-    ): void {
+    getParticipants(state: ChatState, action: PayloadAction<Participant[]>): void {
       state.participants = action.payload;
     },
     addRecipient(state: ChatState, action: PayloadAction<any>): void {
       const recipient = action.payload;
-      const exists = state.recipients.find(
-        (_recipient) => _recipient.id === recipient.id
-      );
+      const exists = state.recipients.find((_recipient) => _recipient.id === recipient.id);
 
       if (!exists) {
         state.recipients.push(recipient);
@@ -94,11 +89,9 @@ const slice = createSlice({
     removeRecipient(state: ChatState, action: PayloadAction<string>): void {
       const recipientId = action.payload;
 
-      state.recipients = state.recipients.filter(
-        (recipient) => recipient.id !== recipientId
-      );
-    },
-  },
+      state.recipients = state.recipients.filter((recipient) => recipient.id !== recipientId);
+    }
+  }
 });
 
 export const { reducer } = slice;

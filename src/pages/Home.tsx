@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import type { FC } from "react";
-import { Helmet } from "react-helmet-async";
-import { HomePage } from "../components/home";
-import gtm from "../lib/gtm";
+import { HomePage } from '../components/home';
+import gtm from '../lib/gtm';
+import { useEffect } from 'react';
+import type { FC } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 const Home: FC = () => {
   useEffect(() => {
-    gtm.push({ event: "page_view" });
+    gtm.push({ event: 'page_view' });
   }, []);
 
   return (

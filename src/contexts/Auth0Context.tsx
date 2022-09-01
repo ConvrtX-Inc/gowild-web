@@ -1,9 +1,12 @@
-import { createContext, useEffect, useReducer } from "react";
-import type { FC, ReactNode } from "react";
-import PropTypes from "prop-types";
-import { Auth0Client } from "@auth0/auth0-spa-js";
-import { auth0Config } from "../config";
-import type { User } from "../types/user";
+import { auth0Config } from '../config';
+import type { User } from '../types/user';
+import { Auth0Client } from '@auth0/auth0-spa-js';
+import PropTypes from 'prop-types';
+import { createContext, useEffect, useReducer } from 'react';
+import type { FC, ReactNode } from 'react';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('Auth0 Context');
 
 let auth0Client: Auth0Client | null = null;
 
@@ -14,7 +17,7 @@ interface State {
 }
 
 export interface AuthContextValue extends State {
-  platform: "Auth0";
+  platform: 'Auth0';
   loginWithPopup: (options?: any) => Promise<void>;
   logout: () => void;
 }
@@ -24,7 +27,7 @@ interface AuthProviderProps {
 }
 
 type InitializeAction = {
-  type: "INITIALIZE";
+  type: 'INITIALIZE';
   payload: {
     isAuthenticated: boolean;
     user: User | null;
@@ -32,18 +35,18 @@ type InitializeAction = {
 };
 
 type LoginAction = {
-  type: "LOGIN";
+  type: 'LOGIN';
   payload: {
     user: User;
   };
 };
 
 type LogoutAction = {
-  type: "LOGOUT";
+  type: 'LOGOUT';
 };
 
 type RegisterAction = {
-  type: "REGISTER";
+  type: 'REGISTER';
 };
 
 type Action = InitializeAction | LoginAction | LogoutAction | RegisterAction;
@@ -51,7 +54,7 @@ type Action = InitializeAction | LoginAction | LogoutAction | RegisterAction;
 const initialState: State = {
   isAuthenticated: false,
   isInitialized: false,
-  user: null,
+  user: null
 };
 
 const handlers: Record<string, (state: State, action: Action) => State> = {
@@ -62,7 +65,7 @@ const handlers: Record<string, (state: State, action: Action) => State> = {
       ...state,
       isAuthenticated,
       isInitialized: true,
-      user,
+      user
     };
   },
   LOGIN: (state: State, action: LoginAction): State => {
@@ -71,24 +74,25 @@ const handlers: Record<string, (state: State, action: Action) => State> = {
     return {
       ...state,
       isAuthenticated: true,
-      user,
+      user
     };
   },
   LOGOUT: (state: State): State => ({
     ...state,
     isAuthenticated: false,
-    user: null,
-  }),
+    user: null
+  })
 };
 
-const reducer = (state: State, action: Action): State =>
-  handlers[action.type] ? handlers[action.type](state, action) : state;
+const reducer = (state: State, action: Action): State => {
+  return handlers[action.type] ? handlers[action.type](state, action) : state;
+};
 
 const AuthContext = createContext<AuthContextValue>({
   ...initialState,
-  platform: "Auth0",
+  platform: 'Auth0',
   loginWithPopup: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
+  logout: () => Promise.resolve()
 });
 
 export const AuthProvider: FC<AuthProviderProps> = (props) => {
@@ -100,7 +104,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
       try {
         auth0Client = new Auth0Client({
           redirect_uri: window.location.origin,
-          ...auth0Config,
+          ...auth0Config
         });
 
         await auth0Client.checkSession();
@@ -115,35 +119,35 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
           // The auth state only provides basic information.
 
           dispatch({
-            type: "INITIALIZE",
+            type: 'INITIALIZE',
             payload: {
               isAuthenticated,
               user: {
                 id: user.sub,
                 avatar: user.picture,
                 email: user.email,
-                name: "Aaron Begin",
-                plan: "Premium",
-              },
-            },
+                name: 'Aaron Begin',
+                plan: 'Premium'
+              }
+            }
           });
         } else {
           dispatch({
-            type: "INITIALIZE",
+            type: 'INITIALIZE',
             payload: {
               isAuthenticated,
-              user: null,
-            },
+              user: null
+            }
           });
         }
       } catch (err) {
-        console.error(err);
+        logger.error(err);
         dispatch({
-          type: "INITIALIZE",
+          type: 'INITIALIZE',
           payload: {
             isAuthenticated: false,
-            user: null,
-          },
+            user: null
+          }
         });
       }
     };
@@ -163,16 +167,16 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
       // The auth state only provides basic information.
 
       dispatch({
-        type: "LOGIN",
+        type: 'LOGIN',
         payload: {
           user: {
             id: user.sub,
             avatar: user.picture,
             email: user.email,
-            name: "Aaron Begin",
-            plan: "Premium",
-          },
-        },
+            name: 'Aaron Begin',
+            plan: 'Premium'
+          }
+        }
       });
     }
   };
@@ -180,7 +184,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   const logout = (): void => {
     auth0Client.logout();
     dispatch({
-      type: "LOGOUT",
+      type: 'LOGOUT'
     });
   };
 
@@ -188,9 +192,9 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     <AuthContext.Provider
       value={{
         ...state,
-        platform: "Auth0",
+        platform: 'Auth0',
         loginWithPopup,
-        logout,
+        logout
       }}
     >
       {children}
@@ -199,7 +203,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
 };
 
 AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
 };
 
 export default AuthContext;

@@ -1,18 +1,21 @@
-import createResourceId from "../utils/createResourceId";
-import { sign, decode, JWT_SECRET, JWT_EXPIRES_IN } from "../utils/jwt";
-import wait from "../utils/wait";
-import { User } from "../types/user";
+import { User } from '../types/user';
+import createResourceId from '../utils/createResourceId';
+import { JWT_EXPIRES_IN, JWT_SECRET, decode, sign } from '../utils/jwt';
+import wait from '../utils/wait';
+import { getLogger } from 'src/utils/loggin';
 
 const users = [
   {
-    id: "5e86809283e28b96d2d38537",
-    avatar: "/static/mock-images/avatars/gowild.jpg",
-    email: "test1@example.com",
-    name: "gowild",
-    password: "string",
-    role: "admin",
-  },
+    id: '5e86809283e28b96d2d38537',
+    avatar: '/static/mock-images/avatars/gowild.jpg',
+    email: 'test1@example.com',
+    name: 'gowild',
+    password: 'string',
+    role: 'admin'
+  }
 ];
+
+const authLogger = getLogger('Auth Api');
 
 class AuthApi {
   async login({ email, password }): Promise<string> {
@@ -24,19 +27,19 @@ class AuthApi {
         const user = users.find((_user) => _user.email === email);
 
         if (!user || user.password !== password) {
-          reject(new Error("401"));
+          reject(new Error('401'));
           return;
         }
 
         // Create the access token
         const accessToken = sign({ userId: user.id }, JWT_SECRET, {
-          expiresIn: JWT_EXPIRES_IN,
+          expiresIn: JWT_EXPIRES_IN
         });
 
         resolve(accessToken);
       } catch (err) {
-        console.error("[Auth Api]: ", err);
-        reject(new Error("Internal server error"));
+        authLogger.error('[Auth Api]: ', err);
+        reject(new Error('Internal server error'));
       }
     });
   }
@@ -50,7 +53,7 @@ class AuthApi {
         let user = users.find((_user) => _user.email === email);
 
         if (user) {
-          reject(new Error("User already exists"));
+          reject(new Error('User already exists'));
           return;
         }
 
@@ -60,19 +63,19 @@ class AuthApi {
           email,
           name,
           password,
-          role: "admin",
+          role: 'admin'
         };
 
         users.push(user);
 
         const accessToken = sign({ userId: user.id }, JWT_SECRET, {
-          expiresIn: JWT_EXPIRES_IN,
+          expiresIn: JWT_EXPIRES_IN
         });
 
         resolve(accessToken);
       } catch (err) {
-        console.error("[Auth Api]: ", err);
-        reject(new Error("Internal server error"));
+        authLogger.error('[Auth Api]: ', err);
+        reject(new Error('Internal server error'));
       }
     });
   }
@@ -87,7 +90,7 @@ class AuthApi {
         const user = users.find((_user) => _user.id === userId);
 
         if (!user) {
-          reject(new Error("Invalid authorization token"));
+          reject(new Error('Invalid authorization token'));
           return;
         }
 
@@ -96,11 +99,11 @@ class AuthApi {
           avatar: user.avatar,
           email: user.email,
           name: user.name,
-          role: user.role,
+          role: user.role
         });
       } catch (err) {
-        console.error("[Auth Api]: ", err);
-        reject(new Error("Internal server error"));
+        authLogger.error(err);
+        reject(new Error('Internal server error'));
       }
     });
   }

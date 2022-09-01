@@ -1,5 +1,5 @@
-import { Byte64Image } from "./others";
-import { Status } from "./status";
+import { Byte64Image } from './others';
+import { Status } from './status';
 
 export interface EndUser {
   id?: string;

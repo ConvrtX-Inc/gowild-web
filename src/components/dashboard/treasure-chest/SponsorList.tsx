@@ -1,19 +1,22 @@
-import { Box, IconButton, TextField, Typography } from "@material-ui/core";
-import { FC } from "react";
-import WebLink from "src/icons/WebLink";
-import styled from "styled-components";
-import ImageDropzone from "../ImageDropzone";
-import XIcon from "../../../icons/X";
-import toast, { Toaster } from "react-hot-toast";
+import XIcon from '../../../icons/X';
+import ImageDropzone from '../ImageDropzone';
+import { Box, IconButton, TextField, Typography } from '@material-ui/core';
+import { FC } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import WebLink from 'src/icons/WebLink';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('SponsorList');
 
 export type SponsorState = {
-  link?: "";
+  link?: '';
   imageFile?: File;
 };
 const createNewSponsor = (): SponsorState => {
   return {
     imageFile: null,
-    link: "",
+    link: ''
   };
 };
 
@@ -22,15 +25,16 @@ interface SponsorListProps {
   setSponsors: React.Dispatch<React.SetStateAction<SponsorState[]>>;
 }
 
-const SponsorList: FC<SponsorListProps> = ({ sponsors, setSponsors }) => {
+const SponsorList: FC<SponsorListProps> = ({ sponsors: sponsorsProps, setSponsors }) => {
   const handleLinkTextChange = (e, index: number) => {
     setSponsors((sponsors) =>
       sponsors.map((sponsor, i) => {
-        if (i === index)
+        if (i === index) {
           return {
             ...sponsor,
-            link: e.target.value,
+            link: e.target.value
           };
+        }
         return sponsor;
       })
     );
@@ -40,32 +44,34 @@ const SponsorList: FC<SponsorListProps> = ({ sponsors, setSponsors }) => {
     try {
       const file: File = fileArr[0];
       if (file.size > 1000000) {
-        toast.error("File must be 1MB size or less");
+        toast.error('File must be 1MB size or less');
         return;
       }
       setSponsors((sponsors: SponsorState[]) =>
         sponsors.map((sponsor, i) => {
-          if (i === index)
+          if (i === index) {
             return {
               ...sponsor,
-              imageFile: file,
+              imageFile: file
             };
+          }
           return sponsor;
         })
       );
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
   };
 
   const handleRemove = (index): void => {
     setSponsors((sponsors) =>
       sponsors.map((sponsor, i) => {
-        if (i === index)
+        if (i === index) {
           return {
             ...sponsor,
-            imageFile: null,
+            imageFile: null
           };
+        }
         return sponsor;
       })
     );
@@ -84,35 +90,36 @@ const SponsorList: FC<SponsorListProps> = ({ sponsors, setSponsors }) => {
 
   return (
     <ListBox>
-      {sponsors.map((s: SponsorState, i) => (
+      {sponsorsProps.map((s: SponsorState, i) => (
         <SponsorBox key={i}>
           <IconButton
             sx={{
-              position: "absolute",
-              right: "-21px",
-              top: "-20px",
-              zIndex: "100",
+              position: 'absolute',
+              right: '-21px',
+              top: '-20px',
+              zIndex: '100'
             }}
             onClick={() => removeSponsor(i)}
           >
-            <XIcon fontSize="small" />
+            <XIcon fontSize='small' />
           </IconButton>
           {s?.imageFile ? (
-            <Box sx={{ position: "relative" }}>
+            <Box sx={{ position: 'relative' }}>
               <IconButton
-                sx={{ position: "absolute", right: "-21px", top: "-20px" }}
+                sx={{
+                  position: 'absolute',
+                  right: '-21px',
+                  top: '-20px'
+                }}
                 onClick={() => handleRemove(i)}
               >
-                <XIcon fontSize="small" />
+                <XIcon fontSize='small' />
               </IconButton>
-              <SponsorLogo
-                component="img"
-                src={URL.createObjectURL(s.imageFile)}
-              />
+              <SponsorLogo component='img' src={URL.createObjectURL(s.imageFile)} />
             </Box>
           ) : (
             <ImageDropzone
-              accept="image/*"
+              accept='image/*'
               onDrop={(file: File[]) => {
                 handleDrop(file, i);
               }}
@@ -122,7 +129,7 @@ const SponsorList: FC<SponsorListProps> = ({ sponsors, setSponsors }) => {
           )}
           <StyledTextField
             InputProps={{
-              startAdornment: <WebLink />,
+              startAdornment: <WebLink />
             }}
             value={s.link}
             onChange={(e) => handleLinkTextChange(e, i)}
@@ -130,7 +137,7 @@ const SponsorList: FC<SponsorListProps> = ({ sponsors, setSponsors }) => {
         </SponsorBox>
       ))}
       <AddMoreText onClick={handleAddMore}>
-        {sponsors.length > 0 ? "Add more" : "Add sponsor"}
+        {sponsorsProps.length > 0 ? 'Add more' : 'Add sponsor'}
       </AddMoreText>
       <Toaster />
     </ListBox>
@@ -173,7 +180,7 @@ const SponsorBox = styled(Box)`
   }
 `;
 
-const SponsorLogo = styled(Box)`
+const SponsorLogo = styled(Box)<{ src?: string }>`
   && {
     border-radius: 22.2px;
     min-width: 67px;
@@ -216,7 +223,7 @@ const StyledTextField = styled(TextField)`
     && input {
       height: 67px;
       padding: 20px 33px 20px 5px;
-      font-family: "Gilroy Regular";
+      font-family: 'Gilroy Regular';
       font-size: 12px;
       line-height: 24px;
       letter-spacing: -0.025em;
@@ -225,7 +232,7 @@ const StyledTextField = styled(TextField)`
       align-items: center;
       box-sizing: border-box;
       &::placeholder {
-        font-family: "Gilroy Semibold";
+        font-family: 'Gilroy Semibold';
         font-weight: 500;
         font-size: 12px;
         line-height: 15.6px;
@@ -246,5 +253,5 @@ export const StyledElements = {
   SponsorBox,
   SponsorLogo,
   SponsorPlaceHolder,
-  StyledTextField,
+  StyledTextField
 };

@@ -1,9 +1,9 @@
-import { Box } from "@material-ui/core";
-import { FC } from "react";
-import { DropzoneOptions, useDropzone } from "react-dropzone";
-import styled from "styled-components";
+import { Box } from '@material-ui/core';
+import { FC, ReactNode } from 'react';
+import { DropzoneOptions, useDropzone } from 'react-dropzone';
+import styled from 'styled-components';
 
-const ImageDropzone: FC<DropzoneOptions> = (props) => {
+const ImageDropzone: FC<DropzoneOptions & { children: ReactNode }> = (props) => {
   const { accept, maxFiles, maxSize, minSize, onDrop, children } = props;
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -11,7 +11,7 @@ const ImageDropzone: FC<DropzoneOptions> = (props) => {
     maxFiles,
     maxSize,
     minSize,
-    onDrop,
+    onDrop
   });
 
   return (

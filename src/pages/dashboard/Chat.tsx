@@ -1,23 +1,22 @@
-import { useEffect } from "react";
-import type { FC } from "react";
-import { Helmet } from "react-helmet-async";
-import { Box } from "@mui/material";
-import { ChatSidebar, ChatThread } from "../../components/dashboard/chat";
-import gtm from "../../lib/gtm";
-import { getThreads } from "../../slices/chat";
-import { useDispatch } from "../../store";
+import { ChatSidebar, ChatThread } from '../../components/dashboard/chat';
+import gtm from '../../lib/gtm';
+import { getThreads } from '../../slices/chat';
+import { useDispatch } from '../../store';
+import { Box } from '@mui/material';
+import { useEffect } from 'react';
+import type { FC } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 const Chat: FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    gtm.push({ event: "page_view" });
+    gtm.push({ event: 'page_view' });
   }, []);
 
   useEffect(() => {
     dispatch(getThreads());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, getThreads]);
 
   return (
     <>
@@ -26,9 +25,9 @@ const Chat: FC = () => {
       </Helmet>
       <Box
         sx={{
-          backgroundColor: "background.default",
-          display: "flex",
-          height: "100%",
+          backgroundColor: 'background.default',
+          display: 'flex',
+          height: '100%'
         }}
       >
         <ChatSidebar />

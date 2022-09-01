@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import type { FC } from "react";
-import NProgress from "nprogress";
-import { Box } from "@mui/material";
+import { Box } from '@mui/material';
+import NProgress from 'nprogress';
+import { useEffect } from 'react';
+import type { FC } from 'react';
 
 const LoadingScreen: FC = () => {
   useEffect(() => {
@@ -15,8 +15,8 @@ const LoadingScreen: FC = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "background.paper",
-        minHeight: "100%",
+        backgroundColor: 'background.paper',
+        minHeight: '100%'
       }}
     />
   );

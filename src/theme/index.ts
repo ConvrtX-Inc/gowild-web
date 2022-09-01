@@ -1,8 +1,11 @@
-import merge from 'lodash/merge';
-import { createTheme, responsiveFontSizes } from '@material-ui/core/styles';
-import type { Direction, Theme, ThemeOptions } from '@material-ui/core';
 import { THEMES } from '../constants';
-import { lightShadows, darkShadows } from './shadows';
+import { darkShadows, lightShadows } from './shadows';
+import type { Direction, Theme, ThemeOptions } from '@material-ui/core';
+import { createTheme, responsiveFontSizes } from '@material-ui/core/styles';
+import merge from 'lodash/merge';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('Theme');
 
 interface ThemeConfig {
   direction?: Direction;
@@ -86,7 +89,8 @@ const baseOptions: ThemeOptions = {
     button: {
       fontWeight: 600
     },
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
     h1: {
       fontWeight: 600,
       fontSize: '3.5rem'
@@ -249,7 +253,7 @@ export const createCustomTheme = (config: ThemeConfig = {}): Theme => {
   let themeOptions = themesOptions[config.theme];
 
   if (!themeOptions) {
-    console.warn(new Error(`The theme ${config.theme} is not valid`));
+    logger.warn(`The theme ${config.theme} is not valid`);
     themeOptions = themesOptions[THEMES.LIGHT];
   }
 
@@ -259,13 +263,11 @@ export const createCustomTheme = (config: ThemeConfig = {}): Theme => {
       baseOptions,
       themeOptions,
       {
-        ...(
-          config.roundedCorners && {
-            shape: {
-              borderRadius: 16
-            }
+        ...(config.roundedCorners && {
+          shape: {
+            borderRadius: 16
           }
-        )
+        })
       },
       {
         direction: config.direction

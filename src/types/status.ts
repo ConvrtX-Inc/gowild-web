@@ -1,4 +1,4 @@
-import { AccountStatus, OnlineStatus } from "src/enums/user-list";
+import { AccountStatus, OnlineStatus } from 'src/enums/user-list';
 
 export interface Status {
   id?: string;

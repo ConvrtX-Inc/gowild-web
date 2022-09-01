@@ -1,18 +1,11 @@
-import { useRef, useState, memo } from "react";
-import type { FC } from "react";
-import {
-  ListItemIcon,
-  ListItemText,
-  Tooltip,
-  IconButton,
-  Menu,
-  MenuItem,
-} from "@mui/material";
-import ArchiveIcon from "../icons/Archive";
-import DocumentTextIcon from "../icons/DocumentText";
-import DotsHorizontalIcon from "../icons/DotsHorizontal";
-import DownloadIcon from "../icons/Download";
-import DuplicateIcon from "../icons/Duplicate";
+import ArchiveIcon from '../icons/Archive';
+import DocumentTextIcon from '../icons/DocumentText';
+import DotsHorizontalIcon from '../icons/DotsHorizontal';
+import DownloadIcon from '../icons/Download';
+import DuplicateIcon from '../icons/Duplicate';
+import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Tooltip } from '@mui/material';
+import { memo, useRef, useState } from 'react';
+import type { FC } from 'react';
 
 const MoreMenu: FC = (props) => {
   const anchorRef = useRef<HTMLButtonElement | null>(null);
@@ -28,53 +21,53 @@ const MoreMenu: FC = (props) => {
 
   return (
     <>
-      <Tooltip title="More options">
+      <Tooltip title='More options'>
         <IconButton onClick={handleMenuOpen} ref={anchorRef} {...props}>
-          <DotsHorizontalIcon fontSize="small" />
+          <DotsHorizontalIcon fontSize='small' />
         </IconButton>
       </Tooltip>
       <Menu
         anchorEl={anchorRef.current}
         anchorOrigin={{
-          horizontal: "left",
-          vertical: "top",
+          horizontal: 'left',
+          vertical: 'top'
         }}
         onClose={handleMenuClose}
         open={openMenu}
         PaperProps={{
           sx: {
-            maxWidth: "100%",
-            width: 256,
-          },
+            maxWidth: '100%',
+            width: 256
+          }
         }}
         transformOrigin={{
-          horizontal: "left",
-          vertical: "top",
+          horizontal: 'left',
+          vertical: 'top'
         }}
       >
         <MenuItem>
           <ListItemIcon>
-            <DownloadIcon fontSize="small" />
+            <DownloadIcon fontSize='small' />
           </ListItemIcon>
-          <ListItemText primary="Import" />
+          <ListItemText primary='Import' />
         </MenuItem>
         <MenuItem>
           <ListItemIcon>
-            <DocumentTextIcon fontSize="small" />
+            <DocumentTextIcon fontSize='small' />
           </ListItemIcon>
-          <ListItemText primary="Export" />
+          <ListItemText primary='Export' />
         </MenuItem>
         <MenuItem>
           <ListItemIcon>
-            <DuplicateIcon fontSize="small" />
+            <DuplicateIcon fontSize='small' />
           </ListItemIcon>
-          <ListItemText primary="Copy" />
+          <ListItemText primary='Copy' />
         </MenuItem>
         <MenuItem>
           <ListItemIcon>
-            <ArchiveIcon fontSize="small" />
+            <ArchiveIcon fontSize='small' />
           </ListItemIcon>
-          <ListItemText primary="Archive" />
+          <ListItemText primary='Archive' />
         </MenuItem>
       </Menu>
     </>

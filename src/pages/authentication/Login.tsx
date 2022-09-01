@@ -1,30 +1,26 @@
-import { useEffect } from "react";
-import type { FC } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import { Box, Container, Link } from "@mui/material";
-import {
-  LoginAmplify,
-  LoginAuth0,
-  LoginJWT,
-} from "../../components/authentication/login";
-import styled from "styled-components";
-import SmallWhiteMoonIcon from "../../icons/LoginWhiteMoon";
-import useAuth from "../../hooks/useAuth";
-import gtm from "../../lib/gtm";
+import { LoginAmplify, LoginAuth0, LoginJWT } from '../../components/authentication/login';
+import useAuth from '../../hooks/useAuth';
+import SmallWhiteMoonIcon from '../../icons/LoginWhiteMoon';
+import gtm from '../../lib/gtm';
+import { Box, Container, Link } from '@mui/material';
+import { useEffect } from 'react';
+import type { FC } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link as RouterLink } from 'react-router-dom';
+import styled from 'styled-components';
 
 const platformIcons = {
-  Amplify: "/static/icons/amplify.svg",
-  Auth0: "/static/icons/auth0.svg",
-  Firebase: "/static/icons/firebase.svg",
-  JWT: "/static/icons/jwt.svg",
+  Amplify: '/static/icons/amplify.svg',
+  Auth0: '/static/icons/auth0.svg',
+  Firebase: '/static/icons/firebase.svg',
+  JWT: '/static/icons/jwt.svg'
 };
 
 const Login: FC = () => {
   const { platform } = useAuth() as any;
 
   useEffect(() => {
-    gtm.push({ event: "page_view" });
+    gtm.push({ event: 'page_view' });
   }, []);
 
   return (
@@ -45,39 +41,34 @@ const Login: FC = () => {
               <ThirdToTopBox>
                 <SmallWhiteMoonIcon />
               </ThirdToTopBox>
-              <OpaqueMoonTop src="/static/login/opaque-ellipse.svg" />
-              <OpaqueMoonLeft src="/static/login/opaque-ellipse.svg" />
-              <OpaqueMoonRight src="/static/login/opaque-ellipse.svg" />
+              <OpaqueMoonTop src='/static/login/opaque-ellipse.svg' />
+              <OpaqueMoonLeft src='/static/login/opaque-ellipse.svg' />
+              <OpaqueMoonRight src='/static/login/opaque-ellipse.svg' />
 
               <LogoWrapper>
-                <RouterLink to="/">
-                  <img
-                    src="/static/login/group-logo.png"
-                    alt="nexxus-one-login-logo"
-                  />
+                <RouterLink to='/'>
+                  <img src='/static/login/group-logo.png' alt='nexxus-one-login-logo' />
                 </RouterLink>
               </LogoWrapper>
-              <FormContainer maxWidth="sm">
-                <Box sx={{ alignItems: "center" }}>
+              <FormContainer maxWidth='sm'>
+                <Box sx={{ alignItems: 'center' }}>
                   <div>
-                    <LoginTitle sx={{ mb: "16px" }}>
-                      Sign in to manage
-                    </LoginTitle>
+                    <LoginTitle sx={{ mb: '16px' }}>Sign in to manage</LoginTitle>
                     <SubTitle>Enter your details below</SubTitle>
                   </div>
 
                   {/* ------------------DYNAMIC FORMS------------------ */}
-                  {platform !== "JWT" && platform !== "Axios" && (
+                  {platform !== 'JWT' && platform !== 'Axios' && (
                     <Box
                       sx={{
                         height: 32,
-                        "& > img": {
-                          maxHeight: "100%",
-                          width: "auto",
-                        },
+                        '& > img': {
+                          maxHeight: '100%',
+                          width: 'auto'
+                        }
                       }}
                     >
-                      <img alt="Auth platform" src={platformIcons[platform]} />
+                      <img alt='Auth platform' src={platformIcons[platform]} />
                     </Box>
                   )}
                 </Box>
@@ -85,21 +76,21 @@ const Login: FC = () => {
                 <Box
                   sx={{
                     flexGrow: 1,
-                    mt: "54px",
+                    mt: '54px'
                   }}
                 >
-                  {platform === "Amplify" && <LoginAmplify />}
-                  {platform === "Auth0" && <LoginAuth0 />}
-                  {platform === "JWT" && <LoginJWT />}
-                  {platform === "Axios" && <LoginJWT />}
+                  {platform === 'Amplify' && <LoginAmplify />}
+                  {platform === 'Auth0' && <LoginAuth0 />}
+                  {platform === 'JWT' && <LoginJWT />}
+                  {platform === 'Axios' && <LoginJWT />}
                 </Box>
-                {platform === "Amplify" && (
+                {platform === 'Amplify' && (
                   <Link
-                    color="textSecondary"
+                    color='textSecondary'
                     component={RouterLink}
                     sx={{ mt: 1 }}
-                    to="/authentication/password-recovery"
-                    variant="body2"
+                    to='/authentication/password-recovery'
+                    variant='body2'
                   >
                     Forgot password
                   </Link>
@@ -119,7 +110,7 @@ const Background1stLineWave = styled(Box)`
   && {
     width: 100%;
     height: 100%;
-    background-image: url("/static/login/line-wave.png");
+    background-image: url('/static/login/line-wave.png');
     background-repeat: no-repeat;
     background-position: bottom;
     background-size: contain;
@@ -132,7 +123,7 @@ const BackgroundImg2ndLayer = styled(Box)`
   && {
     width: 100%;
     height: 100%;
-    background-image: url("/static/login/second-layer-background.svg");
+    background-image: url('/static/login/second-layer-background.svg');
     background-repeat: no-repeat;
     background-position: left bottom;
     background-size: 1080px;
@@ -144,7 +135,7 @@ const BackgroundImg3rdLayer = styled(Box)`
   && {
     width: 100%;
     height: 100%;
-    background-image: url("/static/login/third-layer-background.png");
+    background-image: url('/static/login/third-layer-background.png');
     background-repeat: no-repeat;
     background-size: cover;
   }
@@ -239,7 +230,7 @@ const FormContainer = styled(Container)`
 
 const LoginTitle = styled(Box)`
   && {
-    font-family: "DM Sans";
+    font-family: 'DM Sans';
     font-style: normal;
     font-weight: 500;
     font-size: 3rem;
@@ -251,7 +242,7 @@ const LoginTitle = styled(Box)`
 
 const SubTitle = styled(Box)`
   && {
-    font-family: "Poppins";
+    font-family: 'Poppins';
     font-style: normal;
     font-weight: 400;
     font-size: 1rem;

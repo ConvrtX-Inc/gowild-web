@@ -1,6 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
-import type { FC } from 'react';
-import { formatDistanceToNowStrict } from 'date-fns';
+import UsersIcon from '../../icons/Users';
+import { getContacts } from '../../slices/chat';
+import { useDispatch, useSelector } from '../../store';
+import StatusIndicator from '../StatusIndicator';
 import {
   Avatar,
   Box,
@@ -14,10 +15,9 @@ import {
   Tooltip,
   Typography
 } from '@mui/material';
-import UsersIcon from '../../icons/Users';
-import { getContacts } from '../../slices/chat';
-import { useDispatch, useSelector } from '../../store';
-import StatusIndicator from '../StatusIndicator';
+import { formatDistanceToNowStrict } from 'date-fns';
+import { useEffect, useRef, useState } from 'react';
+import type { FC } from 'react';
 
 const ContactsPopover: FC = () => {
   const dispatch = useDispatch();
@@ -27,8 +27,7 @@ const ContactsPopover: FC = () => {
 
   useEffect(() => {
     dispatch(getContacts());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, getContacts]);
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -40,13 +39,9 @@ const ContactsPopover: FC = () => {
 
   return (
     <>
-      <Tooltip title="Contacts">
-        <IconButton
-          color="inherit"
-          onClick={handleOpen}
-          ref={anchorRef}
-        >
-          <UsersIcon fontSize="small" />
+      <Tooltip title='Contacts'>
+        <IconButton color='inherit' onClick={handleOpen} ref={anchorRef}>
+          <UsersIcon fontSize='small' />
         </IconButton>
       </Tooltip>
       <Popover
@@ -64,10 +59,7 @@ const ContactsPopover: FC = () => {
           }
         }}
       >
-        <Typography
-          color="textPrimary"
-          variant="h6"
-        >
+        <Typography color='textPrimary' variant='h6'>
           Contacts
         </Typography>
         <Box sx={{ mt: 2 }}>
@@ -76,47 +68,31 @@ const ContactsPopover: FC = () => {
               const contact = contacts.byId[contactId];
 
               return (
-                <ListItem
-                  disableGutters
-                  key={contact.id}
-                >
+                <ListItem disableGutters key={contact.id}>
                   <ListItemAvatar>
                     <Avatar src={contact.avatar} />
                   </ListItemAvatar>
                   <ListItemText
                     disableTypography
-                    primary={(
+                    primary={
                       <Link
-                        color="textPrimary"
-                        display="block"
+                        color='textPrimary'
+                        display='block'
                         noWrap
-                        underline="none"
-                        variant="subtitle2"
+                        underline='none'
+                        variant='subtitle2'
                       >
                         {contact.name}
                       </Link>
-                    )}
+                    }
                   />
-                  {
-                    contact.isActive
-                      ? (
-                        <StatusIndicator
-                          size="small"
-                          status="online"
-                        />
-                      )
-                      : (
-                        <Typography
-                          color="textSecondary"
-                          noWrap
-                          variant="caption"
-                        >
-                          {formatDistanceToNowStrict(contact.lastActivity)}
-                          {' '}
-                          ago
-                        </Typography>
-                      )
-                  }
+                  {contact.isActive ? (
+                    <StatusIndicator size='small' status='online' />
+                  ) : (
+                    <Typography color='textSecondary' noWrap variant='caption'>
+                      {formatDistanceToNowStrict(contact.lastActivity)} ago
+                    </Typography>
+                  )}
                 </ListItem>
               );
             })}

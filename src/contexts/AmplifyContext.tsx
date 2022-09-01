@@ -1,9 +1,12 @@
-import { createContext, useEffect, useReducer } from "react";
-import type { FC, ReactNode } from "react";
-import PropTypes from "prop-types";
-import Amplify, { Auth } from "aws-amplify";
-import { amplifyConfig } from "../config";
-import type { User } from "../types/user";
+import { amplifyConfig } from '../config';
+import type { User } from '../types/user';
+import Amplify, { Auth } from 'aws-amplify';
+import PropTypes from 'prop-types';
+import { createContext, useEffect, useReducer } from 'react';
+import type { FC, ReactNode } from 'react';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('Amplify Context');
 
 Amplify.configure(amplifyConfig);
 
@@ -14,18 +17,14 @@ interface State {
 }
 
 interface AuthContextValue extends State {
-  platform: "Amplify";
+  platform: 'Amplify';
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   verifyCode: (username: string, code: string) => Promise<void>;
   resendCode: (username: string) => Promise<void>;
   passwordRecovery: (username: string) => Promise<void>;
-  passwordReset: (
-    username: string,
-    code: string,
-    newPassword: string
-  ) => Promise<void>;
+  passwordReset: (username: string, code: string, newPassword: string) => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -33,7 +32,7 @@ interface AuthProviderProps {
 }
 
 type InitializeAction = {
-  type: "INITIALIZE";
+  type: 'INITIALIZE';
   payload: {
     isAuthenticated: boolean;
     user: User | null;
@@ -41,33 +40,33 @@ type InitializeAction = {
 };
 
 type LoginAction = {
-  type: "LOGIN";
+  type: 'LOGIN';
   payload: {
     user: User;
   };
 };
 
 type LogoutAction = {
-  type: "LOGOUT";
+  type: 'LOGOUT';
 };
 
 type RegisterAction = {
-  type: "REGISTER";
+  type: 'REGISTER';
 };
 
 type VerifyCodeAction = {
-  type: "VERIFY_CODE";
+  type: 'VERIFY_CODE';
 };
 
 type ResendCodeAction = {
-  type: "RESEND_CODE";
+  type: 'RESEND_CODE';
 };
 type PasswordRecoveryAction = {
-  type: "PASSWORD_RECOVERY";
+  type: 'PASSWORD_RECOVERY';
 };
 
 type PasswordResetAction = {
-  type: "PASSWORD_RESET";
+  type: 'PASSWORD_RESET';
 };
 
 type Action =
@@ -83,7 +82,7 @@ type Action =
 const initialState: State = {
   isAuthenticated: false,
   isInitialized: false,
-  user: null,
+  user: null
 };
 
 const handlers: Record<string, (state: State, action: Action) => State> = {
@@ -94,7 +93,7 @@ const handlers: Record<string, (state: State, action: Action) => State> = {
       ...state,
       isAuthenticated,
       isInitialized: true,
-      user,
+      user
     };
   },
   LOGIN: (state: State, action: LoginAction): State => {
@@ -103,34 +102,35 @@ const handlers: Record<string, (state: State, action: Action) => State> = {
     return {
       ...state,
       isAuthenticated: true,
-      user,
+      user
     };
   },
   LOGOUT: (state: State): State => ({
     ...state,
     isAuthenticated: false,
-    user: null,
+    user: null
   }),
   REGISTER: (state: State): State => ({ ...state }),
   VERIFY_CODE: (state: State): State => ({ ...state }),
   RESEND_CODE: (state: State): State => ({ ...state }),
   PASSWORD_RECOVERY: (state: State): State => ({ ...state }),
-  PASSWORD_RESET: (state: State): State => ({ ...state }),
+  PASSWORD_RESET: (state: State): State => ({ ...state })
 };
 
-const reducer = (state: State, action: Action): State =>
-  handlers[action.type] ? handlers[action.type](state, action) : state;
+const reducer = (state: State, action: Action): State => {
+  return handlers[action.type] ? handlers[action.type](state, action) : state;
+};
 
 const AuthContext = createContext<AuthContextValue>({
   ...initialState,
-  platform: "Amplify",
+  platform: 'Amplify',
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve(),
   verifyCode: () => Promise.resolve(),
   resendCode: () => Promise.resolve(),
   passwordRecovery: () => Promise.resolve(),
-  passwordReset: () => Promise.resolve(),
+  passwordReset: () => Promise.resolve()
 });
 
 export const AuthProvider: FC<AuthProviderProps> = (props) => {
@@ -147,25 +147,25 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
         // The auth state only provides basic information.
 
         dispatch({
-          type: "INITIALIZE",
+          type: 'INITIALIZE',
           payload: {
             isAuthenticated: true,
             user: {
               id: user.sub,
-              avatar: "/static/mock-images/avatars/NexxusOne.jpg",
+              avatar: '/static/mock-images/avatars/NexxusOne.jpg',
               email: user.attributes.email,
-              name: "Aaron Begin",
-              plan: "Premium",
-            },
-          },
+              name: 'Aaron Begin',
+              plan: 'Premium'
+            }
+          }
         });
       } catch (error) {
         dispatch({
-          type: "INITIALIZE",
+          type: 'INITIALIZE',
           payload: {
             isAuthenticated: false,
-            user: null,
-          },
+            user: null
+          }
         });
       }
     };
@@ -177,30 +177,30 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     const user = await Auth.signIn(email, password);
 
     if (user.challengeName) {
-      console.error(
+      logger.error(
         `Unable to login, because challenge "${user.challengeName}" is mandated and we did not handle this case.`
       );
       return;
     }
 
     dispatch({
-      type: "LOGIN",
+      type: 'LOGIN',
       payload: {
         user: {
           id: user.attributes.sub,
-          avatar: "/static/mock-images/avatars/NexxusOne.jpg",
+          avatar: '/static/mock-images/avatars/NexxusOne.jpg',
           email: user.attributes.email,
-          name: "Aaron Begin",
-          plan: "Premium",
-        },
-      },
+          name: 'Aaron Begin',
+          plan: 'Premium'
+        }
+      }
     });
   };
 
   const logout = async (): Promise<void> => {
     await Auth.signOut();
     dispatch({
-      type: "LOGOUT",
+      type: 'LOGOUT'
     });
   };
 
@@ -208,31 +208,31 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     await Auth.signUp({
       username: email,
       password,
-      attributes: { email },
+      attributes: { email }
     });
     dispatch({
-      type: "REGISTER",
+      type: 'REGISTER'
     });
   };
 
   const verifyCode = async (username: string, code: string): Promise<void> => {
     await Auth.confirmSignUp(username, code);
     dispatch({
-      type: "VERIFY_CODE",
+      type: 'VERIFY_CODE'
     });
   };
 
   const resendCode = async (username: string): Promise<void> => {
     await Auth.resendSignUp(username);
     dispatch({
-      type: "RESEND_CODE",
+      type: 'RESEND_CODE'
     });
   };
 
   const passwordRecovery = async (username: string): Promise<void> => {
     await Auth.forgotPassword(username);
     dispatch({
-      type: "PASSWORD_RECOVERY",
+      type: 'PASSWORD_RECOVERY'
     });
   };
 
@@ -243,7 +243,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   ): Promise<void> => {
     await Auth.forgotPasswordSubmit(username, code, newPassword);
     dispatch({
-      type: "PASSWORD_RESET",
+      type: 'PASSWORD_RESET'
     });
   };
 
@@ -251,14 +251,14 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     <AuthContext.Provider
       value={{
         ...state,
-        platform: "Amplify",
+        platform: 'Amplify',
         login,
         logout,
         register,
         verifyCode,
         resendCode,
         passwordRecovery,
-        passwordReset,
+        passwordReset
       }}
     >
       {children}
@@ -267,7 +267,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
 };
 
 AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
 };
 
 export default AuthContext;

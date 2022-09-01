@@ -1,7 +1,3 @@
-import { useState } from 'react';
-import type { ChangeEvent, FC } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Box, IconButton, Typography } from '@mui/material';
 import { chatApi } from '../../../__fakeApi__/chatApi';
 import CogIcon from '../../../icons/Cog';
 import PencilAltIcon from '../../../icons/PencilAlt';
@@ -9,6 +5,13 @@ import type { Contact } from '../../../types/chat';
 import Scrollbar from '../../Scrollbar';
 import ChatContactSearch from './ChatContactSearch';
 import ChatThreadList from './ChatThreadList';
+import { Box, IconButton, Typography } from '@mui/material';
+import { useState } from 'react';
+import type { ChangeEvent, FC } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('ChatSidebar');
 
 const ChatSidebar: FC = () => {
   const navigate = useNavigate();
@@ -35,7 +38,7 @@ const ChatSidebar: FC = () => {
         setSearchResults([]);
       }
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
   };
 
@@ -70,21 +73,15 @@ const ChatSidebar: FC = () => {
           px: 2
         }}
       >
-        <Typography
-          color="textPrimary"
-          variant="h5"
-        >
+        <Typography color='textPrimary' variant='h5'>
           Chats
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
         <IconButton>
-          <CogIcon fontSize="small" />
+          <CogIcon fontSize='small' />
         </IconButton>
-        <IconButton
-          component={RouterLink}
-          to="/dashboard/chat/new"
-        >
-          <PencilAltIcon fontSize="small" />
+        <IconButton component={RouterLink} to='/dashboard/chat/new'>
+          <PencilAltIcon fontSize='small' />
         </IconButton>
       </Box>
       <Box

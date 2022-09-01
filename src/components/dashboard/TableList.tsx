@@ -1,29 +1,32 @@
-import React, { cloneElement, useState } from "react";
-import type { ChangeEvent, FC, MouseEvent } from "react";
+import DeleteIcon from '../../icons/RouteListDelete';
+import EditIcon from '../../icons/RouteListEdit';
+import ViewIcon from '../../icons/RouteListView';
+import ThreeDotsIcon from '../../icons/ThreeDots';
+import { NormalRoute } from '../../types/route-lists';
+import Scrollbar from '../Scrollbar';
 import {
   Box,
   Checkbox,
-  Popover,
+  CircularProgress,
   IconButton,
+  Popover,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TablePagination,
   TableRow,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
-import styled from "styled-components";
-import ThreeDotsIcon from "../../icons/ThreeDots";
-import ViewIcon from "../../icons/RouteListView";
-import EditIcon from "../../icons/RouteListEdit";
-import DeleteIcon from "../../icons/RouteListDelete";
-import { NormalRoute } from "../../types/route-lists";
-import Scrollbar from "../Scrollbar";
-import { TreasureChest } from "src/types/treasurechest";
-import { TableCellStyled } from "src/shared-styled-components/dashboard";
-import { EndUser } from "src/types/end-user";
+  Typography
+} from '@mui/material';
+import React, { cloneElement, useState } from 'react';
+import type { ChangeEvent, FC, MouseEvent } from 'react';
+import { TableCellStyled } from 'src/shared-styled-components/dashboard';
+import { EndUser } from 'src/types/end-user';
+import { TreasureChest } from 'src/types/treasurechest';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('TableList');
 
 type TableItems = NormalRoute[] | TreasureChest[] | EndUser[];
 type TableItem = NormalRoute | TreasureChest | EndUser;
@@ -31,14 +34,11 @@ interface TableListProps {
   headers: string[];
   items: TableItems;
   rowElementsBuilder: (item: TableItem) => JSX.Element[];
-  rowOptionsBuilder: (
-    item: TableItem | null,
-    handleClose: () => void
-  ) => JSX.Element[] | null;
+  rowOptionsBuilder: (item: TableItem | null, handleClose: () => void) => JSX.Element[] | null;
   loading?: boolean;
 }
 
-type Sort = "updatedAt|desc" | "updatedAt|asc" | "deleteAt|asc";
+type Sort = 'updatedAt|desc' | 'updatedAt|asc' | 'deleteAt|asc';
 
 interface SortOption {
   value: Sort;
@@ -48,38 +48,34 @@ interface SortOption {
 
 const sortOptions: SortOption[] = [
   {
-    label: "View",
-    value: "updatedAt|asc",
-    icon: <ViewIcon />,
+    label: 'View',
+    value: 'updatedAt|asc',
+    icon: <ViewIcon />
   },
   {
-    label: "Edit",
-    value: "updatedAt|desc",
-    icon: <EditIcon />,
+    label: 'Edit',
+    value: 'updatedAt|desc',
+    icon: <EditIcon />
   },
   {
-    label: "Delete",
-    value: "deleteAt|asc",
-    icon: <DeleteIcon />,
-  },
+    label: 'Delete',
+    value: 'deleteAt|asc',
+    icon: <DeleteIcon />
+  }
 ];
 
-const applyFilters = (
-  items: any[],
-  query: string,
-  filters: any
-): TableItems[] =>
+const applyFilters = (items: any[], query: string, filters: any): TableItems[] =>
   items.filter((item) => {
     let matches = true;
 
     if (query) {
-      const properties = ["route_name"];
+      const properties = ['route_name'];
       let containsQuery = false;
 
-      if (typeof query === "string") {
-        console.log("Query is string");
+      if (typeof query === 'string') {
+        logger.debug('Query is string');
         properties.forEach((property) => {
-          //Query all Strings
+          // Query all Strings
           if (item[property].toLowerCase().includes(query.toLowerCase())) {
             containsQuery = true;
           }
@@ -117,57 +113,55 @@ const descendingComparator = (a: any, b: any, orderBy: string): number => {
   return 0;
 };
 
-const getComparator = (order: "asc" | "desc", orderBy: string) =>
-  order === "desc"
-    ? (a: TableItems, b: TableItems) => descendingComparator(a, b, orderBy)
-    : (a: TableItems, b: TableItems) => -descendingComparator(a, b, orderBy);
+const getComparator =
+  (order: 'asc' | 'desc', orderBy: string) => (a: TableItems, b: TableItems) => {
+    return order === 'desc'
+      ? descendingComparator(a, b, orderBy)
+      : -descendingComparator(a, b, orderBy);
+  };
+
+type TableIdx = [TableItems, number];
 
 const applySort = (items: TableItems[], sort: Sort): TableItems[] => {
-  const [orderBy, order] = sort.split("|") as [string, "asc" | "desc"];
+  const [orderBy, order] = sort.split('|') as [string, 'asc' | 'desc'];
   const comparator = getComparator(order, orderBy);
-  const stabilizedThis = items.map((el, index) => [el, index]);
+  const stabilizedThis: TableIdx[] = items.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
-    // @ts-ignore
     const newOrder = comparator(a[0], b[0]);
 
     if (newOrder !== 0) {
       return newOrder;
     }
 
-    // @ts-ignore
     return a[1] - b[1];
   });
 
-  // @ts-ignore
   return stabilizedThis.map((el) => el[0]);
 };
 
 const TableList: FC<TableListProps> = (props) => {
-  const { items, headers, rowElementsBuilder, rowOptionsBuilder, loading } =
-    props;
+  const { items, headers, rowElementsBuilder, rowOptionsBuilder, loading } = props;
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [
-    query,
+    query
     // setQuery
-  ] = useState<string>("");
+  ] = useState<string>('');
   const [
-    sort,
+    sort
     // setSort
   ] = useState<Sort>(sortOptions[1].value);
   const [filters] = useState<any>({
     hasAcceptedMarketing: null,
     isProspect: null,
-    isReturning: null,
+    isReturning: null
   });
 
   const [rowItem, setRowItem] = useState<TableItem>(null);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>, item) => {
     setRowItem(item);
@@ -177,7 +171,7 @@ const TableList: FC<TableListProps> = (props) => {
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const id = open ? 'simple-popover' : undefined;
 
   const handleSelectAllItems = (event: ChangeEvent<HTMLInputElement>): void => {
     setSelectedItems(event.target.checked ? items.map((item) => item.id) : []);
@@ -196,10 +190,7 @@ const TableList: FC<TableListProps> = (props) => {
   //   }
   // };
 
-  const handlePageChange = (
-    event: MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ): void => {
+  const handlePageChange = (event: MouseEvent<HTMLButtonElement> | null, newPage: number): void => {
     setPage(newPage);
   };
 
@@ -211,15 +202,14 @@ const TableList: FC<TableListProps> = (props) => {
   const sortedItems = applySort(filteredItems, sort);
   const paginatedItems = applyPagination(sortedItems, page, limit);
 
-  const selectedSomeItems =
-    selectedItems.length > 0 && selectedItems.length < items.length;
+  const selectedSomeItems = selectedItems.length > 0 && selectedItems.length < items.length;
   const selectedAllItems = selectedItems.length === items.length;
   return (
     <>
       <Scrollbar>
         <Box
           sx={{
-            overflow: "auto",
+            overflow: 'auto'
           }}
         >
           <Table>
@@ -240,10 +230,7 @@ const TableList: FC<TableListProps> = (props) => {
                 {headers.map((header) => (
                   <TableHeaderCell key={header}>{header}</TableHeaderCell>
                 ))}
-                <TableHeaderCell
-                  align="left"
-                  sx={{ width: "161px" }}
-                ></TableHeaderCell>
+                <TableHeaderCell align='left' sx={{ width: '161px' }} />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -252,11 +239,7 @@ const TableList: FC<TableListProps> = (props) => {
                 paginatedItems.map((item) => {
                   const isItemSelected = selectedItems.includes(item.id);
                   return (
-                    <StyledTableRow
-                      hover
-                      key={item.id}
-                      selected={isItemSelected}
-                    >
+                    <StyledTableRow hover key={item.id} selected={isItemSelected}>
                       {/* <TableCellStyled padding="checkbox">
                         <Box
                           sx={{
@@ -277,20 +260,17 @@ const TableList: FC<TableListProps> = (props) => {
 
                       {rowElementsBuilder(item).map((elem, i) =>
                         cloneElement(elem, {
-                          key: `${item}-${i}`,
+                          key: `${item}-${i}`
                         })
                       )}
 
-                      <TableCellStyled align="right">
+                      <TableCellStyled align='right'>
                         <Box
                           sx={{
-                            textAlign: "right",
+                            textAlign: 'right'
                           }}
                         >
-                          <IconButton
-                            aria-describedby={id}
-                            onClick={(e) => handleClick(e, item)}
-                          >
+                          <IconButton aria-describedby={id} onClick={(e) => handleClick(e, item)}>
                             <ThreeDotsIcon />
                           </IconButton>
                           <StyledPopOver
@@ -299,12 +279,12 @@ const TableList: FC<TableListProps> = (props) => {
                             anchorEl={anchorEl}
                             onClose={handleClose}
                             anchorOrigin={{
-                              vertical: "bottom",
-                              horizontal: "center",
+                              vertical: 'bottom',
+                              horizontal: 'center'
                             }}
                             transformOrigin={{
-                              vertical: "top",
-                              horizontal: "right",
+                              vertical: 'top',
+                              horizontal: 'right'
                             }}
                           >
                             {rowOptionsBuilder(rowItem, handleClose)}
@@ -315,12 +295,12 @@ const TableList: FC<TableListProps> = (props) => {
                   );
                 })
               ) : (
-                <TableRow sx={{ width: "100%" }}>
+                <TableRow sx={{ width: '100%' }}>
                   <TableCell
                     sx={{
-                      borderBottom: "none",
-                      position: "relative",
-                      height: "142px",
+                      borderBottom: 'none',
+                      position: 'relative',
+                      height: '142px'
                     }}
                   >
                     <DefaultLoadingBox>
@@ -333,13 +313,12 @@ const TableList: FC<TableListProps> = (props) => {
           </Table>
           {!loading && items.length === 0 && (
             <EmptyTableBox m={2}>
-              <Typography variant="h5">Empty...</Typography>
+              <Typography variant='h5'>Empty...</Typography>
             </EmptyTableBox>
           )}
         </Box>
       </Scrollbar>
       <StyledTablePagination
-        component="div"
         count={filteredItems.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
@@ -347,10 +326,10 @@ const TableList: FC<TableListProps> = (props) => {
         rowsPerPage={limit}
         rowsPerPageOptions={[10, 25, 50]}
       />
-      <Box sx={{ display: "flex", position: "relative" }}>
+      <Box sx={{ display: 'flex', position: 'relative' }}>
         <HiddenCheckBox
           checked={selectedAllItems}
-          color="primary"
+          color='primary'
           indeterminate={selectedSomeItems}
           onChange={handleSelectAllItems}
         />
@@ -420,7 +399,7 @@ const TableHeaderCell = styled(TableCell)`
     background-color: #ff7851;
     padding: 15px 18px;
     text-align: center;
-    font-family: "Inter";
+    font-family: 'Inter';
     font-weight: 600;
     font-size: 0.75rem;
     line-height: 15px;
@@ -458,14 +437,14 @@ const StyledTablePagination = styled(TablePagination)`
       }
     }
     & p {
-      font-family: "Gilroy SemiBold";
+      font-family: 'Gilroy SemiBold';
       font-size: 16px;
       line-height: 19px;
       margin: 0 0 0 0;
       color: #ffffff;
     }
     div.MuiTablePagination-select {
-      font-family: "Gilroy SemiBold";
+      font-family: 'Gilroy SemiBold';
       font-size: 16px;
       line-height: 19px;
       padding: 0 25px 0 0;

@@ -1,14 +1,11 @@
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/core";
-import { FC } from "react";
-import styled from "styled-components";
-import { GuidelineType } from "../../../enums";
+import { GuidelineType } from '../../../enums';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/core';
+import { FC } from 'react';
+import styled from 'styled-components';
 
 interface GuidelineTabsProps {
   tabOpened: GuidelineType;
-  onTabChange: (
-    event: React.MouseEvent<HTMLElement>,
-    tab: GuidelineType
-  ) => void;
+  onTabChange: (event: React.MouseEvent<HTMLElement>, tab: GuidelineType) => void;
 }
 
 const GuidelineTabs: FC<GuidelineTabsProps> = ({ tabOpened, onTabChange }) => {
@@ -17,29 +14,23 @@ const GuidelineTabs: FC<GuidelineTabsProps> = ({ tabOpened, onTabChange }) => {
       value={tabOpened}
       exclusive
       onChange={onTabChange}
-      aria-label="Guideline Tabs"
+      aria-label='Guideline Tabs'
       sx={{
-        px: "1em",
+        px: '1em'
       }}
     >
       <GuidelineTabElem
         value={GuidelineType.TERMS_AND_CONDITIONS}
         aria-label={GuidelineType.TERMS_AND_CONDITIONS}
       >
-        {"Terms & Condition"}
+        Terms & Condition
       </GuidelineTabElem>
 
-      <GuidelineTabElem
-        value={GuidelineType.FAQ}
-        aria-label={GuidelineType.FAQ}
-      >
+      <GuidelineTabElem value={GuidelineType.FAQ} aria-label={GuidelineType.FAQ}>
         FAQ
       </GuidelineTabElem>
 
-      <GuidelineTabElem
-        value={GuidelineType.E_WAIVER}
-        aria-label={GuidelineType.E_WAIVER}
-      >
+      <GuidelineTabElem value={GuidelineType.E_WAIVER} aria-label={GuidelineType.E_WAIVER}>
         E - Waiver
       </GuidelineTabElem>
     </GuidelineTabsGroup>
@@ -55,7 +46,7 @@ const GuidelineTabElem = styled(ToggleButton)`
     width: 175px;
     &.MuiToggleButton-root {
       color: #c0c0c0;
-      font-family: "Gilroy Bold";
+      font-family: 'Gilroy Bold';
       font-weight: 400;
     }
     &.Mui-selected {

@@ -1,16 +1,21 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import type { FC } from "react";
-import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../../firebase";
-import toast from "react-hot-toast";
-import * as Yup from "yup";
-import { Formik } from "formik";
+import * as Yup from 'yup';
+import { storage } from '../../../firebase';
+import ExpandMoreIcon from '../../../icons/ExpandAccordion';
+import FinishingPtIcon from '../../../icons/LocationFinishingPt';
+import HistoricalEventIcon from '../../../icons/LocationHistoricalEvent';
+import StartingPtIcon from '../../../icons/LocationStartingPt';
+import AddHistoricalIcon from '../../../icons/RouteListAddHistorical';
+import CrossIcon from '../../../icons/RouteListCross';
+import { setRouteListIsLoading } from '../../../slices/route-list';
+import { useDispatch } from '../../../store';
+import FileDropzone from '../../FileDropzone';
+import FileDropzoneHistorical from '../../FileDropzoneHistorical';
+import Scrollbar from '../../Scrollbar';
+import RouteEditMap from './RouteEditMap';
 import {
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Card,
@@ -19,21 +24,20 @@ import {
   FormHelperText,
   Grid,
   IconButton,
-  TextField,
-} from "@mui/material";
-import styled from "styled-components";
-import Scrollbar from "../../Scrollbar";
-import RouteEditMap from "./RouteEditMap";
-import FileDropzone from "../../FileDropzone";
-import FileDropzoneHistorical from "../../FileDropzoneHistorical";
-import StartingPtIcon from "../../../icons/LocationStartingPt";
-import FinishingPtIcon from "../../../icons/LocationFinishingPt";
-import CrossIcon from "../../../icons/RouteListCross";
-import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
-import AddHistoricalIcon from "../../../icons/RouteListAddHistorical";
-import ExpandMoreIcon from "../../../icons/ExpandAccordion";
-import { setRouteListIsLoading } from "../../../slices/route-list";
-import { useDispatch } from "../../../store";
+  TextField
+} from '@mui/material';
+import axios from 'axios';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { Formik } from 'formik';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type { FC } from 'react';
+import toast from 'react-hot-toast';
+import { errorMessage } from 'src/utils/formik.utils';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
+
+const logger = getLogger('RouteEditForm');
 
 // interface RouteEditFormProps {
 //   // normalRoutes: NormalRoute[];
@@ -42,23 +46,23 @@ import { useDispatch } from "../../../store";
 
 const RouteEditForm: FC<any> = (props) => {
   const { singleRoute } = props;
-  console.log("EDIT FORM PROPS: ", singleRoute);
+  logger.debug('EDIT FORM PROPS: ', singleRoute);
   const dispatch = useDispatch();
   const [
     ,
     // b64files
-    setB64files,
-  ] = useState<any>("");
+    setB64files
+  ] = useState<any>('');
   const [files, setFiles] = useState<any[]>([]);
   const [isImgLoaded, setIsImgLoaded] = useState(true);
   const [
     ,
     // b64historicalFiles
-    setB64historicalFiles,
-  ] = useState<any>("");
+    setB64historicalFiles
+  ] = useState<any>('');
   const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
-  const [eventId, setEventId] = useState<string>("");
-  const [gmapMarkerUid, setGmapMarkerUid] = useState("");
+  const [eventId, setEventId] = useState<string>('');
+  const [gmapMarkerUid, setGmapMarkerUid] = useState('');
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const [loadGmapAfterGetEvents, setLoadGmapAfterGetEvents] = useState(false);
   const [eventIsEditing, setEventIsEditing] = useState(false);
@@ -74,10 +78,10 @@ const RouteEditForm: FC<any> = (props) => {
     const newState = [...routeHistoFields];
     newState[i] = {
       ...newState[i],
-      [name]: value,
+      [name]: value
     };
 
-    console.log("HISTO FIELDS", newState);
+    logger.debug('HISTO FIELDS', newState);
     setHistoricalEvents(newState);
   };
   // useEffect(() => {
@@ -96,23 +100,21 @@ const RouteEditForm: FC<any> = (props) => {
   const handleDrop = (newFiles: any): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const file = newFiles.find((f) => f);
-    console.log(file);
+    logger.debug(file);
 
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      console.log("OBJ SRC & DATA ", {
+      logger.debug('OBJ SRC & DATA ', {
         src: file.preview,
-        data: reader.result,
+        data: reader.result
       });
       setB64files(reader.result);
     };
   };
 
   const handleRemove = (file): void => {
-    setFiles((prevFiles) =>
-      prevFiles.filter((_file) => _file.path !== file.path)
-    );
+    setFiles((prevFiles) => prevFiles.filter((_file) => _file.path !== file.path));
   };
 
   const handleRemoveAll = (): void => {
@@ -122,23 +124,21 @@ const RouteEditForm: FC<any> = (props) => {
   const handleHistoricalDrop = (newFiles: any): void => {
     setHistoricalFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const file = newFiles.find((f) => f);
-    console.log("Historical Img Drop ", file);
+    logger.debug('Historical Img Drop ', file);
 
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      console.log("OBJ SRC & DATA ", {
+      logger.debug('OBJ SRC & DATA ', {
         src: file.preview,
-        data: reader.result,
+        data: reader.result
       });
       setB64historicalFiles(reader.result);
     };
   };
 
   const handleHistoricalRemove = (file): void => {
-    setHistoricalFiles((prevFiles) =>
-      prevFiles.filter((_file) => _file.path !== file.path)
-    );
+    setHistoricalFiles((prevFiles) => prevFiles.filter((_file) => _file.path !== file.path));
   };
 
   const handleHistoricalRemoveAll = (): void => {
@@ -146,22 +146,20 @@ const RouteEditForm: FC<any> = (props) => {
   };
 
   const uploadImgToFirebase = async (file) => {
-    if (!file) return console.log("No Image File Attached");
+    if (!file) return logger.debug('No Image File Attached');
     return new Promise((resolve, reject) => {
       const storageRef = ref(storage, `web/normal-route/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
-      //on(next, error, complete)
+      // on(next, error, complete)
       uploadTask.on(
-        "state_changed",
+        'state_changed',
         (snapshot) => {
-          const prog = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
+          const prog = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
           setProgress(prog);
         },
         (err) => {
-          console.log("FIREBASE ERROR: ", err);
+          logger.debug('FIREBASE ERROR: ', err);
           reject(err);
         },
         () => {
@@ -172,17 +170,17 @@ const RouteEditForm: FC<any> = (props) => {
   };
 
   const getHistoricalEvents = useCallback(async () => {
-    console.log("Get Historical Events by ID loaded: ", singleRoute.id);
-    const accessToken = sessionStorage.getItem("token");
+    logger.debug('Get Historical Events by ID loaded: ', singleRoute.id);
+    const accessToken = sessionStorage.getItem('token');
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events?filter=route_id||$eq||${singleRoute.id}`;
     const CONFIG = {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     };
     setLoadGmapAfterGetEvents(false);
     const apiResponse = await axios.get(URL, CONFIG);
-    console.log("GET Historical Events", apiResponse.data.data);
+    logger.debug('GET Historical Events', apiResponse.data.data);
     setHistoricalEvents(apiResponse.data.data);
     setRouteHistoFields(apiResponse.data.data);
     setLoadGmapAfterGetEvents(true);
@@ -193,32 +191,31 @@ const RouteEditForm: FC<any> = (props) => {
       getHistoricalEvents();
     }
   }, [singleRoute.id, getHistoricalEvents]);
-  console.log("EVENT ID AFTER: ", eventId);
+  logger.debug('EVENT ID AFTER: ', eventId);
 
   // Add HistoricalEvent & Photo
   const handleAddEventPhoto = useCallback(async () => {
     try {
-      //Get firebase img url
+      // Get firebase img url
       const firebaseImgUrl = await uploadEventImgToFirebase(historicalFiles[0]);
 
-      const accessToken = sessionStorage.getItem("token");
+      const accessToken = sessionStorage.getItem('token');
       const IMGURL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-event-photo`;
       const IMGBODY = {
         route_historical_event_id: eventId,
-        event_photo_url: firebaseImgUrl,
+        event_photo_url: firebaseImgUrl
       };
       const IMGCONFIG = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
+          'Content-Type': 'application/json'
+        }
       };
       const apiResponseImg = await axios.post(IMGURL, IMGBODY, IMGCONFIG);
-      console.log("Add Historical Event Photo Response: ", apiResponseImg);
+      logger.debug('Add Historical Event Photo Response: ', apiResponseImg);
     } catch (err) {
-      console.log("Handle Add Event Photo Error: ", err);
+      logger.debug('Handle Add Event Photo Error: ', err);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
 
   useEffect(() => {
@@ -228,18 +225,12 @@ const RouteEditForm: FC<any> = (props) => {
   }, [eventId, handleAddEventPhoto]);
 
   const handleAddHistorical = useCallback(
-    async (
-      histoLong,
-      histoLat,
-      histoTitle,
-      histoSubTitle,
-      histoDescription
-    ) => {
+    async (histoLong, histoLat, histoTitle, histoSubTitle, histoDescription) => {
       try {
-        console.log("SHOW CURRENT route_id: ", singleRoute.id);
+        logger.debug('SHOW CURRENT route_id: ', singleRoute.id);
         const uuid = uuidv4();
-        console.log("uuid generated ", uuid);
-        const accessToken = sessionStorage.getItem("token");
+        logger.debug('uuid generated ', uuid);
+        const accessToken = sessionStorage.getItem('token');
         const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events`;
         const DATA = {
           route_id: singleRoute.id,
@@ -249,48 +240,43 @@ const RouteEditForm: FC<any> = (props) => {
           event_lat: histoLat,
           event_title: histoTitle,
           event_subtitle: histoSubTitle,
-          description: histoDescription,
+          description: histoDescription
         };
         const CONFIG = {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
+            'Content-Type': 'application/json'
+          }
         };
         const apiResponse = await axios.post(URL, DATA, CONFIG);
-        console.log("Add Historical Event Response: ", apiResponse);
+        logger.debug('Add Historical Event Response: ', apiResponse);
         setEventId(apiResponse.data.id);
         getHistoricalEvents();
         scrollToHistoricalEvents();
         setHistoricalFiles([]);
-        setB64historicalFiles("");
+        setB64historicalFiles('');
       } catch (err) {
-        console.log("Adding Historical Event Error: ", err);
+        logger.debug('Adding Historical Event Error: ', err);
       }
     },
     [singleRoute.id, getHistoricalEvents, gmapMarkerUid]
   );
 
   const uploadEventImgToFirebase = (histoFile) => {
-    if (!histoFile) return console.log("No Image File Attached");
+    if (!histoFile) return logger.debug('No Image File Attached');
     return new Promise((resolve, reject) => {
-      const storageRef = ref(
-        storage,
-        `web/normal-route/historical-event/${histoFile.name}`
-      );
+      const storageRef = ref(storage, `web/normal-route/historical-event/${histoFile.name}`);
       const uploadTask = uploadBytesResumable(storageRef, histoFile);
 
-      //on(next, error, complete)
+      // on(next, error, complete)
       uploadTask.on(
-        "state_changed",
+        'state_changed',
         (snapshot) => {
-          const prog = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
+          const prog = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
           setProgress(prog);
         },
         (err) => {
-          console.log("FIREBASE ERROR: ", err);
+          logger.debug('FIREBASE ERROR: ', err);
           reject(err);
         },
         () => {
@@ -315,7 +301,7 @@ const RouteEditForm: FC<any> = (props) => {
 
   return (
     <Formik
-      enableReinitialize={true}
+      enableReinitialize
       initialValues={{
         startPtLong: singleRoute.start_point_long,
         startPtLat: singleRoute.start_point_lat,
@@ -323,72 +309,69 @@ const RouteEditForm: FC<any> = (props) => {
         endPtLat: singleRoute.stop_point_lat,
         raceTitle: singleRoute.route_name,
         description: singleRoute.description,
-        histoLong: "",
-        histoLat: "",
-        histoTitle: "",
-        histoSubTitle: "",
-        histoDescription: "",
-        submit: null,
+        histoLong: '',
+        histoLat: '',
+        histoTitle: '',
+        histoSubTitle: '',
+        histoDescription: '',
+        submit: null
       }}
-      validationSchema={Yup.object().shape({
-        startPtLong: Yup.number().required("This field is required"),
-        startPtLat: Yup.number().required("This field is required"),
-        endPtLong: Yup.number().required("This field is required"),
-        endPtLat: Yup.number().required("This field is required"),
-        raceTitle: Yup.string().max(80).required("This field is required"),
-        description: Yup.string().max(255).required("This field is required"),
+      validationSchema={Yup['object']().shape({
+        startPtLong: Yup.number().required('This field is required'),
+        startPtLat: Yup.number().required('This field is required'),
+        endPtLong: Yup.number().required('This field is required'),
+        endPtLat: Yup.number().required('This field is required'),
+        raceTitle: Yup.string().max(80).required('This field is required'),
+        description: Yup.string().max(255).required('This field is required'),
         histoLong: Yup.number(),
         histoLat: Yup.number(),
         histoTitle: Yup.string().max(80),
         histoSubTitle: Yup.string().max(80),
-        histoDescription: Yup.string().max(80),
+        histoDescription: Yup.string().max(80)
       })}
-      onSubmit={async (
-        values,
-        { setErrors, setStatus, setSubmitting, resetForm }
-      ): Promise<void> => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
-          //Note: Upload Img to Firebase
+          // Note: Upload Img to Firebase
           const firebaseImgUrl = await uploadImgToFirebase(files[0]);
 
           // NOTE: Make API request
-          const accessToken = sessionStorage.getItem("token");
-          const userId = sessionStorage.getItem("user_id");
+          const accessToken = sessionStorage.getItem('token');
+          const userId = sessionStorage.getItem('user_id');
           const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${singleRoute.id}`;
           const DATA = {
             user_id: userId,
             route_name: values.raceTitle.trim(),
-            route_photo: "byte64image",
+            route_photo: 'byte64image',
             start_point_long: Number(values.startPtLong),
             start_point_lat: Number(values.startPtLat),
             stop_point_long: Number(values.endPtLong),
             stop_point_lat: Number(values.endPtLat),
             img_url: firebaseImgUrl,
-            description: values.description.trim(),
+            description: values.description.trim()
           };
           const CONFIG = {
             headers: {
               Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
+              'Content-Type': 'application/json'
+            }
           };
           const apiResponse = await axios.patch(URL, DATA, CONFIG);
-          console.log("ONSUBMIT API RESPONSE: ", apiResponse);
+          logger.debug('ONSUBMIT API RESPONSE: ', apiResponse);
 
           setStatus({ success: true });
 
-          //Make the RouteList Table Loading
+          // Make the RouteList Table Loading
           dispatch(setRouteListIsLoading(true));
 
-          //Clear Form and Current States
+          // Clear Form and Current States
           // resetForm();
           // setFiles([]);
           setHistoricalFiles([]);
-          setB64files("");
+          setB64files('');
           setSubmitting(false);
-          toast.success("Route created!");
+          toast.success('Route created!');
         } catch (err) {
-          console.error(err);
+          logger.error(err);
           if (err.response.status === 413) {
             err.message = `Image ${err.response.statusText} (${err.response.status})`;
           }
@@ -396,7 +379,7 @@ const RouteEditForm: FC<any> = (props) => {
             err.message = `${err.response.statusText} (${err.response.status})`;
           }
 
-          toast.error("Something went wrong!");
+          toast.error('Something went wrong!');
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);
@@ -410,10 +393,8 @@ const RouteEditForm: FC<any> = (props) => {
         handleSubmit,
         isSubmitting,
         setFieldValue,
-        setFieldError,
-        setFieldTouched,
         touched,
-        values,
+        values
       }): JSX.Element => (
         <StyledForm onSubmit={handleSubmit} {...props}>
           <Grid container spacing={3}>
@@ -421,112 +402,110 @@ const RouteEditForm: FC<any> = (props) => {
               <Card>
                 <CardContent>
                   <RowBox>
-                    <Box sx={{ width: "293px", mr: "18px" }}>
+                    <Box sx={{ width: '293px', mr: '18px' }}>
                       <LegendBox>
-                        <FlexiBox sx={{ mb: "17px" }}>
-                          <StartingPtIcon fontSize="small" />
+                        <FlexiBox sx={{ mb: '17px' }}>
+                          <StartingPtIcon fontSize='small' />
                           <LegendItem>Starting Point</LegendItem>
                         </FlexiBox>
-                        <FlexiBox sx={{ mb: "17px" }}>
-                          <FinishingPtIcon fontSize="small" />
+                        <FlexiBox sx={{ mb: '17px' }}>
+                          <FinishingPtIcon fontSize='small' />
                           <LegendItem>Finishing Point</LegendItem>
                         </FlexiBox>
                         <FlexiBox>
-                          <HistoricalEventIcon fontSize="small" />
+                          <HistoricalEventIcon fontSize='small' />
                           <LegendItem>Historical Event</LegendItem>
                         </FlexiBox>
                       </LegendBox>
                       <FieldLabel>Starting Point</FieldLabel>
                       <StyledTextField
-                        autoComplete="off"
-                        error={Boolean(
-                          touched.startPtLong && errors.startPtLong
-                        )}
+                        autoComplete='off'
+                        error={Boolean(touched.startPtLong && errors.startPtLong)}
                         fullWidth
-                        helperText={touched.startPtLong && errors.startPtLong}
-                        placeholder="Longitude"
-                        name="startPtLong"
+                        helperText={touched.startPtLong && errorMessage(errors.startPtLong)}
+                        placeholder='Longitude'
+                        name='startPtLong'
                         onBlur={handleBlur}
                         onChange={handleChange}
                         value={values.startPtLong}
-                        variant="outlined"
+                        variant='outlined'
                       />
                       <StyledTextField
-                        autoComplete="off"
-                        sx={{ mt: "0 !important" }}
+                        autoComplete='off'
+                        sx={{ mt: '0 !important' }}
                         error={Boolean(touched.startPtLat && errors.startPtLat)}
                         fullWidth
-                        helperText={touched.startPtLat && errors.startPtLat}
-                        placeholder="Latitude"
-                        name="startPtLat"
+                        helperText={touched.startPtLat && errorMessage(errors.startPtLat)}
+                        placeholder='Latitude'
+                        name='startPtLat'
                         onBlur={handleBlur}
                         onChange={handleChange}
                         value={values.startPtLat}
-                        variant="outlined"
+                        variant='outlined'
                       />
                       <FieldLabel>End Point</FieldLabel>
                       <StyledTextField
-                        autoComplete="off"
+                        autoComplete='off'
                         error={Boolean(touched.endPtLong && errors.endPtLong)}
                         fullWidth
-                        helperText={touched.endPtLong && errors.endPtLong}
-                        placeholder="Longitude"
-                        name="endPtLong"
+                        helperText={touched.endPtLong && errorMessage(errors.endPtLong)}
+                        placeholder='Longitude'
+                        name='endPtLong'
                         onBlur={handleBlur}
                         onChange={handleChange}
                         value={values.endPtLong}
-                        variant="outlined"
+                        variant='outlined'
                       />
                       <StyledTextField
-                        autoComplete="off"
-                        sx={{ mt: "0 !important" }}
+                        autoComplete='off'
+                        sx={{ mt: '0 !important' }}
                         error={Boolean(touched.endPtLat && errors.endPtLat)}
                         fullWidth
-                        helperText={touched.endPtLat && errors.endPtLat}
-                        placeholder="Latitude"
-                        name="endPtLat"
+                        helperText={touched.endPtLat && errorMessage(errors.endPtLat)}
+                        placeholder='Latitude'
+                        name='endPtLat'
                         onBlur={handleBlur}
                         onChange={handleChange}
                         value={values.endPtLat}
-                        variant="outlined"
+                        variant='outlined'
                       />
                       <Box
                         sx={{
-                          width: "289px",
-                          height: "89.98px",
+                          width: '289px',
+                          height: '89.98px'
                         }}
                       >
                         {singleRoute.img_url && isImgLoaded ? (
                           <Box
                             sx={{
-                              position: "relative",
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              mb: "20px",
+                              position: 'relative',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              mb: '20px'
                             }}
                           >
                             <IconButton
                               sx={{
-                                position: "absolute",
-                                right: "76px",
-                                top: "-20px",
+                                position: 'absolute',
+                                right: '76px',
+                                top: '-20px'
                               }}
                               onClick={() => setIsImgLoaded(false)}
                             >
-                              <CrossIcon fontSize="medium" />
+                              <CrossIcon fontSize='medium' />
                             </IconButton>
                             <img
-                              height="90px"
-                              width="90px"
+                              height='90px'
+                              width='90px'
                               src={singleRoute.img_url}
-                              alt="route-img"
+                              alt='route-img'
                             />
                           </Box>
                         ) : (
                           <FileDropzone
-                            accept={["image/png", ".jpg", "image/gif"]}
+                            accept={['image/png', '.jpg', 'image/gif']}
                             maxFiles={1}
                             files={files}
                             onDrop={handleDrop}
@@ -537,82 +516,78 @@ const RouteEditForm: FC<any> = (props) => {
                       </Box>
                       <FieldLabel>Title</FieldLabel>
                       <StyledTextField
-                        autoComplete="off"
+                        autoComplete='off'
                         error={Boolean(touched.raceTitle && errors.raceTitle)}
                         fullWidth
-                        helperText={touched.raceTitle && errors.raceTitle}
-                        placeholder="My race title"
-                        name="raceTitle"
+                        helperText={touched.raceTitle && errorMessage(errors.raceTitle)}
+                        placeholder='My race title'
+                        name='raceTitle'
                         onBlur={handleBlur}
                         onChange={handleChange}
                         value={values.raceTitle}
-                        variant="outlined"
+                        variant='outlined'
                       />
                       <FieldLabel>Description</FieldLabel>
                       <StyledMultiTextField
-                        autoComplete="off"
-                        error={Boolean(
-                          touched.description && errors.description
-                        )}
+                        autoComplete='off'
+                        error={Boolean(touched.description && errors.description)}
                         fullWidth
                         multiline
                         rows={4}
-                        helperText={touched.description && errors.description}
-                        placeholder="Write something here..."
-                        name="description"
+                        helperText={touched.description && errorMessage(errors.description)}
+                        placeholder='Write something here...'
+                        name='description'
                         onBlur={handleBlur}
                         onChange={handleChange}
                         value={values.description}
-                        variant="outlined"
+                        variant='outlined'
                       />
                       <Box
                         sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          mt: "16px",
+                          display: 'flex',
+                          justifyContent: 'center',
+                          mt: '16px'
                         }}
                       >
-                        <SaveButton
-                          disabled={isSubmitting}
-                          type="submit"
-                          variant="contained"
-                        >
+                        <SaveButton disabled={isSubmitting} type='submit' variant='contained'>
                           {isSubmitting ? (
                             <>
                               <CircularProgress
                                 sx={{
-                                  color: "#FBF1DA",
-                                  position: "absolute",
-                                  right: "60px",
+                                  color: '#FBF1DA',
+                                  position: 'absolute',
+                                  right: '60px'
                                 }}
                               />
-                              {progress === 100
-                                ? "Saving"
-                                : `Uploading image ${progress}%   `}
+                              {progress === 100 ? 'Saving' : `Uploading image ${progress}%   `}
                             </>
                           ) : (
-                            "Save Changes"
+                            'Save Changes'
                           )}
                         </SaveButton>
                       </Box>
                       {errors.submit && (
-                        <Box sx={{ mt: 3, position: "relative" }}>
-                          <FormHelperText error>{errors.submit}</FormHelperText>
+                        <Box
+                          sx={{
+                            mt: 3,
+                            position: 'relative'
+                          }}
+                        >
+                          <FormHelperText error>{errorMessage(errors.submit)}</FormHelperText>
                         </Box>
                       )}
                     </Box>
 
                     <Box
                       sx={{
-                        height: "982px",
-                        width: "100%",
-                        borderRadius: "20px",
-                        position: "relative",
-                        border: "1px solid rgba(0,0,0,0.1)",
+                        height: '982px',
+                        width: '100%',
+                        borderRadius: '20px',
+                        position: 'relative',
+                        border: '1px solid rgba(0,0,0,0.1)'
                       }}
                     >
-                      {Object.keys(singleRoute).length !== 0 &&
-                      loadGmapAfterGetEvents ? (
+                      {Object.keys(singleRoute).length !== 0 && loadGmapAfterGetEvents ? (
                         <RouteEditMap
                           loadRouteMarkers={singleRoute}
                           loadEventMarkers={historicalEvents}
@@ -621,44 +596,44 @@ const RouteEditForm: FC<any> = (props) => {
                           onChangeEndPtLat={Number(values.endPtLat)}
                           onChangeEndPtLong={Number(values.endPtLong)}
                           setStartPt={(lat, long) => {
-                            if (lat === "" && long === "") {
-                              setFieldValue("startPtLat", "");
-                              setFieldValue("startPtLong", "");
+                            if (lat === '' && long === '') {
+                              setFieldValue('startPtLat', '');
+                              setFieldValue('startPtLong', '');
                               return;
                             }
-                            setFieldValue("startPtLat", lat.toFixed(4));
-                            setFieldValue("startPtLong", long.toFixed(4));
+                            setFieldValue('startPtLat', lat.toFixed(4));
+                            setFieldValue('startPtLong', long.toFixed(4));
                           }}
                           setEndPt={(lat, long) => {
-                            if (lat === "" && long === "") {
-                              setFieldValue("endPtLat", "");
-                              setFieldValue("endPtLong", "");
+                            if (lat === '' && long === '') {
+                              setFieldValue('endPtLat', '');
+                              setFieldValue('endPtLong', '');
                               return;
                             }
-                            setFieldValue("endPtLat", lat.toFixed(4));
-                            setFieldValue("endPtLong", long.toFixed(4));
+                            setFieldValue('endPtLat', lat.toFixed(4));
+                            setFieldValue('endPtLong', long.toFixed(4));
                           }}
                           setHistoricalEventPt={(lat, long, closureUid) => {
-                            if (lat === "" && long === "") {
-                              setFieldValue("histoLat", "");
-                              setFieldValue("histoLong", "");
+                            if (lat === '' && long === '') {
+                              setFieldValue('histoLat', '');
+                              setFieldValue('histoLong', '');
                               return;
                             }
-                            setFieldValue("histoLat", lat.toFixed(4));
-                            setFieldValue("histoLong", long.toFixed(4));
+                            setFieldValue('histoLat', lat.toFixed(4));
+                            setFieldValue('histoLong', long.toFixed(4));
                             setGmapMarkerUid(closureUid);
                           }}
                         />
                       ) : (
                         <Box
                           sx={{
-                            position: "absolute",
-                            top: "491px",
-                            left: "330px",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            position: 'absolute',
+                            top: '491px',
+                            left: '330px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center'
                           }}
                         >
                           <StyledCircularProgress />
@@ -667,32 +642,35 @@ const RouteEditForm: FC<any> = (props) => {
                       )}
                     </Box>
                   </RowBox>
-                  {/* -----------------------------HISTORICAL------------------------------------- */}
+                  {/* ---------------------HISTORICAL------------------------ */}
 
                   <HistoricalBox>
                     <ToolbarBox>
-                      <Title sx={{ cursor: "pointer" }}>Historical</Title>
-                      <OrangeBorder></OrangeBorder>
-                      <Box
-                        sx={{ ml: "auto" }}
-                        onClick={scrollToHistoricalEvents}
-                      >
+                      <Title sx={{ cursor: 'pointer' }}>Historical</Title>
+                      <OrangeBorder />
+                      <Box sx={{ ml: 'auto' }} onClick={scrollToHistoricalEvents}>
                         <Button
-                          sx={{ color: "#0E5753", borderColor: "#0E5753" }}
-                          variant="outlined"
+                          sx={{
+                            color: '#0E5753',
+                            borderColor: '#0E5753'
+                          }}
+                          variant='outlined'
                         >
                           🔺 Scroll to Events
                         </Button>
                       </Box>
-                      <Box sx={{ ml: "20px" }} onClick={scrollToHistoricalForm}>
+                      <Box sx={{ ml: '20px' }} onClick={scrollToHistoricalForm}>
                         <Button
-                          sx={{ color: "#0E5753", borderColor: "#0E5753" }}
-                          variant="outlined"
+                          sx={{
+                            color: '#0E5753',
+                            borderColor: '#0E5753'
+                          }}
+                          variant='outlined'
                         >
                           🔻 Scroll to Form
                         </Button>
                       </Box>
-                      <Box sx={{ ml: "auto", mb: "20px" }}>
+                      <Box sx={{ ml: 'auto', mb: '20px' }}>
                         <AddHistoricalButton
                           sx={{
                             opacity: `${
@@ -702,19 +680,19 @@ const RouteEditForm: FC<any> = (props) => {
                               values.histoSubTitle &&
                               values.histoDescription
                                 ? 1
-                                : "0.2"
-                            }`,
+                                : '0.2'
+                            }`
                           }}
                           disabled={
-                            values.histoLong &&
-                            values.histoLat &&
-                            values.histoTitle &&
-                            values.histoSubTitle &&
-                            values.histoDescription
-                              ? false
-                              : true
+                            !(
+                              values.histoLong &&
+                              values.histoLat &&
+                              values.histoTitle &&
+                              values.histoSubTitle &&
+                              values.histoDescription
+                            )
                           }
-                          variant="contained"
+                          variant='contained'
                           onClick={() => {
                             if (
                               !values.histoLong ||
@@ -723,7 +701,7 @@ const RouteEditForm: FC<any> = (props) => {
                               !values.histoSubTitle ||
                               !values.histoDescription
                             ) {
-                              console.log("No values added");
+                              logger.debug('No values added');
                             } else {
                               handleAddHistorical(
                                 values.histoLong,
@@ -733,28 +711,28 @@ const RouteEditForm: FC<any> = (props) => {
                                 values.histoDescription
                               );
                             }
-                            setFieldValue("histoLong", "");
-                            setFieldValue("histoLat", "");
-                            setFieldValue("histoTitle", "");
-                            setFieldValue("histoSubTitle", "");
-                            setFieldValue("histoDescription", "");
+                            setFieldValue('histoLong', '');
+                            setFieldValue('histoLat', '');
+                            setFieldValue('histoTitle', '');
+                            setFieldValue('histoSubTitle', '');
+                            setFieldValue('histoDescription', '');
                           }}
                         >
-                          <Box sx={{ mr: "3px" }}>
-                            <AddHistoricalIcon fontSize="small" />
+                          <Box sx={{ mr: '3px' }}>
+                            <AddHistoricalIcon fontSize='small' />
                           </Box>
                           Add Historical
                         </AddHistoricalButton>
                       </Box>
                     </ToolbarBox>
-                    <Box sx={{ height: "457px" }}>
+                    <Box sx={{ height: '457px' }}>
                       <Scrollbar>
-                        {/* ---------------------------------------------------------------- ACCORDION */}
+                        {/* -------------------------- ACCORDION */}
                         <span ref={scrollToEvents} />
                         {historicalEvents.length > 0 &&
                           historicalEvents.map((historical, index) => (
                             <StyledAccordion
-                              square={true}
+                              square
                               key={historical.id}
                               expanded={
                                 eventIsEditing && expanded === `panel${index}`
@@ -764,47 +742,58 @@ const RouteEditForm: FC<any> = (props) => {
                               onChange={handleAccordionChange(`panel${index}`)}
                             >
                               <StyledAccordionSummary
-                                sx={{ pl: "36px" }}
+                                sx={{
+                                  pl: '36px'
+                                }}
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls={`panel${index}a-content`}
                                 id={`panel${index}a-header`}
                               >
                                 <Box
                                   sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    mr: "81px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    mr: '81px'
                                   }}
                                 >
                                   <AccordionTitle
-                                    sx={{ mb: `${expanded ? 44 : 15}px` }}
+                                    sx={{
+                                      mb: `${expanded ? 44 : 15}px`
+                                    }}
                                   >
                                     Historical Event
                                   </AccordionTitle>
-                                  <Box sx={{ display: "flex" }}>
-                                    <AccordionValue sx={{ mr: "23px" }}>
+                                  <Box
+                                    sx={{
+                                      display: 'flex'
+                                    }}
+                                  >
+                                    <AccordionValue
+                                      sx={{
+                                        mr: '23px'
+                                      }}
+                                    >
                                       {`${historical.event_long}°`}
                                     </AccordionValue>
-                                    <AccordionValue>
-                                      {`${historical.event_lat}°`}
-                                    </AccordionValue>
+                                    <AccordionValue>{`${historical.event_lat}°`}</AccordionValue>
                                   </Box>
                                 </Box>
                                 <Box
                                   sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    mr: "81px",
-                                    position: "relative",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    mr: '81px',
+                                    position: 'relative'
                                   }}
                                 >
                                   <AccordionTitle
-                                    sx={{ mb: `${expanded ? 44 : 15}px` }}
+                                    sx={{
+                                      mb: `${expanded ? 44 : 15}px`
+                                    }}
                                   >
                                     Title
                                   </AccordionTitle>
-                                  {eventIsEditing &&
-                                  expanded === `panel${index}` ? (
+                                  {eventIsEditing && expanded === `panel${index}` ? (
                                     <Box>
                                       <AccordionValue
                                         sx={
@@ -814,16 +803,14 @@ const RouteEditForm: FC<any> = (props) => {
                                         }
                                       >
                                         {historical.event_title}
-                                        {console.log(
-                                          historical.event_title.length
-                                        )}
+                                        {logger.debug(historical.event_title.length)}
                                       </AccordionValue>
                                       <EditEventTextField
                                         sx={{
                                           // width: `${
                                           //   historical.event_title.length + 1
                                           // }ch`,
-                                          width: "100px",
+                                          width: '100px'
                                         }}
                                         // error={Boolean(
                                         //   touched.histoTitle &&
@@ -835,53 +822,54 @@ const RouteEditForm: FC<any> = (props) => {
                                         //   errors.histoTitle
                                         // }
                                         // placeholder={historical.event_title}
-                                        name={`event_title`}
+                                        name='event_title'
                                         onClick={(e) => e.stopPropagation()}
                                         // onBlur={handleBlur}
-                                        onChange={(e) =>
-                                          handleChangeHistoFields(e, index)
-                                        }
+                                        onChange={(e) => handleChangeHistoFields(e, index)}
                                         value={historical.event_title}
-                                        autoComplete="off"
-                                        variant="outlined"
+                                        autoComplete='off'
+                                        variant='outlined'
                                       />
                                     </Box>
                                   ) : (
-                                    <AccordionValue>
-                                      {historical.event_title}
-                                    </AccordionValue>
+                                    <AccordionValue>{historical.event_title}</AccordionValue>
                                   )}
                                 </Box>
                                 <Box
                                   sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    mr: "81px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    mr: '81px'
                                   }}
                                 >
                                   <AccordionTitle
-                                    sx={{ mb: `${expanded ? 44 : 15}px` }}
+                                    sx={{
+                                      mb: `${expanded ? 44 : 15}px`
+                                    }}
                                   >
                                     Sub Title
                                   </AccordionTitle>
-                                  <AccordionValue>
-                                    {historical.event_subtitle}
-                                  </AccordionValue>
+                                  <AccordionValue>{historical.event_subtitle}</AccordionValue>
                                 </Box>
                               </StyledAccordionSummary>
-                              <AccordionDetails sx={{ pl: "36px", pt: "16px" }}>
+                              <AccordionDetails
+                                sx={{
+                                  pl: '36px',
+                                  pt: '16px'
+                                }}
+                              >
                                 {historical.description}
                               </AccordionDetails>
                               {eventIsEditing ? (
                                 <SaveChangesButton
-                                  variant="contained"
+                                  variant='contained'
                                   onClick={handleSaveSelectedEvent}
                                 >
                                   Save Changes
                                 </SaveChangesButton>
                               ) : (
                                 <SaveChangesButton
-                                  variant="contained"
+                                  variant='contained'
                                   onClick={handleEditSelectedEvent}
                                 >
                                   Edit
@@ -889,92 +877,94 @@ const RouteEditForm: FC<any> = (props) => {
                               )}
                             </StyledAccordion>
                           ))}
-                        {/* ----------------------------------------------------------------------- ACCORDION END */}
+                        {/* --------------------------------- ACCORDION END */}
                         <Box
                           sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "flex-start",
-                            position: "relative",
-                            mt: `${historicalEvents.length > 0 ? "33px" : "0"}`,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-start',
+                            position: 'relative',
+                            mt: `${historicalEvents.length > 0 ? '33px' : '0'}`
                           }}
                         >
                           <span ref={scrollRef} />
-                          <RowBox sx={{ width: "688.31px" }}>
+                          <RowBox
+                            sx={{
+                              width: '688.31px'
+                            }}
+                          >
                             <ColumnBox>
-                              <Box sx={{ width: "293px", pl: "13px" }}>
+                              <Box
+                                sx={{
+                                  width: '293px',
+                                  pl: '13px'
+                                }}
+                              >
                                 <FieldLabel>Historical Event</FieldLabel>
                                 <StyledTextField
-                                  sx={{ mb: "35px !important" }}
-                                  error={Boolean(
-                                    touched.histoLong && errors.histoLong
-                                  )}
+                                  sx={{
+                                    mb: '35px !important'
+                                  }}
+                                  error={Boolean(touched.histoLong && errors.histoLong)}
                                   fullWidth
-                                  helperText={
-                                    touched.histoLong && errors.histoLong
-                                  }
-                                  placeholder="Longitude"
-                                  name="histoLong"
+                                  helperText={touched.histoLong && errors.histoLong}
+                                  placeholder='Longitude'
+                                  name='histoLong'
                                   onBlur={handleBlur}
                                   onChange={handleChange}
                                   value={values.histoLong}
-                                  variant="outlined"
+                                  variant='outlined'
                                 />
                                 <StyledTextField
-                                  sx={{ mt: 0 }}
-                                  error={Boolean(
-                                    touched.histoLat && errors.histoLat
-                                  )}
+                                  sx={{
+                                    mt: 0
+                                  }}
+                                  error={Boolean(touched.histoLat && errors.histoLat)}
                                   fullWidth
-                                  helperText={
-                                    touched.histoLat && errors.histoLat
-                                  }
-                                  placeholder="Latitude"
-                                  name="histoLat"
+                                  helperText={touched.histoLat && errors.histoLat}
+                                  placeholder='Latitude'
+                                  name='histoLat'
                                   onBlur={handleBlur}
                                   onChange={handleChange}
                                   value={values.histoLat}
-                                  autoComplete="off"
-                                  variant="outlined"
+                                  autoComplete='off'
+                                  variant='outlined'
                                 />
                               </Box>
-                              <Box sx={{ width: "293px", ml: "39px" }}>
+                              <Box
+                                sx={{
+                                  width: '293px',
+                                  ml: '39px'
+                                }}
+                              >
                                 <FieldLabel>Title</FieldLabel>
                                 <StyledTextField
-                                  error={Boolean(
-                                    touched.histoTitle && errors.histoTitle
-                                  )}
+                                  error={Boolean(touched.histoTitle && errors.histoTitle)}
                                   fullWidth
-                                  helperText={
-                                    touched.histoTitle && errors.histoTitle
-                                  }
-                                  placeholder="Historical Item"
-                                  name="histoTitle"
+                                  helperText={touched.histoTitle && errors.histoTitle}
+                                  placeholder='Historical Item'
+                                  name='histoTitle'
                                   onBlur={handleBlur}
                                   onChange={handleChange}
                                   value={values.histoTitle}
-                                  autoComplete="off"
-                                  variant="outlined"
+                                  autoComplete='off'
+                                  variant='outlined'
                                 />
                                 <FieldLabel>Sub-Title</FieldLabel>
                                 <StyledTextField
-                                  sx={{ mt: 0 }}
-                                  error={Boolean(
-                                    touched.histoSubTitle &&
-                                      errors.histoSubTitle
-                                  )}
+                                  sx={{
+                                    mt: 0
+                                  }}
+                                  error={Boolean(touched.histoSubTitle && errors.histoSubTitle)}
                                   fullWidth
-                                  helperText={
-                                    touched.histoSubTitle &&
-                                    errors.histoSubTitle
-                                  }
-                                  placeholder="Write something here..."
-                                  name="histoSubTitle"
+                                  helperText={touched.histoSubTitle && errors.histoSubTitle}
+                                  placeholder='Write something here...'
+                                  name='histoSubTitle'
                                   onBlur={handleBlur}
                                   onChange={handleChange}
                                   value={values.histoSubTitle}
-                                  autoComplete="off"
-                                  variant="outlined"
+                                  autoComplete='off'
+                                  variant='outlined'
                                 />
                               </Box>
                             </ColumnBox>
@@ -982,16 +972,16 @@ const RouteEditForm: FC<any> = (props) => {
 
                           <Box
                             sx={{
-                              width: "296px",
-                              height: "470px",
-                              position: "absolute",
-                              right: "0",
-                              top: "0",
+                              width: '296px',
+                              height: '470px',
+                              position: 'absolute',
+                              right: '0',
+                              top: '0'
                             }}
                           >
                             <Scrollbar>
                               <FileDropzoneHistorical
-                                accept="image/*"
+                                accept='image/*'
                                 files={historicalFiles}
                                 onDrop={handleHistoricalDrop}
                                 onRemove={handleHistoricalRemove}
@@ -1000,26 +990,25 @@ const RouteEditForm: FC<any> = (props) => {
                             </Scrollbar>
                           </Box>
                         </Box>
-                        <Box sx={{ width: "622px", pl: "16px" }}>
+                        <Box
+                          sx={{
+                            width: '622px',
+                            pl: '16px'
+                          }}
+                        >
                           <FieldLabel>Description</FieldLabel>
                           <StyledMultiTextField
-                            error={Boolean(
-                              touched.histoDescription &&
-                                errors.histoDescription
-                            )}
+                            error={Boolean(touched.histoDescription && errors.histoDescription)}
                             fullWidth
                             multiline
                             rows={7}
-                            helperText={
-                              touched.histoDescription &&
-                              errors.histoDescription
-                            }
-                            placeholder="Write something here..."
-                            name="histoDescription"
+                            helperText={touched.histoDescription && errors.histoDescription}
+                            placeholder='Write something here...'
+                            name='histoDescription'
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.histoDescription}
-                            variant="outlined"
+                            variant='outlined'
                           />
                         </Box>
                       </Scrollbar>
@@ -1051,7 +1040,7 @@ const LegendBox = styled(Box)`
 const LegendItem = styled(Box)`
   && {
     margin-left: 18px;
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-weight: 400;
     font-size: 13.6592px;
     line-height: 14px;
@@ -1080,7 +1069,7 @@ const StyledForm = styled.form`
 
 const FieldLabel = styled(Box)`
   && {
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-size: 16px;
     line-height: 18px;
     color: #22333b;
@@ -1107,7 +1096,7 @@ const StyledTextField = styled(TextField)`
     margin-bottom: 20px;
     background: #ffffff;
     color: #22333b;
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-size: 1.11rem;
     line-height: 27px;
     border-radius: 22.1951px;
@@ -1120,7 +1109,7 @@ const StyledTextField = styled(TextField)`
     && input {
       height: 67px;
       padding: 20px 33px 20px 33px;
-      font-family: "Gilroy Medium";
+      font-family: 'Gilroy Medium';
       font-size: 1.11rem;
       line-height: 27px;
       color: rgba(0, 0, 0, 0.4);
@@ -1130,7 +1119,7 @@ const StyledTextField = styled(TextField)`
       border: 2px solid #f3f3f3;
       border-radius: 22.1951px;
       &::placeholder {
-        font-family: "Gilroy Medium";
+        font-family: 'Gilroy Medium';
         font-size: 1.11rem;
         line-height: 27px;
         color: #000000;
@@ -1154,7 +1143,7 @@ const StyledMultiTextField = styled(TextField)`
     margin-top: 6px;
     background: #ffffff;
     color: #22333b;
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-size: 1.11rem;
     line-height: 27px;
     border-radius: 22.1951px;
@@ -1169,7 +1158,7 @@ const StyledMultiTextField = styled(TextField)`
     }
     && textarea {
       padding: 20px 13px 12px 33px;
-      font-family: "Gilroy Medium";
+      font-family: 'Gilroy Medium';
       font-size: 1.11rem;
       line-height: 25px;
       color: rgba(0, 0, 0, 0.4);
@@ -1178,7 +1167,7 @@ const StyledMultiTextField = styled(TextField)`
       border: 2px solid #f3f3f3;
       border-radius: 22.1951px;
       &::placeholder {
-        font-family: "Gilroy Medium";
+        font-family: 'Gilroy Medium';
         font-size: 1.11rem;
         line-height: 27px;
         color: #000000;
@@ -1196,7 +1185,7 @@ const StyledMultiTextField = styled(TextField)`
   }
 `;
 
-//---------------------------------HISTORICAL EVENTS
+// ---------------------------------HISTORICAL EVENTS
 const HistoricalBox = styled(Box)`
   && {
     margin-top: 46px;
@@ -1207,7 +1196,7 @@ const Title = styled(Box)`
   && {
     margin-left: 128px;
     margin-bottom: 21px;
-    font-family: "Circular Std Bold";
+    font-family: 'Circular Std Bold';
     font-style: normal;
     font-weight: 700;
     font-size: 30px;
@@ -1253,7 +1242,7 @@ const AddHistoricalButton = styled(Button)`
     background-color: #0e5753;
     border-radius: 13.6667px;
     padding: 10px 16.21px 11px 22px;
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-style: normal;
     font-size: 14px;
     line-height: 20px;
@@ -1290,7 +1279,7 @@ const StyledAccordionSummary = styled(AccordionSummary)`
 
 const AccordionTitle = styled(Box)`
   && {
-    font-family: "Gilroy Regular";
+    font-family: 'Gilroy Regular';
     font-size: 16px;
     line-height: 18px;
     color: #22333b;
@@ -1299,7 +1288,7 @@ const AccordionTitle = styled(Box)`
 
 const AccordionValue = styled(Box)`
   && {
-    font-family: "Gilroy Semibold";
+    font-family: 'Gilroy Semibold';
     font-weight: 400;
     font-size: 20px;
     line-height: 18px;
@@ -1316,7 +1305,7 @@ const EditEventTextField = styled(TextField)`
     top: 51px;
     left: -15px;
     background: #ffffff;
-    font-family: "Gilroy Semibold";
+    font-family: 'Gilroy Semibold';
     font-weight: 400;
     font-size: 20px;
     line-height: 18px;
@@ -1332,7 +1321,7 @@ const EditEventTextField = styled(TextField)`
     && input {
       height: 40px !important;
       padding: 10px 14px 10px 13px;
-      font-family: "Gilroy Semibold";
+      font-family: 'Gilroy Semibold';
       font-weight: 400;
       font-size: 20px;
       line-height: 18px;
@@ -1343,7 +1332,7 @@ const EditEventTextField = styled(TextField)`
       border: 2px solid #f3f3f3;
       border-radius: 10px;
       &::placeholder {
-        font-family: "Gilroy Semibold";
+        font-family: 'Gilroy Semibold';
         font-weight: 400;
         font-size: 20px;
         line-height: 18px;
@@ -1418,7 +1407,7 @@ const SaveChangesButton = styled(Button)`
     display: flex;
     margin-left: auto;
     margin-right: 24px;
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-size: 14px;
     line-height: 20px;
     text-align: center;
@@ -1431,10 +1420,10 @@ const SaveButton = styled(Button)`
     height: 60px;
     width: 303px;
     padding: 20px auto 20px;
-    background-image: url("/static/route-list/save-btn.png");
+    background-image: url('/static/route-list/save-btn.png');
     background-color: #00755e;
     border-radius: 10px;
-    font-family: "Gilroy Bold";
+    font-family: 'Gilroy Bold';
     font-size: 1rem;
     line-height: 19px;
     text-align: center;

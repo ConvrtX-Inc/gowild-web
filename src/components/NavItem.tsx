@@ -1,12 +1,12 @@
-import { useState } from "react";
-import type { FC, ReactNode } from "react";
-import { NavLink as RouterLink } from "react-router-dom";
-import PropTypes from "prop-types";
-import { Box, Button, Collapse, ListItem } from "@material-ui/core";
-import styled from "styled-components";
-import type { ListItemProps } from "@material-ui/core";
-import ChevronDownIcon from "../icons/ChevronDown";
-import ChevronRightIcon from "../icons/ChevronRight";
+import ChevronDownIcon from '../icons/ChevronDown';
+import ChevronRightIcon from '../icons/ChevronRight';
+import { Box, Button, Collapse, ListItem } from '@material-ui/core';
+import type { ListItemProps } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
+import type { FC, ReactNode } from 'react';
+import { NavLink as RouterLink } from 'react-router-dom';
+import styled from 'styled-components';
 
 interface NavItemProps extends ListItemProps {
   active?: boolean;
@@ -20,17 +20,7 @@ interface NavItemProps extends ListItemProps {
 }
 
 const NavItem: FC<NavItemProps> = (props) => {
-  const {
-    active,
-    children,
-    depth,
-    icon,
-    info,
-    open: openProp,
-    path,
-    title,
-    ...other
-  } = props;
+  const { active, children, depth, icon, info, open: openProp, path, title, ...other } = props;
   const [open, setOpen] = useState<boolean>(openProp);
 
   const handleToggle = (): void => {
@@ -49,32 +39,28 @@ const NavItem: FC<NavItemProps> = (props) => {
       <ListItem
         disableGutters
         sx={{
-          display: "block",
-          py: 0,
+          display: 'block',
+          py: 0
         }}
         {...other}
       >
         <Button
           endIcon={
-            !open ? (
-              <ChevronRightIcon fontSize="small" />
-            ) : (
-              <ChevronDownIcon fontSize="small" />
-            )
+            !open ? <ChevronRightIcon fontSize='small' /> : <ChevronDownIcon fontSize='small' />
           }
           onClick={handleToggle}
           startIcon={icon}
           sx={{
-            color: "text.secondary",
+            color: 'text.secondary',
             // fontWeight: "fontWeightMedium",
-            justifyContent: "flex-start",
+            justifyContent: 'flex-start',
             pl: `${paddingLeft}px`,
-            padding: "15px auto 16px",
-            textAlign: "left",
-            textTransform: "none",
-            width: "100%",
+            padding: '15px auto 16px',
+            textAlign: 'left',
+            textTransform: 'none',
+            width: '100%'
           }}
-          variant="text"
+          variant='text'
         >
           <Box sx={{ flexGrow: 1 }}>{title}</Box>
           {info}
@@ -89,37 +75,37 @@ const NavItem: FC<NavItemProps> = (props) => {
     <ListItem
       disableGutters
       sx={{
-        display: "flex",
-        py: 0,
+        display: 'flex',
+        py: 0
       }}
     >
       <NavButton
         component={path && RouterLink}
         startIcon={icon}
         sx={{
-          color: "#E8E8E8",
-          fontFamily: "Gilroy Medium",
+          color: '#E8E8E8',
+          fontFamily: 'Gilroy Medium',
           fontWeight: 400,
-          fontSize: "1rem",
-          lineHeight: "19px",
-          letterSpacing: "-0.04em",
-          justifyContent: "flex-start",
-          textAlign: "left",
-          borderRadius: "25px",
+          fontSize: '1rem',
+          lineHeight: '19px',
+          letterSpacing: '-0.04em',
+          justifyContent: 'flex-start',
+          textAlign: 'left',
+          borderRadius: '25px',
           pl: `${paddingLeft}px`,
-          padding: "15px auto 16px",
-          textTransform: "none",
-          width: "100%",
-          height: "50px",
+          padding: '15px auto 16px',
+          textTransform: 'none',
+          width: '100%',
+          height: '50px',
           ...(active && {
-            color: "#FFFFFF",
-            backgroundColor: "#82BAA7",
-            "& svg": {
-              color: "#09110e",
-            },
-          }),
+            color: '#FFFFFF',
+            backgroundColor: '#82BAA7',
+            '& svg': {
+              color: '#09110e'
+            }
+          })
         }}
-        variant="text"
+        variant='text'
         to={path}
       >
         <Box sx={{ flexGrow: 1 }}>{title}</Box>
@@ -137,17 +123,17 @@ NavItem.propTypes = {
   info: PropTypes.node,
   open: PropTypes.bool,
   path: PropTypes.string,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired
 };
 
 NavItem.defaultProps = {
   active: false,
-  open: false,
+  open: false
 };
 
 export default NavItem;
 
-const NavButton = styled(Button)`
+const NavButton = styled(Button)<{ component: any; to?: string }>`
   && {
     &:hover {
       background-color: rgba(130, 186, 167, 0.4);

@@ -1,13 +1,17 @@
+import { getLogger } from 'src/utils/loggin';
+
 interface GTMConfig {
   containerId: string;
 }
+
+const logger = getLogger('GTM');
 
 const warn = (...args) => {
   if (process.env.NODE_ENV !== 'development') {
     return;
   }
 
-  console.warn(...args);
+  logger.warn('Take a look here', ...args);
 };
 
 class GTM {

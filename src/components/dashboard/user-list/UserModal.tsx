@@ -1,18 +1,11 @@
-import {
-  Box,
-  FormControl,
-  MenuItem,
-  Modal,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { FC } from "react";
-import X from "src/icons/X";
-import styled from "styled-components";
-import MuiPhoneNumber from "material-ui-phone-number";
-import { Button } from "@material-ui/core";
-import { RootState, useSelector } from "src/store";
-import format from "date-fns/format";
+import { Button } from '@material-ui/core';
+import { Box, FormControl, MenuItem, Modal, TextField, Typography } from '@mui/material';
+import format from 'date-fns/format';
+import MuiPhoneNumber from 'material-ui-phone-number';
+import { FC } from 'react';
+import X from 'src/icons/X';
+import { RootState, useSelector } from 'src/store';
+import styled from 'styled-components';
 
 interface UserModalProps {
   open: boolean;
@@ -20,10 +13,10 @@ interface UserModalProps {
 }
 
 enum ModalAction {
-  REJECT = "Reject",
-  APPROVE = "Approve",
+  REJECT = 'Reject',
+  APPROVE = 'Approve'
 }
-const genders = ["Male", "Female"];
+const genders = ['Male', 'Female'];
 
 const UserModal: FC<UserModalProps> = ({ open, handleClose }) => {
   const { user } = useSelector((state: RootState) => state.userList);
@@ -31,71 +24,61 @@ const UserModal: FC<UserModalProps> = ({ open, handleClose }) => {
     <Modal
       open={open}
       onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      aria-labelledby='modal-modal-title'
+      aria-describedby='modal-modal-description'
     >
       <ModalContent>
         <ModalBody>
           <X
             onClick={handleClose}
             sx={{
-              cursor: "pointer",
+              cursor: 'pointer'
             }}
           />
 
-          <Box mr="10px">
+          <Box mr='10px'>
             <ModalTitle>Personal data</ModalTitle>
-            <StyledFormControl variant="standard">
-              <StyledInputLabel component="label" htmlFor="firstName">
+            <StyledFormControl variant='standard'>
+              <StyledInputLabel component='label' htmlFor='firstName'>
                 First name
               </StyledInputLabel>
               <ModalTextField
-                variant="standard"
-                id="lastName"
-                defaultValue={user?.full_name.split(" ")[0]} //TODO: Request API must have first name
+                variant='standard'
+                id='lastName'
+                defaultValue={user?.full_name.split(' ')[0]} // TODO: Request API must have first name
                 disabled
               />
             </StyledFormControl>
             <StyledFormControl>
-              <StyledInputLabel component="label" htmlFor="lastName">
+              <StyledInputLabel component='label' htmlFor='lastName'>
                 Last name
               </StyledInputLabel>
               <ModalTextField
-                variant="standard"
-                id="firstName"
+                variant='standard'
+                id='firstName'
                 disabled
-                defaultValue={
-                  user?.full_name.split(" ")[
-                    user?.full_name.split(" ").length - 1
-                  ]
-                }
-                //TODO: Request API must have last name
+                defaultValue={user?.full_name.split(' ')[user?.full_name.split(' ').length - 1]}
+                // TODO: Request API must have last name
               />
             </StyledFormControl>
             <StyledFormControl>
-              <StyledInputLabel component="label" htmlFor="phoneNumber">
+              <StyledInputLabel component='label' htmlFor='phoneNumber'>
                 Phone number
               </StyledInputLabel>
               <StyledPhoneNumber
-                variant="standard"
+                variant='standard'
                 onChange={() => null}
-                defaultCountry={"ca"}
-                id="phoneNumber"
+                defaultCountry='ca'
+                id='phoneNumber'
                 value={user?.phone_no}
                 disabled
               />
             </StyledFormControl>
             <StyledFormControl>
-              <StyledInputLabel component="label" htmlFor="gender">
+              <StyledInputLabel component='label' htmlFor='gender'>
                 Gender
               </StyledInputLabel>
-              <ModalTextField
-                select
-                value={genders[0]}
-                variant="standard"
-                id="gender"
-                disabled
-              >
+              <ModalTextField select value={genders[0]} variant='standard' id='gender' disabled>
                 {genders.map((option) => (
                   <MenuItem key={option} value={option}>
                     {option}
@@ -104,26 +87,22 @@ const UserModal: FC<UserModalProps> = ({ open, handleClose }) => {
               </ModalTextField>
             </StyledFormControl>
             <StyledFormControl>
-              <StyledInputLabel component="label" htmlFor="dob">
+              <StyledInputLabel component='label' htmlFor='dob'>
                 Date of birth
               </StyledInputLabel>
               <ModalTextField
-                variant="standard"
-                id="dob"
-                type="date"
-                value={
-                  user?.created_date
-                    ? format(new Date(user.created_date), "yyyy-MM-dd")
-                    : ""
-                }
+                variant='standard'
+                id='dob'
+                type='date'
+                value={user?.created_date ? format(new Date(user.created_date), 'yyyy-MM-dd') : ''}
                 disabled
               />
             </StyledFormControl>
           </Box>
-          <Box ml="10px">
-            <IDBox></IDBox>
-            <Box height="50px"></Box>
-            <IDBox></IDBox>
+          <Box ml='10px'>
+            <IDBox />
+            <Box height='50px' />
+            <IDBox />
           </Box>
         </ModalBody>
         <ModalFooter>
@@ -154,12 +133,12 @@ const ModalFooter = styled(Box)`
   }
 `;
 
-const ModalButton = styled(Button)`
+const ModalButton = styled(Button)<{ payload?: ModalAction }>`
   && {
     background: ${(props) => {
-      if (props?.payload === ModalAction.APPROVE) return "#0D5351";
+      if (props?.payload === ModalAction.APPROVE) return '#0D5351';
 
-      return "#F87878";
+      return '#F87878';
     }};
     border-radius: 16px;
     height: 60px;
@@ -176,7 +155,7 @@ const StyledFormControl = styled(FormControl)`
 
 const ModalTextField = styled(TextField)`
   && {
-    font-family: "Roboto";
+    font-family: 'Roboto';
     font-weight: 400;
     font-size: 18px;
     line-height: 28px;
@@ -216,7 +195,7 @@ const StyledPhoneNumber = styled(MuiPhoneNumber)`
 
 const ModalTitle = styled(Typography)`
   && {
-    font-family: "Poppins";
+    font-family: 'Poppins';
     font-weight: 600;
     font-size: 20px;
     line-height: 28px;
@@ -224,9 +203,9 @@ const ModalTitle = styled(Typography)`
   }
 `;
 
-const StyledInputLabel = styled(Typography)`
+const StyledInputLabel = styled(Typography)<{ component: any; htmlFor: string }>`
   && {
-    font-family: "Poppins";
+    font-family: 'Poppins';
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
@@ -254,7 +233,7 @@ const ModalBody = styled(Box)`
       overflow-y: auto;
     }
 
-    font-family: "Poppins";
+    font-family: 'Poppins';
     color: #e4572e;
   }
 `;

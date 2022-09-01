@@ -1,12 +1,15 @@
-import "dotenv/config";
-import { createContext, useEffect, useReducer } from "react";
-import type { FC, ReactNode } from "react";
-import PropTypes from "prop-types";
 import type {} from // User,
 // AxiosAdmin,
 // InitiateAdmin,
-"../types/user";
-import axios from "axios";
+'../types/user';
+import axios from 'axios';
+import 'dotenv/config';
+import PropTypes from 'prop-types';
+import { createContext, useEffect, useReducer } from 'react';
+import type { FC, ReactNode } from 'react';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('Axios Context');
 
 interface State {
   isInitialized: boolean;
@@ -19,7 +22,7 @@ interface State {
 }
 
 interface AuthContextValue extends State {
-  platform: "Axios";
+  platform: 'Axios';
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -29,7 +32,7 @@ interface AuthProviderProps {
 }
 
 type InitializeAction = {
-  type: "INITIALIZE";
+  type: 'INITIALIZE';
   payload: {
     isAuthenticated: boolean;
     // user: User | null;
@@ -40,7 +43,7 @@ type InitializeAction = {
 };
 
 type LoginAction = {
-  type: "LOGIN";
+  type: 'LOGIN';
   payload: {
     // user: User;
     // user: AxiosAdmin;
@@ -49,7 +52,7 @@ type LoginAction = {
 };
 
 type LogoutAction = {
-  type: "LOGOUT";
+  type: 'LOGOUT';
 };
 
 type Action = InitializeAction | LoginAction | LogoutAction;
@@ -58,7 +61,7 @@ const initialState: State = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
-  initiateUser: null,
+  initiateUser: null
 };
 
 const handlers: Record<string, (state: State, action: Action) => State> = {
@@ -69,7 +72,7 @@ const handlers: Record<string, (state: State, action: Action) => State> = {
       ...state,
       isAuthenticated,
       isInitialized: true,
-      initiateUser,
+      initiateUser
     };
   },
   LOGIN: (state: State, action: LoginAction): State => {
@@ -78,24 +81,25 @@ const handlers: Record<string, (state: State, action: Action) => State> = {
     return {
       ...state,
       isAuthenticated: true,
-      user,
+      user
     };
   },
   LOGOUT: (state: State): State => ({
     ...state,
     isAuthenticated: false,
-    user: null,
-  }),
+    user: null
+  })
 };
 
-const reducer = (state: State, action: Action): State =>
-  handlers[action.type] ? handlers[action.type](state, action) : state;
+const reducer = (state: State, action: Action): State => {
+  return handlers[action.type] ? handlers[action.type](state, action) : state;
+};
 
 const AuthContext = createContext<AuthContextValue>({
   ...initialState,
-  platform: "Axios",
+  platform: 'Axios',
   login: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
+  logout: () => Promise.resolve()
 });
 
 export const AuthProvider: FC<AuthProviderProps> = (props) => {
@@ -105,47 +109,47 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   useEffect(() => {
     const initialize = async (): Promise<void> => {
       try {
-        const token = window.sessionStorage.getItem("token");
+        const token = window.sessionStorage.getItem('token');
         const initiateUser = [];
-        console.log("INITIALIZED AUTHENTICATION");
-        console.log("You must login to get a token");
+        logger.debug('INITIALIZED AUTHENTICATION');
+        logger.debug('You must login to get a token');
 
         if (token) {
           const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/me`;
           const CONFIG = {
             headers: {
-              Authorization: `bearer ${token}`,
-            },
+              Authorization: `bearer ${token}`
+            }
           };
           const apiResponse = await axios.get(URL, CONFIG);
           initiateUser.push(apiResponse.data.user);
-          console.log("INITIALIZE-AUTH-TOKEN TRIGGERED");
-          console.log("Login-thru-token Successfully");
+          logger.debug('INITIALIZE-AUTH-TOKEN TRIGGERED');
+          logger.debug('Login-thru-token Successfully');
 
           dispatch({
-            type: "INITIALIZE",
+            type: 'INITIALIZE',
             payload: {
               isAuthenticated: true,
-              initiateUser,
-            },
+              initiateUser
+            }
           });
         } else {
           dispatch({
-            type: "INITIALIZE",
+            type: 'INITIALIZE',
             payload: {
               isAuthenticated: false,
-              initiateUser: null,
-            },
+              initiateUser: null
+            }
           });
         }
       } catch (err) {
-        console.error(err);
+        logger.error(err);
         dispatch({
-          type: "INITIALIZE",
+          type: 'INITIALIZE',
           payload: {
             isAuthenticated: false,
-            initiateUser: null,
-          },
+            initiateUser: null
+          }
         });
       }
     };
@@ -156,47 +160,47 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   const login = async (email: string, password: string): Promise<void> => {
     // const accessToken = await authApi.login({ email, password });
     // const user = await authApi.me(accessToken);
-    console.log("LOG IN TRIGGERED");
+    logger.debug('LOG IN TRIGGERED');
     const user = [];
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/login`;
     const BODY = {
-      email: email,
-      password: password,
+      email,
+      password
     };
     const CONFIG = {
       headers: {
-        "Content-Type": "application/json",
-      },
+        'Content-Type': 'application/json'
+      }
     };
     const apiResponse = await axios.post(URL, BODY, CONFIG);
-    sessionStorage.setItem("token", apiResponse.data.token);
-    sessionStorage.setItem("user_id", apiResponse.data.user.id);
-    sessionStorage.setItem("user", apiResponse.data.user);
+    sessionStorage.setItem('token', apiResponse.data.token);
+    sessionStorage.setItem('user_id', apiResponse.data.user.id);
+    sessionStorage.setItem('user', apiResponse.data.user);
     user.push(apiResponse.data.user);
 
     dispatch({
-      type: "LOGIN",
+      type: 'LOGIN',
       payload: {
-        user,
-      },
+        user
+      }
     });
   };
 
   const logout = async (): Promise<void> => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("user");
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('user');
     sessionStorage.clear();
-    dispatch({ type: "LOGOUT" });
+    dispatch({ type: 'LOGOUT' });
   };
 
   return (
     <AuthContext.Provider
       value={{
         ...state,
-        platform: "Axios",
+        platform: 'Axios',
         login,
-        logout,
+        logout
       }}
     >
       {children}
@@ -205,7 +209,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
 };
 
 AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
 };
 
 export default AuthContext;

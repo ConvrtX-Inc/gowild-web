@@ -1,8 +1,9 @@
 // import "dotenv/config";
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
-//import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from 'firebase/app';
+import { getStorage } from 'firebase/storage';
+
+// import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -15,12 +16,12 @@ const firebaseConfig = {
   storageBucket: `${process.env.REACT_APP_FIREBASE_STORAGE}`,
   messagingSenderId: `${process.env.REACT_APP_FIREBASE_SID}`,
   appId: `${process.env.REACT_APP_FIREBASE_APPID}`,
-  measurementId: `${process.env.REACT_APP_FIREBASE_MID}`,
+  measurementId: `${process.env.REACT_APP_FIREBASE_MID}`
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-//const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 export const storage = getStorage(app);
 
 // apiKey: "AIzaSyCIag8Y1v3gmGnF55sGh4ocFnZq6qsEnKM",

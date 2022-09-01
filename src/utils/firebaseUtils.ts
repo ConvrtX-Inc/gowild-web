@@ -1,25 +1,28 @@
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../firebase";
+import { storage } from '../firebase';
+import { getLogger } from './loggin';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 
-export const uploadImgToFirebase = async (file: File): Promise<string> => {
+const firebaseUtilLogger = getLogger('Firebase Utils');
+
+export const uploadImgToFirebase = async (file: File): Promise<string | null> => {
   if (!file) {
-    console.error("No Image File Attached");
-    return;
+    firebaseUtilLogger.error('No Image File Attached');
+    return null;
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise<string>((resolve, reject): void => {
     const storageRef = ref(storage, `web/storageTest/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
-      "state_changed",
-      (snapshot) => {
+      'state_changed',
+      () => {
         // const prog = Math.round(
         //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         // );
       },
       (err) => {
-        console.error("FIREBASE ERROR: ", err);
+        firebaseUtilLogger.error('FIREBASE ERROR: ', err);
         reject(err);
       },
       () => {

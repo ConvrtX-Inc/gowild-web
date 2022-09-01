@@ -1,10 +1,10 @@
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import { format } from "date-fns";
-import { FC } from "react";
-import { GuidelineLog } from "src/types/guidelines";
-import styled from "styled-components";
-import LogItem from "./LogItem";
+import LogItem from './LogItem';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import { format } from 'date-fns';
+import { FC } from 'react';
+import { GuidelineLog } from 'src/types/guidelines';
+import styled from 'styled-components';
 
 interface LogContentProps {
   logs: GuidelineLog[];
@@ -13,22 +13,14 @@ interface LogContentProps {
 const LogContent: FC<LogContentProps> = ({ logs }) => {
   return (
     <LogBox pl={2}>
-      <TitleHeading variant="h5" mb={2}>
-        {logs !== null &&
-          logs.length > 0 &&
-          format(new Date(logs[0].last_update_date), "PP")}
+      <TitleHeading variant='h5' mb={2}>
+        {logs !== null && logs.length > 0 && format(new Date(logs[0].last_update_date), 'PP')}
       </TitleHeading>
-      <Typography sx={{ opacity: "0.3", fontFamily: "Poppins" }}>
-        Update Logs
-      </Typography>
+      <Typography sx={{ opacity: '0.3', fontFamily: 'Poppins' }}>Update Logs</Typography>
       {logs?.map((_, i, logsArr) => {
         const item = logsArr[logsArr.length - 1 - i];
         return (
-          <LogItem
-            date={item.last_update_date}
-            type={item.guideline_type}
-            key={`${item.id}`}
-          />
+          <LogItem date={item.last_update_date} type={item.guideline_type} key={`${item.id}`} />
         );
       })}
     </LogBox>
@@ -41,7 +33,7 @@ const TitleHeading = styled(Typography)`
   && {
     color: #000;
     font-weight: 700;
-    font-family: "Gilroy SemiBold", "Gilroy Bold";
+    font-family: 'Gilroy SemiBold', 'Gilroy Bold';
   }
 `;
 

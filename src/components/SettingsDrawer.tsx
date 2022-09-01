@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import type { FC } from "react";
+import { THEMES } from '../constants';
+import useSettings from '../hooks/useSettings';
+import AdjustmentsIcon from '../icons/Adjustments';
 import {
   Box,
   Button,
@@ -9,18 +10,17 @@ import {
   Switch,
   TextField,
   Tooltip,
-  Typography,
-} from "@mui/material";
-import { THEMES } from "../constants";
-import useSettings from "../hooks/useSettings";
-import AdjustmentsIcon from "../icons/Adjustments";
+  Typography
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import type { FC } from 'react';
 
 const getValues = (settings) => ({
   compact: settings.compact,
   direction: settings.direction,
   responsiveFontSizes: settings.responsiveFontSizes,
   roundedCorners: settings.roundedCorners,
-  theme: settings.theme,
+  theme: settings.theme
 });
 
 const SettingsDrawer: FC = () => {
@@ -43,7 +43,7 @@ const SettingsDrawer: FC = () => {
   const handleChange = (field, value): void => {
     setValues({
       ...values,
-      [field]: value,
+      [field]: value
     });
   };
 
@@ -54,55 +54,53 @@ const SettingsDrawer: FC = () => {
 
   return (
     <>
-      <Tooltip title="Settings">
+      <Tooltip title='Settings'>
         <Fab
-          color="primary"
+          color='primary'
           onClick={handleOpen}
-          size="medium"
+          size='medium'
           sx={{
             bottom: 0,
             margin: (theme) => theme.spacing(4),
-            position: "fixed",
+            position: 'fixed',
             right: 0,
-            zIndex: (theme) => theme.zIndex.speedDial,
+            zIndex: (theme) => theme.zIndex.speedDial
           }}
         >
-          <AdjustmentsIcon fontSize="small" />
+          <AdjustmentsIcon fontSize='small' />
         </Fab>
       </Tooltip>
       <Drawer
-        anchor="right"
+        anchor='right'
         onClose={handleClose}
         open={open}
         PaperProps={{
           sx: {
             p: 2,
-            width: 320,
-          },
+            width: 320
+          }
         }}
       >
-        <Typography color="textPrimary" variant="h6">
+        <Typography color='textPrimary' variant='h6'>
           Settings
         </Typography>
         <Box sx={{ mt: 3 }}>
           <TextField
             fullWidth
-            label="Theme"
-            name="theme"
-            onChange={(event): void =>
-              handleChange("theme", event.target.value)
-            }
+            label='Theme'
+            name='theme'
+            onChange={(event): void => handleChange('theme', event.target.value)}
             select
             SelectProps={{ native: true }}
             value={values.theme}
-            variant="outlined"
+            variant='outlined'
           >
             {Object.keys(THEMES).map((theme) => (
               <option key={theme} value={theme}>
                 {theme
-                  .split("_")
+                  .split('_')
                   .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
-                  .join(" ")}
+                  .join(' ')}
               </option>
             ))}
           </TextField>
@@ -110,32 +108,25 @@ const SettingsDrawer: FC = () => {
         <Box
           sx={{
             mt: 2,
-            px: 1.5,
+            px: 1.5
           }}
         >
           <FormControlLabel
             control={
               <Switch
-                checked={values.direction === "rtl"}
-                color="primary"
-                edge="start"
-                name="direction"
+                checked={values.direction === 'rtl'}
+                color='primary'
+                edge='start'
+                name='direction'
                 onChange={(event): void =>
-                  handleChange(
-                    "direction",
-                    event.target.checked ? "rtl" : "ltr"
-                  )
+                  handleChange('direction', event.target.checked ? 'rtl' : 'ltr')
                 }
               />
             }
             label={
               <div>
                 RTL
-                <Typography
-                  color="textSecondary"
-                  component="p"
-                  variant="caption"
-                >
+                <Typography color='textSecondary' component='p' variant='caption'>
                   Change text direction
                 </Typography>
               </div>
@@ -145,29 +136,25 @@ const SettingsDrawer: FC = () => {
         <Box
           sx={{
             mt: 2,
-            px: 1.5,
+            px: 1.5
           }}
         >
           <FormControlLabel
             control={
               <Switch
                 checked={values.responsiveFontSizes}
-                color="primary"
-                edge="start"
-                name="direction"
+                color='primary'
+                edge='start'
+                name='direction'
                 onChange={(event): void =>
-                  handleChange("responsiveFontSizes", event.target.checked)
+                  handleChange('responsiveFontSizes', event.target.checked)
                 }
               />
             }
             label={
               <div>
                 Responsive font sizes
-                <Typography
-                  color="textSecondary"
-                  component="p"
-                  variant="caption"
-                >
+                <Typography color='textSecondary' component='p' variant='caption'>
                   Adjust font for small devices
                 </Typography>
               </div>
@@ -177,29 +164,23 @@ const SettingsDrawer: FC = () => {
         <Box
           sx={{
             mt: 2,
-            px: 1.5,
+            px: 1.5
           }}
         >
           <FormControlLabel
             control={
               <Switch
                 checked={values.compact}
-                color="primary"
-                edge="start"
-                name="compact"
-                onChange={(event): void =>
-                  handleChange("compact", event.target.checked)
-                }
+                color='primary'
+                edge='start'
+                name='compact'
+                onChange={(event): void => handleChange('compact', event.target.checked)}
               />
             }
             label={
               <div>
                 Compact
-                <Typography
-                  color="textSecondary"
-                  component="p"
-                  variant="caption"
-                >
+                <Typography color='textSecondary' component='p' variant='caption'>
                   Fixed width on some screens
                 </Typography>
               </div>
@@ -209,29 +190,23 @@ const SettingsDrawer: FC = () => {
         <Box
           sx={{
             mt: 2,
-            px: 1.5,
+            px: 1.5
           }}
         >
           <FormControlLabel
             control={
               <Switch
                 checked={values.roundedCorners}
-                color="primary"
-                edge="start"
-                name="roundedCorners"
-                onChange={(event): void =>
-                  handleChange("roundedCorners", event.target.checked)
-                }
+                color='primary'
+                edge='start'
+                name='roundedCorners'
+                onChange={(event): void => handleChange('roundedCorners', event.target.checked)}
               />
             }
             label={
               <div>
                 Rounded Corners
-                <Typography
-                  color="textSecondary"
-                  component="p"
-                  variant="caption"
-                >
+                <Typography color='textSecondary' component='p' variant='caption'>
                   Increase border radius
                 </Typography>
               </div>
@@ -239,12 +214,7 @@ const SettingsDrawer: FC = () => {
           />
         </Box>
         <Box sx={{ mt: 3 }}>
-          <Button
-            color="primary"
-            fullWidth
-            onClick={handleSave}
-            variant="contained"
-          >
+          <Button color='primary' fullWidth onClick={handleSave} variant='contained'>
             Save Settings
           </Button>
         </Box>

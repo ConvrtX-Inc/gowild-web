@@ -1,9 +1,9 @@
-import type { FC, ReactNode } from "react";
-import PropTypes from "prop-types";
-import { matchPath } from "react-router-dom";
-import { List, ListSubheader } from "@material-ui/core";
-import type { ListProps } from "@material-ui/core";
-import NavItem from "./NavItem";
+import NavItem from './NavItem';
+import { List, ListSubheader } from '@material-ui/core';
+import type { ListProps } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import type { FC, ReactNode } from 'react';
+import { matchPath } from 'react-router-dom';
 
 interface Item {
   path?: string;
@@ -23,7 +23,7 @@ interface NavSectionProps extends ListProps {
 const renderNavItems = ({
   depth = 0,
   items,
-  pathname,
+  pathname
 }: {
   items: Item[];
   pathname: string;
@@ -37,7 +37,7 @@ const renderNavItems = ({
           acc,
           item,
           pathname,
-          depth,
+          depth
         }),
       []
     )}
@@ -48,7 +48,7 @@ const reduceChildRoutes = ({
   acc,
   pathname,
   item,
-  depth,
+  depth
 }: {
   acc: JSX.Element[];
   pathname: string;
@@ -60,7 +60,7 @@ const reduceChildRoutes = ({
     ? !!matchPath(
         {
           path: item.path,
-          end: true,
+          end: true
         },
         pathname
       )
@@ -71,7 +71,7 @@ const reduceChildRoutes = ({
       ? !!matchPath(
           {
             path: item.path,
-            end: false,
+            end: false
           },
           pathname
         )
@@ -91,7 +91,7 @@ const reduceChildRoutes = ({
         {renderNavItems({
           depth: depth + 1,
           items: item.children,
-          pathname,
+          pathname
         })}
       </NavItem>
     );
@@ -122,11 +122,11 @@ const NavSection: FC<NavSectionProps> = (props) => {
           disableGutters
           disableSticky
           sx={{
-            color: "text.primary",
-            fontSize: "0.75rem",
+            color: 'text.primary',
+            fontSize: '0.75rem',
             lineHeight: 2.5,
             fontWeight: 700,
-            textTransform: "uppercase",
+            textTransform: 'uppercase'
           }}
         >
           {title}
@@ -136,16 +136,16 @@ const NavSection: FC<NavSectionProps> = (props) => {
     >
       {renderNavItems({
         items,
-        pathname,
+        pathname
       })}
     </List>
   );
 };
 
 NavSection.propTypes = {
-  items: PropTypes.array,
+  items: PropTypes['array'],
   pathname: PropTypes.string,
-  title: PropTypes.string,
+  title: PropTypes.string
 };
 
 export default NavSection;

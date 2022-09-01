@@ -1,72 +1,75 @@
-import { Box, Grid } from "@material-ui/core";
-import { Formik } from "formik";
-import { FC, useState } from "react";
+import * as Yup from 'yup';
+import SponsorList, { SponsorState } from './SponsorList';
+import TMap from './TreasureChestMap';
+import UploadImage from './UploadImage';
+import { Box, Grid } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
+import axios from 'axios';
+import { Formik } from 'formik';
+import { FC, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   DashboardButton,
   StyledTextField,
-  TextFieldLabel,
-} from "src/shared-styled-components/dashboard";
-import { TreasureChest } from "src/types/treasurechest";
-import styled from "styled-components";
-import SponsorList, { SponsorState } from "./SponsorList";
-import UploadImage from "./UploadImage";
-import * as Yup from "yup";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import TMap from "./TreasureChestMap";
-import { CircularProgress } from "@mui/material";
-import { uploadImgToFirebase } from "src/utils/firebaseUtils";
+  TextFieldLabel
+} from 'src/shared-styled-components/dashboard';
+import { TreasureChest } from 'src/types/treasurechest';
+import { uploadImgToFirebase } from 'src/utils/firebaseUtils';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('TreasureChestCreateForm');
 
 const location = {
-  address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
+  address: '7 Carlson St, Kitimat, BC V8C 1A9, Canada',
   lat: 54.06291864840513,
-  lng: -128.6423159788208,
+  lng: -128.6423159788208
 };
 
-const TreasureChestSchema = Yup.object().shape({
-  title: Yup.string().required("Please enter a title."),
-  description: Yup.string().required("Please enter a description."),
+const TreasureChestSchema = Yup['object']().shape({
+  title: Yup.string().required('Please enter a title.'),
+  description: Yup.string().required('Please enter a description.'),
   tLocationLat: Yup.number()
-    .min(-90, "Valid value range -90 to 90")
-    .max(90, "Valid value range -90 to 90")
-    .typeError("Must be a number")
-    .required("Please enter a latitude"),
+    .min(-90, 'Valid value range -90 to 90')
+    .max(90, 'Valid value range -90 to 90')
+    .typeError('Must be a number')
+    .required('Please enter a latitude'),
   tLocationLong: Yup.number()
-    .min(-180, "Valid value range -180 to 180")
-    .max(180, "Valid value range -180 to 180")
-    .typeError("Must be a number")
-    .required("Please enter a longitude"),
-  eventDate: Yup.string().required("Please enter the event date"),
-  eventTime: Yup.string().required("Please enter the event time"),
+    .min(-180, 'Valid value range -180 to 180')
+    .max(180, 'Valid value range -180 to 180')
+    .typeError('Must be a number')
+    .required('Please enter a longitude'),
+  eventDate: Yup.string().required('Please enter the event date'),
+  eventTime: Yup.string().required('Please enter the event time'),
   numParticipants: Yup.number()
     .min(1)
-    .typeError("Must be a number")
-    .required("Please enter the number of participants"),
-  thumbnailImage: Yup.mixed().required("Please upload an image."),
-  augmentImage: Yup.mixed().notRequired(), // TODO: Update when AR is supported
+    .typeError('Must be a number')
+    .required('Please enter the number of participants'),
+  thumbnailImage: Yup.mixed().required('Please upload an image.'),
+  augmentImage: Yup.mixed().notRequired() // TODO: Update when AR is supported
 });
 
 type ChestFormObject = Yup.InferType<typeof TreasureChestSchema>;
 
 const initFormObject = {
-  title: "",
-  description: "",
+  title: '',
+  description: '',
   tLocationLat: String(location.lat.toFixed(4)),
   tLocationLong: String(location.lng.toFixed(4)),
-  eventDate: "",
-  eventTime: "",
-  numParticipants: "",
+  eventDate: '',
+  eventTime: '',
+  numParticipants: '',
   thumbnailImage: null,
-  augmentImage: null,
+  augmentImage: null
 };
 
-const TreasureChestCreateForm: FC = (props) => {
+const TreasureChestCreateForm: FC = () => {
   const navigate = useNavigate();
 
   const [sponsors, setSponsors] = useState<SponsorState[]>([]);
 
   const createNewChest = async (values: ChestFormObject): Promise<boolean> => {
-    const accessToken = sessionStorage.getItem("token");
+    const accessToken = sessionStorage.getItem('token');
     const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
     const TREASURE_URL = `${BASE_URL}/treasure-chest`;
     const SPONSOR_URL = `${BASE_URL}/sponsor`;
@@ -81,21 +84,21 @@ const TreasureChestCreateForm: FC = (props) => {
         event_date: values.eventDate,
         event_time: values.eventTime,
         no_of_participants: values.numParticipants,
-        thumbnail_img: "",
+        thumbnail_img: '',
         img_url: fbThumbnailLink,
-        a_r: "", //TODO: Update AR image upload when supported.
+        a_r: '' // TODO: Update AR image upload when supported.
       };
       const CONFIG = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
+          'Content-Type': 'application/json'
+        }
       };
 
       const chestAPIResponse = await axios.post(TREASURE_URL, DATA, CONFIG);
       const treasureChestId = chestAPIResponse.data.id;
 
-      if (sponsors.length > 0)
+      if (sponsors.length > 0) {
         await Promise.all(
           sponsors.map(async (sponsor) => {
             if (sponsor.imageFile) {
@@ -104,18 +107,19 @@ const TreasureChestCreateForm: FC = (props) => {
                 SPONSOR_URL,
                 {
                   treasure_chest_id: treasureChestId,
-                  img: "",
+                  img: '',
                   link: sponsor.link,
-                  img_url: fbImageLink,
+                  img_url: fbImageLink
                 },
                 CONFIG
               );
             }
           })
         );
+      }
       return true;
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       return false;
     }
   };
@@ -128,35 +132,28 @@ const TreasureChestCreateForm: FC = (props) => {
         setSubmitting(true);
         const created = await createNewChest(values as any);
         setSubmitting(false);
-        if (created) navigate("/dashboard/treasure-chest-list");
+        if (created) navigate('/dashboard/treasure-chest-list');
       }}
       validateOnBlur={false}
       validateOnChange={false}
     >
-      {({
-        values,
-        errors,
-        handleChange,
-        handleSubmit,
-        isSubmitting,
-        setFieldValue,
-      }) => (
+      {({ values, errors, handleChange, handleSubmit, isSubmitting, setFieldValue }) => (
         <form noValidate onSubmit={handleSubmit}>
           <FormContainer>
             <ColumnLeft mr={2}>
               <TextFieldLabel>Title</TextFieldLabel>
               <StyledTextField
                 onChange={handleChange}
-                name="title"
+                name='title'
                 value={values.title}
                 error={Boolean(errors.title)}
                 helperText={errors.title}
               />
               <TextFieldLabel>Description</TextFieldLabel>
               <StyledTextField
-                multiline={true}
+                multiline
                 onChange={handleChange}
-                name="description"
+                name='description'
                 value={values.description}
                 error={Boolean(errors.description)}
                 helperText={errors.description}
@@ -164,14 +161,14 @@ const TreasureChestCreateForm: FC = (props) => {
               <TextFieldLabel>Treasure Location</TextFieldLabel>
               <StyledTextField
                 onChange={handleChange}
-                name="tLocationLat"
+                name='tLocationLat'
                 value={values.tLocationLat}
                 error={Boolean(errors.tLocationLat)}
                 helperText={errors.tLocationLat}
               />
               <StyledTextField
                 onChange={handleChange}
-                name="tLocationLong"
+                name='tLocationLong'
                 value={values.tLocationLong}
                 error={Boolean(errors.tLocationLong)}
                 helperText={errors.tLocationLong}
@@ -180,11 +177,11 @@ const TreasureChestCreateForm: FC = (props) => {
               <SponsorList sponsors={sponsors} setSponsors={setSponsors} />
             </ColumnLeft>
             <ColumnRight>
-              <Box sx={{ height: "539px", width: "100%" }} mb={1}>
+              <Box sx={{ height: '539px', width: '100%' }} mb={1}>
                 <TMap
                   handleChestLoc={(lat, long) => {
-                    setFieldValue("tLocationLat", lat.toFixed(4));
-                    setFieldValue("tLocationLong", long.toFixed(4));
+                    setFieldValue('tLocationLat', lat.toFixed(4));
+                    setFieldValue('tLocationLong', long.toFixed(4));
                   }}
                   defaultLocation={location}
                   lat={Number(values.tLocationLat)}
@@ -193,25 +190,25 @@ const TreasureChestCreateForm: FC = (props) => {
               </Box>
               <Box>
                 <Grid container spacing={2}>
-                  <Grid container item xs={6} direction="column">
+                  <Grid container item xs={6} direction='column'>
                     <TextFieldLabel>Event Date</TextFieldLabel>
                     <StyledTextField
-                      type="date"
+                      type='date'
                       onChange={handleChange}
-                      name="eventDate"
+                      name='eventDate'
                       value={values.eventDate}
                       error={Boolean(errors.eventDate)}
                       helperText={errors.eventDate}
                       inputProps={{
-                        min: new Date().toISOString().split("T")[0],
+                        min: new Date().toISOString().split('T')[0]
                       }}
                     />
 
                     <TextFieldLabel>Time</TextFieldLabel>
                     <StyledTextField
-                      type="time"
+                      type='time'
                       onChange={handleChange}
-                      name="eventTime"
+                      name='eventTime'
                       value={values.eventTime}
                       error={Boolean(errors.eventTime)}
                       helperText={errors.eventTime}
@@ -220,7 +217,7 @@ const TreasureChestCreateForm: FC = (props) => {
                     <TextFieldLabel>Number of Participants</TextFieldLabel>
                     <StyledTextField
                       onChange={handleChange}
-                      name="numParticipants"
+                      name='numParticipants'
                       value={values.numParticipants}
                       error={Boolean(errors.numParticipants)}
                       helperText={errors.numParticipants}
@@ -230,12 +227,12 @@ const TreasureChestCreateForm: FC = (props) => {
                         <CircularProgress />
                       </SubmitLoadingBox>
                     ) : (
-                      <SubmitButton type="submit" disabled={isSubmitting}>
+                      <SubmitButton type='submit' disabled={isSubmitting}>
                         Submit
                       </SubmitButton>
                     )}
                   </Grid>
-                  <Grid container item xs={6} direction="column">
+                  <Grid container item xs={6} direction='column'>
                     {/* <UploadImage
                       label="Upload Augmented Reality"
                       onImgUpload={(file) =>
@@ -246,10 +243,8 @@ const TreasureChestCreateForm: FC = (props) => {
                       error={errors.augmentImage}
                     /> */}
                     <UploadImage
-                      label="Upload Thumbnail"
-                      onImgUpload={(file) =>
-                        setFieldValue("thumbnailImage", file)
-                      }
+                      label='Upload Thumbnail'
+                      onImgUpload={(file) => setFieldValue('thumbnailImage', file)}
                       imageFile={values.thumbnailImage}
                       error={errors.thumbnailImage}
                     />
@@ -291,7 +286,7 @@ const FormContainer = styled(Box)`
     display: flex;
     flex-direction: row;
     margin-bottom: 1rem;
-    font-family: "Gilroy SemiBold", "Gilroy Bold";
+    font-family: 'Gilroy SemiBold', 'Gilroy Bold';
   }
 `;
 const ColumnLeft = styled(Box)`
@@ -314,5 +309,5 @@ export const StyledElements = {
   SubmitButton,
   FormContainer,
   ColumnLeft,
-  ColumnRight,
+  ColumnRight
 };

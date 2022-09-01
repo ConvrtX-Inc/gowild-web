@@ -1,15 +1,19 @@
-import "dotenv/config";
-import { FC } from "react";
-import GoogleMapReact from "google-map-react";
-import styled from "styled-components";
+import 'dotenv/config';
+import GoogleMapReact from 'google-map-react';
+import { FC } from 'react';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('ViewTMap');
 
 const apiIsLoaded = (map, maps, lat, lng) => {
-  new maps.Marker({
+  const marker = new maps.Marker({
     position: { lat, lng },
-    icon: "/static/treasure-chest/chest.svg",
+    icon: '/static/treasure-chest/chest.svg',
     map,
-    draggable: false,
+    draggable: false
   });
+  logger.debug(() => `marker is ${marker}`);
 };
 
 interface TreasureChestMapProps {
@@ -19,9 +23,9 @@ interface TreasureChestMapProps {
 
 const ViewTMap: FC<TreasureChestMapProps> = ({ lat, lng }) => {
   const location = {
-    address: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
+    address: '7 Carlson St, Kitimat, BC V8C 1A9, Canada',
     lat: 54.06291864840513,
-    lng: -128.6423159788208,
+    lng: -128.6423159788208
   };
   return (
     <GoogleMapReactCore
@@ -31,7 +35,7 @@ const ViewTMap: FC<TreasureChestMapProps> = ({ lat, lng }) => {
       center={{ lat, lng }}
       yesIWantToUseGoogleMapApiInternals
       onGoogleApiLoaded={({ map, maps }) => apiIsLoaded(map, maps, lat, lng)}
-    ></GoogleMapReactCore>
+    />
   );
 };
 

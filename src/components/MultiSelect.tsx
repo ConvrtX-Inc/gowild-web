@@ -1,14 +1,8 @@
-import { useRef, useState } from "react";
-import type { ChangeEvent, FC } from "react";
-import PropTypes from "prop-types";
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Menu,
-  MenuItem,
-} from "@mui/material";
-import ChevronDownIcon from "../icons/ChevronDown";
+import ChevronDownIcon from '../icons/ChevronDown';
+import { Button, Checkbox, FormControlLabel, Menu, MenuItem } from '@mui/material';
+import PropTypes from 'prop-types';
+import { useRef, useState } from 'react';
+import type { ChangeEvent, FC } from 'react';
 
 interface MultiSelectProps {
   label: string;
@@ -47,11 +41,11 @@ const MultiSelect: FC<MultiSelectProps> = (props) => {
   return (
     <>
       <Button
-        color="inherit"
-        endIcon={<ChevronDownIcon fontSize="small" />}
+        color='inherit'
+        endIcon={<ChevronDownIcon fontSize='small' />}
         onClick={handleMenuOpen}
         ref={anchorRef}
-        variant="text"
+        variant='text'
         {...other}
       >
         {label}
@@ -69,7 +63,7 @@ const MultiSelect: FC<MultiSelectProps> = (props) => {
               control={
                 <Checkbox
                   checked={value.indexOf(option) > -1}
-                  color="primary"
+                  color='primary'
                   onChange={handleOptionToggle}
                   value={option}
                 />
@@ -86,8 +80,8 @@ const MultiSelect: FC<MultiSelectProps> = (props) => {
 MultiSelect.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func,
-  options: PropTypes.array.isRequired,
-  value: PropTypes.array.isRequired,
+  options: PropTypes['array'].isRequired,
+  value: PropTypes['array'].isRequired
 };
 
 export default MultiSelect;

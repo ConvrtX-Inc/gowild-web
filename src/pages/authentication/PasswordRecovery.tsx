@@ -1,28 +1,28 @@
-import { useEffect } from "react";
-import type { FC } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import { Box, Container } from "@mui/material";
-import styled from "styled-components";
 import {
   PasswordRecoveryAmplify,
-  PasswordRecoveryJWT,
-} from "../../components/authentication/password-recovery";
-import useAuth from "../../hooks/useAuth";
-import gtm from "../../lib/gtm";
+  PasswordRecoveryJWT
+} from '../../components/authentication/password-recovery';
+import useAuth from '../../hooks/useAuth';
+import gtm from '../../lib/gtm';
+import { Box, Container } from '@mui/material';
+import { useEffect } from 'react';
+import type { FC } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link as RouterLink } from 'react-router-dom';
+import styled from 'styled-components';
 
 const platformIcons = {
-  Amplify: "/static/icons/amplify.svg",
-  Auth0: "/static/icons/auth0.svg",
-  Firebase: "/static/icons/firebase.svg",
-  JWT: "/static/icons/jwt.svg",
+  Amplify: '/static/icons/amplify.svg',
+  Auth0: '/static/icons/auth0.svg',
+  Firebase: '/static/icons/firebase.svg',
+  JWT: '/static/icons/jwt.svg'
 };
 
 const PasswordRecovery: FC = () => {
   const { platform } = useAuth() as any;
 
   useEffect(() => {
-    gtm.push({ event: "page_view" });
+    gtm.push({ event: 'page_view' });
   }, []);
 
   return (
@@ -32,29 +32,26 @@ const PasswordRecovery: FC = () => {
       </Helmet>
       <BackgroundImgBox>
         <BackgroundGradient>
-          <StyledContainer maxWidth="sm">
-            <Box sx={{ width: "472px" }}>
+          <StyledContainer maxWidth='sm'>
+            <Box sx={{ width: '472px' }}>
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  mb: "15.47px",
-                  height: "72px",
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  mb: '15.47px',
+                  height: '72px'
                 }}
               >
-                <RouterLink to="/">
-                  <img
-                    src="/static/login/group-logo.png"
-                    alt="nexxus-one-login-logo"
-                  />
+                <RouterLink to='/'>
+                  <img src='/static/login/group-logo.png' alt='nexxus-one-login-logo' />
                 </RouterLink>
               </Box>
               <Box
                 sx={{
-                  alignItems: "center",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  mb: "71px",
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  mb: '71px'
                 }}
               >
                 <div>
@@ -63,38 +60,38 @@ const PasswordRecovery: FC = () => {
                 </div>
 
                 {/* ------------------DYNAMIC FORMS------------------ */}
-                {platform !== "JWT" && (
+                {platform !== 'JWT' && (
                   <Box
                     sx={{
                       height: 32,
-                      "& > img": {
-                        maxHeight: "100%",
-                        width: "auto",
-                      },
+                      '& > img': {
+                        maxHeight: '100%',
+                        width: 'auto'
+                      }
                     }}
                   >
-                    <img alt="Auth platform" src={platformIcons[platform]} />
+                    <img alt='Auth platform' src={platformIcons[platform]} />
                   </Box>
                 )}
               </Box>
               <Box
                 sx={{
                   flexGrow: 1,
-                  mt: 3,
+                  mt: 3
                 }}
               >
-                {platform === "JWT" && <PasswordRecoveryJWT />}
+                {platform === 'JWT' && <PasswordRecoveryJWT />}
               </Box>
-              
+
               {/* -------For Amplify------- */}
               <Box
-                  sx={{
-                    flexGrow: 1,
-                    mt: 3,
-                  }}
-                >
-                  {platform === "Amplify" && <PasswordRecoveryAmplify />}
-                </Box>
+                sx={{
+                  flexGrow: 1,
+                  mt: 3
+                }}
+              >
+                {platform === 'Amplify' && <PasswordRecoveryAmplify />}
+              </Box>
             </Box>
           </StyledContainer>
         </BackgroundGradient>
@@ -107,7 +104,7 @@ export default PasswordRecovery;
 
 const BackgroundImgBox = styled(Box)`
   && {
-    background-image: url("/static/login/background.webp");
+    background-image: url('/static/login/background.webp');
     background-repeat: no-repeat;
     background-size: cover;
   }
@@ -115,11 +112,7 @@ const BackgroundImgBox = styled(Box)`
 
 const BackgroundGradient = styled(Box)`
   && {
-    background: linear-gradient(
-      57.19deg,
-      #282a37 34.14%,
-      rgba(41, 43, 56, 0) 238.39%
-    );
+    background: linear-gradient(57.19deg, #282a37 34.14%, rgba(41, 43, 56, 0) 238.39%);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -136,7 +129,7 @@ const StyledContainer = styled(Container)`
 
 const LoginTitle = styled(Box)`
   && {
-    font-family: "Poppins";
+    font-family: 'Poppins';
     font-style: normal;
     font-weight: 600;
     font-size: 3.125rem;
@@ -148,7 +141,7 @@ const LoginTitle = styled(Box)`
 
 const SubTitle = styled(Box)`
   && {
-    font-family: "Poppins";
+    font-family: 'Poppins';
     font-style: normal;
     font-weight: 400;
     font-size: 20px;

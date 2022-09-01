@@ -1,25 +1,18 @@
-import { useEffect } from "react";
-import type { FC } from "react";
-import { Helmet } from "react-helmet-async";
-import {
-  Avatar,
-  Box,
-  Container,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import styled from "styled-components";
-import { RouteCreateForm } from "../../components/dashboard/route-list";
-import NotificationIcon from "../../icons/WorkspaceNotification";
-import useSettings from "../../hooks/useSettings";
-import gtm from "../../lib/gtm";
+import { RouteCreateForm } from '../../components/dashboard/route-list';
+import useSettings from '../../hooks/useSettings';
+import NotificationIcon from '../../icons/WorkspaceNotification';
+import gtm from '../../lib/gtm';
+import { Avatar, Box, Container, Grid, IconButton, Typography } from '@mui/material';
+import { useEffect } from 'react';
+import type { FC } from 'react';
+import { Helmet } from 'react-helmet-async';
+import styled from 'styled-components';
 
 const RouteListCreate: FC = () => {
   const { settings } = useSettings();
 
   useEffect(() => {
-    gtm.push({ event: "page_view" });
+    gtm.push({ event: 'page_view' });
   }, []);
 
   return (
@@ -30,17 +23,17 @@ const RouteListCreate: FC = () => {
       <Box
         sx={{
           // backgroundColor: "background.default",
-          backgroundColor: "#1D140C",
-          minHeight: "100%",
-          pt: "55px",
-          pb: "61px",
+          backgroundColor: '#1D140C',
+          minHeight: '100%',
+          pt: '55px',
+          pb: '61px'
         }}
       >
         <StyledContainer
-          maxWidth={settings.compact ? "xl" : false}
-          sx={{ pl: "28px !important", pr: "89px !important" }}
+          maxWidth={settings.compact ? 'xl' : false}
+          sx={{ pl: '28px !important', pr: '89px !important' }}
         >
-          <Grid container justifyContent="space-between">
+          <Grid container justifyContent='space-between'>
             <Grid item>
               <ContentTitleTypography>Normal Route</ContentTitleTypography>
             </Grid>
@@ -52,13 +45,13 @@ const RouteListCreate: FC = () => {
               </IconBox>
               <Box>
                 <Avatar
-                  src="/static/mock-images/avatars/gowild.png"
+                  src='/static/mock-images/avatars/gowild.png'
                   sx={{ width: 44, height: 44 }}
                 />
               </Box>
             </FlexiGrid>
           </Grid>
-          <Box sx={{ mt: "27px" }}>
+          <Box sx={{ mt: '27px' }}>
             <RouteCreateForm />
           </Box>
         </StyledContainer>
@@ -71,14 +64,14 @@ export default RouteListCreate;
 
 const StyledContainer = styled(Container)`
   && {
-    padding-left: "70px !important";
-    padding-right: "60px !important";
+    padding-left: '70px !important';
+    padding-right: '60px !important';
   }
 `;
 
 const ContentTitleTypography = styled(Typography)`
   && {
-    font-family: "Samsung Sharp Sans Bold";
+    font-family: 'Samsung Sharp Sans Bold';
     font-style: normal;
     font-weight: 700;
     font-size: 40px;

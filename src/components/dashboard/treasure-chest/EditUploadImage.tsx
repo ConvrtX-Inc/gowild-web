@@ -1,10 +1,13 @@
-import { Box, IconButton } from "@material-ui/core";
-import { FC, useEffect, useState } from "react";
-import { TextFieldLabel } from "src/shared-styled-components/dashboard";
-import styled from "styled-components";
-import ImageDropzone from "../ImageDropzone";
-import XIcon from "../../../icons/X";
-import { StyledElements } from "./UploadImage";
+import XIcon from '../../../icons/X';
+import ImageDropzone from '../ImageDropzone';
+import { StyledElements } from './UploadImage';
+import { Box, IconButton } from '@material-ui/core';
+import { FC, useEffect, useState } from 'react';
+import { TextFieldLabel } from 'src/shared-styled-components/dashboard';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('EditUploadImage');
 
 interface EditUploadImageProps {
   label: string;
@@ -23,7 +26,7 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
   error,
   imgURL,
   replaceImage,
-  onReplaceImage,
+  onReplaceImage
 }) => {
   useEffect(() => {}, [imageFile, error]);
   const [sizeError, setSizeError] = useState(false);
@@ -38,7 +41,7 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
     try {
       onImgUpload(file);
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
   };
 
@@ -52,19 +55,19 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
     <>
       <TextFieldLabel>{label}</TextFieldLabel>
       <StyledElements.FlexCenterBox>
-        <ImageDropzone accept="image/*" onDrop={handleDrop}>
+        <ImageDropzone accept='image/*' onDrop={handleDrop}>
           <StyledElements.FlexCenterBox>
             <StyledElements.UploadBox>
               {!replaceImage ? (
                 <>
                   <Box
-                    component="img"
+                    component='img'
                     src={imgURL}
                     sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      borderRadius: "22.2px",
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '22.2px'
                     }}
                   />
                   <ReUploadBox>
@@ -80,21 +83,18 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
                       </StyledElements.ErrorMsg>
                       <StyledElements.TryAgainButton
                         sx={{ mt: 1 }}
-                        onClick={(e) => setSizeError(false)}
-                        variant="outlined"
+                        onClick={() => setSizeError(false)}
+                        variant='outlined'
                       >
                         Try again
-                      </StyledElements.TryAgainButton>{" "}
+                      </StyledElements.TryAgainButton>{' '}
                     </>
                   ) : (
                     <>
                       <StyledElements.ErrorMsg>{error}</StyledElements.ErrorMsg>
-                      <StyledElements.TryAgainButton
-                        sx={{ mt: 1 }}
-                        variant="outlined"
-                      >
+                      <StyledElements.TryAgainButton sx={{ mt: 1 }} variant='outlined'>
                         Upload
-                      </StyledElements.TryAgainButton>{" "}
+                      </StyledElements.TryAgainButton>{' '}
                     </>
                   )}
                 </StyledElements.ImgBoxError>
@@ -102,22 +102,22 @@ const EditUploadImage: FC<EditUploadImageProps> = ({
                 <>
                   <IconButton
                     sx={{
-                      position: "absolute",
-                      right: "-21px",
-                      top: "-20px",
+                      position: 'absolute',
+                      right: '-21px',
+                      top: '-20px'
                     }}
                     onClick={handleRemove}
                   >
-                    <XIcon fontSize="small" />
+                    <XIcon fontSize='small' />
                   </IconButton>
                   <Box
-                    component="img"
+                    component='img'
                     src={URL.createObjectURL(imageFile)}
                     sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      borderRadius: "22.2px",
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '22.2px'
                     }}
                   />
                 </>

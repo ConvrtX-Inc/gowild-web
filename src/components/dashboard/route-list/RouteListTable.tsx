@@ -1,8 +1,12 @@
-import React, { useState, useCallback } from "react";
-import type { ChangeEvent, FC, MouseEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import PropTypes from "prop-types";
+import DeleteIcon from '../../../icons/RouteListDelete';
+import EditIcon from '../../../icons/RouteListEdit';
+import ViewIcon from '../../../icons/RouteListView';
+import ThreeDotsIcon from '../../../icons/ThreeDots';
+import { refreshListOnDelete } from '../../../slices/route-list';
+import { useDispatch, useSelector } from '../../../store';
+import type { NormalRoute } from '../../../types/route-lists';
+import formatDate from '../../../utils/formatDate';
+import Scrollbar from '../../Scrollbar';
 import {
   Box,
   Button,
@@ -10,33 +14,32 @@ import {
   CardMedia,
   Checkbox,
   CircularProgress,
-  Popover,
   IconButton,
+  Popover,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TablePagination,
   TableRow,
-  Typography,
-} from "@mui/material";
-import styled from "styled-components";
-import ThreeDotsIcon from "../../../icons/ThreeDots";
-import ViewIcon from "../../../icons/RouteListView";
-import EditIcon from "../../../icons/RouteListEdit";
-import DeleteIcon from "../../../icons/RouteListDelete";
-import type { NormalRoute } from "../../../types/route-lists";
-import Scrollbar from "../../Scrollbar";
-import formatDate from "../../../utils/formatDate";
-import { refreshListOnDelete } from "../../../slices/route-list";
-import { useDispatch, useSelector } from "../../../store";
+  Typography
+} from '@mui/material';
+import axios from 'axios';
+import PropTypes from 'prop-types';
+import React, { useCallback, useState } from 'react';
+import type { ChangeEvent, FC, MouseEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('Route List Table');
 
 interface RouteListTableProps {
   normalRoutes: NormalRoute[];
 }
 
-type Sort = "updated_date|desc" | "updated_date|asc" | "deleteAt|asc";
-type Action = "view" | "edit" | "delete" | null;
+type Sort = 'updated_date|desc' | 'updated_date|asc' | 'deleteAt|asc';
+type Action = 'view' | 'edit' | 'delete' | null;
 
 interface SortOption {
   value: Sort;
@@ -44,7 +47,7 @@ interface SortOption {
   icon: any;
 }
 
-interface actionOption {
+interface ActionOption {
   value: Action;
   label: string;
   icon: any;
@@ -52,65 +55,59 @@ interface actionOption {
 
 const sortOptions: SortOption[] = [
   {
-    label: "View",
-    value: "updated_date|desc",
-    icon: <ViewIcon fontSize="large" />,
+    label: 'View',
+    value: 'updated_date|desc',
+    icon: <ViewIcon fontSize='large' />
   },
   {
-    label: "Edit",
-    value: "updated_date|desc",
-    icon: <EditIcon fontSize="large" />,
+    label: 'Edit',
+    value: 'updated_date|desc',
+    icon: <EditIcon fontSize='large' />
   },
   {
-    label: "Delete",
-    value: "deleteAt|asc",
-    icon: <DeleteIcon fontSize="large" />,
-  },
+    label: 'Delete',
+    value: 'deleteAt|asc',
+    icon: <DeleteIcon fontSize='large' />
+  }
 ];
 
-const actionOptions: actionOption[] = [
+const actionOptions: ActionOption[] = [
   {
-    label: "View",
-    value: "view",
-    icon: <ViewIcon fontSize="large" />,
+    label: 'View',
+    value: 'view',
+    icon: <ViewIcon fontSize='large' />
   },
   {
-    label: "Edit",
-    value: "edit",
-    icon: <EditIcon fontSize="large" />,
+    label: 'Edit',
+    value: 'edit',
+    icon: <EditIcon fontSize='large' />
   },
   {
-    label: "Delete",
-    value: "delete",
-    icon: <DeleteIcon fontSize="large" />,
-  },
+    label: 'Delete',
+    value: 'delete',
+    icon: <DeleteIcon fontSize='large' />
+  }
 ];
 
-const applyFilters = (
-  normalRoutes: any[],
-  query: string,
-  filters: any
-): NormalRoute[] =>
+const applyFilters = (normalRoutes: any[], query: string, filters: any): NormalRoute[] =>
   normalRoutes.filter((normalRoute) => {
     let matches = true;
 
     if (query) {
-      const properties = ["route_name"];
+      const properties = ['route_name'];
       let containsQuery = false;
 
-      if (typeof query === "string") {
-        console.log("Query is string");
+      if (typeof query === 'string') {
+        logger.debug('Query is string');
         properties.forEach((property) => {
-          //Query all Strings
-          if (
-            normalRoute[property].toLowerCase().includes(query.toLowerCase())
-          ) {
+          // Query all Strings
+          if (normalRoute[property].toLowerCase().includes(query.toLowerCase())) {
             containsQuery = true;
           }
         });
       }
       // properties.forEach((property) => {
-      //   console.log(normalRoute["caseTitle"]);
+      //   logger.debug(normalRoute["caseTitle"]);
       //   if (
       //     normalRoute[property].toLowerCase().includes(query.toLowerCase())
       //   ) {
@@ -134,13 +131,14 @@ const applyFilters = (
     return matches;
   });
 
-const applyPagination = (
-  normalRoutes: any[],
-  page: number,
-  limit: number
-): any[] => normalRoutes.slice(page * limit, page * limit + limit);
+const applyPagination = (normalRoutes: any[], page: number, limit: number): any[] =>
+  normalRoutes.slice(page * limit, page * limit + limit);
 
-const descendingComparator = (a: any, b: any, orderBy: string): number => {
+const descendingComparator = (
+  a: Record<string, any>,
+  b: Record<string, any>,
+  orderBy: string
+): number => {
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -152,29 +150,30 @@ const descendingComparator = (a: any, b: any, orderBy: string): number => {
   return 0;
 };
 
-const getComparator = (order: "asc" | "desc", orderBy: string) =>
-  order === "desc"
-    ? (a: NormalRoute, b: NormalRoute) => descendingComparator(a, b, orderBy)
-    : (a: NormalRoute, b: NormalRoute) => -descendingComparator(a, b, orderBy);
+const getComparator = (order: 'asc' | 'desc', orderBy: string) =>
+  function compare(a: NormalRoute, b: NormalRoute) {
+    return order === 'desc'
+      ? descendingComparator(a, b, orderBy)
+      : -descendingComparator(a, b, orderBy);
+  };
+
+type NormalIdx = [NormalRoute, number];
 
 const applySort = (normalRoutes: NormalRoute[], sort: Sort): NormalRoute[] => {
-  const [orderBy, order] = sort.split("|") as [string, "asc" | "desc"];
+  const [orderBy, order] = sort.split('|') as [string, 'asc' | 'desc'];
   const comparator = getComparator(order, orderBy);
-  const stabilizedThis = normalRoutes.map((el, index) => [el, index]);
+  const stabilizedThis: NormalIdx[] = normalRoutes.map((el, index) => [el, index]);
 
-  stabilizedThis.sort((a, b) => {
-    // @ts-ignore
-    const newOrder = comparator(a[0], b[0]);
+  stabilizedThis.sort(([aEl, aIdx], [bEl, bIdx]) => {
+    const newOrder = comparator(aEl, bEl);
 
     if (newOrder !== 0) {
       return newOrder;
     }
 
-    // @ts-ignore
-    return a[1] - b[1];
+    return aIdx - bIdx;
   });
 
-  // @ts-ignore
   return stabilizedThis.map((el) => el[0]);
 };
 
@@ -184,20 +183,18 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   const setIsLoading = useSelector((state) => state.routeList.setIsLoading);
   const [isDeleting, setIsDeleting] = useState(false);
   const { normalRoutes, ...other } = props;
-  const [selectedNormalRoutes, setSelectedNormalRoutes] = useState<string[]>(
-    []
-  );
+  const [selectedNormalRoutes, setSelectedNormalRoutes] = useState<string[]>([]);
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
-  const [query] = useState<string>("");
+  const [query] = useState<string>('');
   const [sort] = useState<Sort>(sortOptions[0].value);
-  const [selectedRouteId, setSelectedRouteId] = useState<string>("");
+  const [selectedRouteId, setSelectedRouteId] = useState<string>('');
   const [filters] = useState<any>({
-    dummy: null,
+    dummy: null
   });
 
   const handleRedirectPath = () => {
-    navigate("/dashboard/route-list/new");
+    navigate('/dashboard/route-list/new');
   };
 
   // const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -214,23 +211,23 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   // };
 
   const handleRowAction = useCallback(
-    async (event: ChangeEvent<HTMLInputElement>, action) => {
-      const { value } = event.target;
-      const accessToken = sessionStorage.getItem("token");
+    async (event: React.MouseEvent<any>, action?: string) => {
+      const { value } = event.target as any;
+      const accessToken = sessionStorage.getItem('token');
 
-      if (value === "delete" || action === "delete") {
-        console.log(`ROW ACTION fn: ${value}, id: ${selectedRouteId}`);
+      if (value === 'delete' || action === 'delete') {
+        logger.debug(`ROW ACTION fn: ${value}, id: ${selectedRouteId}`);
         const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${selectedRouteId}`;
         const CONFIG = {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`
             // "Content-Type": "application/json",
-          },
+          }
         };
         setIsDeleting(true);
         const apiResponse = await axios.delete(URL, CONFIG);
         if (apiResponse.status === 200) {
-          //Trigger Refresh Route List Table in Route List Page
+          // Trigger Refresh Route List Table in Route List Page
           dispatch(refreshListOnDelete(true));
           setIsDeleting(false);
         }
@@ -238,29 +235,24 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
         setAnchorEl(null);
       }
 
-      if (value === "edit" || action === "edit") {
-        navigate("/dashboard/route-list/edit", {
-          state: { routeId: selectedRouteId },
+      if (value === 'edit' || action === 'edit') {
+        navigate('/dashboard/route-list/edit', {
+          state: { routeId: selectedRouteId }
         });
       }
 
-      if (value === "view" || action === "view") {
-        navigate("/dashboard/route-list/view", {
-          state: { routeId: selectedRouteId },
+      if (value === 'view' || action === 'view') {
+        navigate('/dashboard/route-list/view', {
+          state: { routeId: selectedRouteId }
         });
       }
     },
     [dispatch, navigate, selectedRouteId]
   );
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
-  const handleClickPopOver = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    routeId: string
-  ) => {
+  const handleClickPopOver = (event: React.MouseEvent<HTMLButtonElement>, routeId: string) => {
     setAnchorEl(event.currentTarget);
     setSelectedRouteId(routeId);
   };
@@ -269,15 +261,11 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const id = open ? 'simple-popover' : undefined;
 
-  const handleSelectAllNormalRoutes = (
-    event: ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleSelectAllNormalRoutes = (event: ChangeEvent<HTMLInputElement>): void => {
     setSelectedNormalRoutes(
-      event.target.checked
-        ? normalRoutes.map((normalRoute) => normalRoute.id)
-        : []
+      event.target.checked ? normalRoutes.map((normalRoute) => normalRoute.id) : []
     );
   };
 
@@ -286,21 +274,15 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
     normalRouteId: string
   ): void => {
     if (!selectedNormalRoutes.includes(normalRouteId)) {
-      setSelectedNormalRoutes((prevSelected) => [
-        ...prevSelected,
-        normalRouteId,
-      ]);
+      setSelectedNormalRoutes((prevSelected) => [...prevSelected, normalRouteId]);
     } else {
       setSelectedNormalRoutes((prevSelected) =>
-        prevSelected.filter((id) => id !== normalRouteId)
+        prevSelected.filter((_id) => _id !== normalRouteId)
       );
     }
   };
 
-  const handlePageChange = (
-    event: MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ): void => {
+  const handlePageChange = (event: MouseEvent<HTMLButtonElement> | null, newPage: number): void => {
     setPage(newPage);
   };
 
@@ -310,38 +292,32 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
 
   const filteredNormalRoutes = applyFilters(normalRoutes, query, filters);
   const sortedNormalRoutes = applySort(filteredNormalRoutes, sort);
-  const paginatedNormalRoutes = applyPagination(
-    sortedNormalRoutes,
-    page,
-    limit
-  );
+  const paginatedNormalRoutes = applyPagination(sortedNormalRoutes, page, limit);
   // const enableBulkActions = selectedNormalRoutes.length > 0;
   const selectedSomeNormalRoutes =
-    selectedNormalRoutes.length > 0 &&
-    selectedNormalRoutes.length < normalRoutes.length;
-  const selectedAllNormalRoutes =
-    selectedNormalRoutes.length === normalRoutes.length;
+    selectedNormalRoutes.length > 0 && selectedNormalRoutes.length < normalRoutes.length;
+  const selectedAllNormalRoutes = selectedNormalRoutes.length === normalRoutes.length;
 
   return (
     <>
       <StyledCard {...other}>
         <Box
           sx={{
-            alignItems: "center",
-            display: "flex",
-            flexWrap: "wrap",
+            alignItems: 'center',
+            display: 'flex',
+            flexWrap: 'wrap',
             m: 0,
-            padding: "33px 16px 13px 66px",
+            padding: '33px 16px 13px 66px'
           }}
         >
           <ToolbarBox>
             <TableTitleWrapper>
               <TableTitle>Route Lists</TableTitle>
             </TableTitleWrapper>
-            <Box sx={{ ml: "auto" }}>
+            <Box sx={{ ml: 'auto' }}>
               <CreateNormalRouteButton
                 onClick={handleRedirectPath}
-                variant="contained"
+                variant='contained'
                 disableElevation
               >
                 Create
@@ -356,39 +332,35 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                 <TableRow>
                   <HeaderCheckbox>
                     <StyledCheckbox
-                      sx={{ visibility: "hidden" }}
-                      checked={
-                        normalRoutes.length > 0
-                          ? selectedAllNormalRoutes
-                          : false
-                      }
+                      sx={{ visibility: 'hidden' }}
+                      checked={normalRoutes.length > 0 ? selectedAllNormalRoutes : false}
                       indeterminate={selectedSomeNormalRoutes}
                       onChange={handleSelectAllNormalRoutes}
                     />
                   </HeaderCheckbox>
                   <TableHeaderCell
                     sx={{
-                      width: "322px",
-                      maxWidth: "322px",
-                      minWidth: "322px",
+                      width: '322px',
+                      maxWidth: '322px',
+                      minWidth: '322px'
                     }}
                   >
                     <CenteredBox>NAME</CenteredBox>
                   </TableHeaderCell>
                   <TableHeaderCell
                     sx={{
-                      width: "140px",
-                      minWidth: "140px",
-                      maxWidth: "140px",
+                      width: '140px',
+                      minWidth: '140px',
+                      maxWidth: '140px'
                     }}
                   >
                     <CenteredBox>DATE CREATED</CenteredBox>
                   </TableHeaderCell>
                   <TableHeaderCell
                     sx={{
-                      width: "234px",
-                      minWidth: "234px",
-                      maxWidth: "234px",
+                      width: '234px',
+                      minWidth: '234px',
+                      maxWidth: '234px'
                     }}
                   >
                     <CenteredBox>
@@ -398,9 +370,9 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                   </TableHeaderCell>
                   <TableHeaderCell
                     sx={{
-                      width: "266.85px",
-                      minWidth: "266.85px",
-                      maxWidth: "266.85px",
+                      width: '266.85px',
+                      minWidth: '266.85px',
+                      maxWidth: '266.85px'
                     }}
                   >
                     <CenteredBox>
@@ -408,7 +380,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       <Box>LONG / LAT</Box>
                     </CenteredBox>
                   </TableHeaderCell>
-                  <TableHeaderCell align="left"></TableHeaderCell>
+                  <TableHeaderCell align='left' />
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -419,44 +391,39 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                   </TableRow>
                 )}
                 {setIsLoading && (
-                  <TableRow sx={{ width: "100%" }}>
+                  <TableRow sx={{ width: '100%' }}>
                     <TableCell
                       sx={{
-                        borderBottom: "none",
-                        position: "relative",
-                        height: "142px",
+                        borderBottom: 'none',
+                        position: 'relative',
+                        height: '142px'
                       }}
                     >
                       <Box
                         sx={{
-                          position: "absolute",
-                          top: "48.49px",
-                          left: "calc(19vw + 239px)",
+                          position: 'absolute',
+                          top: '48.49px',
+                          left: 'calc(19vw + 239px)'
                         }}
                       >
-                        <CircularProgress sx={{ color: "#2995A8" }} />
+                        <CircularProgress sx={{ color: '#2995A8' }} />
                       </Box>
                     </TableCell>
                   </TableRow>
                 )}
                 {paginatedNormalRoutes.map((normalRoute) => {
-                  const isNormalRouteselected = selectedNormalRoutes.includes(
-                    normalRoute.id
-                  );
+                  const isNormalRouteselected = selectedNormalRoutes.includes(normalRoute.id);
                   return (
-                    <StyledTableRow
-                      hover
-                      key={normalRoute.id}
-                      selected={isNormalRouteselected}
-                    >
+                    <StyledTableRow hover key={normalRoute.id} selected={isNormalRouteselected}>
                       <TableCellStyled>
                         {/* <Box sx={{ ml: "20px" }}></Box> */}
                         <StyledCheckbox
-                          sx={{ ml: "20px", visibility: "hidden" }}
+                          sx={{
+                            ml: '20px',
+                            visibility: 'hidden'
+                          }}
                           checked={isNormalRouteselected}
-                          onChange={(event) =>
-                            handleSelectOneNormalRoute(event, normalRoute.id)
-                          }
+                          onChange={(event) => handleSelectOneNormalRoute(event, normalRoute.id)}
                           value={isNormalRouteselected}
                         />
                       </TableCellStyled>
@@ -464,12 +431,12 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                         <GroupBox>
                           <CardMedia
                             sx={{
-                              width: "85px",
-                              height: "96.01px",
-                              mr: "26px",
-                              borderRadius: "20px",
+                              width: '85px',
+                              height: '96.01px',
+                              mr: '26px',
+                              borderRadius: '20px',
                               // border: "0.2px solid rgba(0, 0, 0, 0.2)",
-                              boxSizing: "border-box",
+                              boxSizing: 'border-box'
                             }}
                             image={normalRoute.img_url}
                           />
@@ -478,9 +445,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       </TableCellStyled>
                       <TableCellStyled>
                         <CenteredBox>
-                          <Typography400>
-                            {formatDate(normalRoute.created_date)}
-                          </Typography400>
+                          <Typography400>{formatDate(normalRoute.created_date)}</Typography400>
                         </CenteredBox>
                       </TableCellStyled>
                       <TableCellStyled>
@@ -493,13 +458,11 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                           <Typography400>{`${normalRoute.stop_point_long}/${normalRoute.stop_point_lat}`}</Typography400>
                         </CenteredBox>
                       </TableCellStyled>
-                      <TableCellStyled align="right">
+                      <TableCellStyled align='right'>
                         <Box>
                           <IconButton
                             aria-describedby={id}
-                            onClick={(e) =>
-                              handleClickPopOver(e, normalRoute.id)
-                            }
+                            onClick={(e) => handleClickPopOver(e, normalRoute.id)}
                           >
                             <ThreeDotsIcon />
                           </IconButton>
@@ -509,12 +472,12 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                             anchorEl={anchorEl}
                             onClose={handleClose}
                             anchorOrigin={{
-                              vertical: "bottom",
-                              horizontal: "center",
+                              vertical: 'bottom',
+                              horizontal: 'center'
                             }}
                             transformOrigin={{
-                              vertical: "top",
-                              horizontal: "right",
+                              vertical: 'top',
+                              horizontal: 'right'
                             }}
                           >
                             {!isDeleting ? (
@@ -529,7 +492,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                                   {option.icon}
                                   <StyledOption
                                     // ref={optionRef}
-                                    onClick={handleRowAction}
+                                    onClick={() => handleRowAction}
                                     value={option.value}
                                   >
                                     {option.label}
@@ -539,18 +502,18 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                             ) : (
                               <Box
                                 sx={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  width: "161px",
-                                  height: "142.43px",
-                                  fontFamily: "Gilroy Medium",
-                                  fontSize: "25px",
-                                  color: "#878787",
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  width: '161px',
+                                  height: '142.43px',
+                                  fontFamily: 'Gilroy Medium',
+                                  fontSize: '25px',
+                                  color: '#878787'
                                 }}
                               >
-                                <CircularProgress color="success" />
+                                <CircularProgress color='success' />
                                 Deleting
                               </Box>
                             )}
@@ -566,7 +529,6 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
         </Scrollbar>
 
         <StyledTablePagination
-          component="div"
           // count={filteredNormalRoutes.length}
           count={normalRoutes.length}
           onPageChange={handlePageChange}
@@ -576,10 +538,10 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
           rowsPerPageOptions={[10, 30, 50]}
         />
       </StyledCard>
-      <Box sx={{ display: "flex", position: "relative" }}>
+      <Box sx={{ display: 'flex', position: 'relative' }}>
         <HiddenCheckBox
           checked={selectedAllNormalRoutes}
-          color="primary"
+          color='primary'
           indeterminate={selectedSomeNormalRoutes}
           onChange={handleSelectAllNormalRoutes}
         />
@@ -589,7 +551,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
 };
 
 RouteListTable.propTypes = {
-  normalRoutes: PropTypes.array.isRequired,
+  normalRoutes: PropTypes['array'].isRequired
 };
 
 export default React.memo(RouteListTable);
@@ -635,7 +597,7 @@ const TableTitleWrapper = styled(Box)`
 
 const TableTitle = styled(Box)`
   && {
-    font-family: "Samsung Sharp Sans Bold";
+    font-family: 'Samsung Sharp Sans Bold';
     font-size: 1.875rem;
     line-height: 38px;
     color: #000000;
@@ -679,7 +641,7 @@ const StyledPopOver = styled(Popover)`
 const StyledOption = styled.option`
   && {
     cursor: pointer;
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-size: 0.875rem;
     line-height: 16px;
     letter-spacing: 0.02rem;
@@ -709,7 +671,7 @@ const TableHeaderCell = styled(TableCell)`
     padding-top: 9px;
     padding-bottom: 6px;
     padding-left: 0;
-    font-family: "Inter";
+    font-family: 'Inter';
     font-weight: 600;
     font-size: 0.75rem;
     line-height: 15px;
@@ -747,7 +709,7 @@ const GroupBox = styled(Box)`
 
 const Typography400 = styled(Typography)`
   && {
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-size: 18px;
     line-height: 21px;
     letter-spacing: 0.05rem;
@@ -759,13 +721,13 @@ const CreateNormalRouteButton = styled(Button)`
   && {
     width: 76px;
     height: 40px;
-    background-image: url("/static/route-list/create-btn.png");
+    background-image: url('/static/route-list/create-btn.png');
     background-repeat: no-repeat;
     background-size: contain;
     background-color: #00755e;
     border-radius: 10px;
     padding: 13px 15px 13px 16px;
-    font-family: "Gilroy Bold";
+    font-family: 'Gilroy Bold';
     font-size: 14px;
     line-height: 16px;
     text-align: center;
@@ -799,14 +761,14 @@ const StyledTablePagination = styled(TablePagination)`
       }
     }
     & p {
-      font-family: "Gilroy SemiBold";
+      font-family: 'Gilroy SemiBold';
       font-size: 16px;
       line-height: 19px;
       margin: 0 0 0 0;
       color: #ffffff;
     }
     div.MuiTablePagination-select {
-      font-family: "Gilroy SemiBold";
+      font-family: 'Gilroy SemiBold';
       font-size: 16px;
       line-height: 19px;
       padding: 0 25px 0 0;

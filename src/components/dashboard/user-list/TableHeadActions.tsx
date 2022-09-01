@@ -1,18 +1,15 @@
-import { Box, Button, TextField } from "@mui/material";
-import { debounce } from "lodash";
-import { FC, useCallback, useState } from "react";
-import FilterTriangle from "src/icons/FilterTriangle";
-import Search from "src/icons/Search";
-import { DashboardButton } from "src/shared-styled-components/dashboard";
-import {
-  onSearchFilter as searchFilterAction,
-  toggleFilter,
-} from "src/slices/user-list";
-import { useDispatch, useSelector } from "src/store";
-import styled from "styled-components";
+import { Box, Button, TextField } from '@mui/material';
+import { debounce } from 'lodash';
+import { FC, useCallback, useState } from 'react';
+import FilterTriangle from 'src/icons/FilterTriangle';
+import Search from 'src/icons/Search';
+import { DashboardButton } from 'src/shared-styled-components/dashboard';
+import { onSearchFilter as searchFilterAction, toggleFilter } from 'src/slices/user-list';
+import { useDispatch, useSelector } from 'src/store';
+import styled from 'styled-components';
 
 const TableHeadActions: FC = () => {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const { isFiltered } = useSelector((state) => state.userList);
   const dispatch = useDispatch();
 
@@ -24,7 +21,7 @@ const TableHeadActions: FC = () => {
   const debouncedSearch = useCallback(debounce(handleSearch, 0), []);
 
   const onSearchFilter = (e) => {
-    const value = e.target.value;
+    const { value } = e.target;
     debouncedSearch(value);
   };
 
@@ -37,13 +34,13 @@ const TableHeadActions: FC = () => {
     <TableHeadBox>
       <Box>
         <FilterButton onClick={handleFilter}>
-          <FilterTriangle viewBox="0 0 20 20" />
-          {!isFiltered ? "Filter" : "Unfilter"}
+          <FilterTriangle viewBox='0 0 20 20' />
+          {!isFiltered ? 'Filter' : 'Unfilter'}
         </FilterButton>
         <SearchBar
-          placeholder="Search Users by Name, Email or Date"
+          placeholder='Search Users by Name, Email or Date'
           InputProps={{
-            startAdornment: <Search />,
+            startAdornment: <Search />
           }}
           onChange={onSearchFilter}
           value={searchValue}
@@ -67,7 +64,7 @@ const FilterButton = styled(Button)`
       margin-right: 10px;
     }
     font-size: 16px;
-    font-family: "Inter";
+    font-family: 'Inter';
     font-weight: 400;
     font-size: 16px;
     line-height: 19px;
@@ -109,7 +106,7 @@ const SearchBar = styled(TextField)`
     }
 
     && input {
-      font-family: "Inter";
+      font-family: 'Inter';
       font-size: 12px;
       color: #000;
       outline: none;

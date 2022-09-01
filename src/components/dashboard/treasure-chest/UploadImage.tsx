@@ -1,10 +1,13 @@
-import { Box, Button, IconButton } from "@material-ui/core";
-import { FC, useEffect, useState } from "react";
-import { default as UploadIcon } from "src/icons/Upload";
-import { TextFieldLabel } from "src/shared-styled-components/dashboard";
-import styled from "styled-components";
-import ImageDropzone from "../ImageDropzone";
-import XIcon from "../../../icons/X";
+import XIcon from '../../../icons/X';
+import ImageDropzone from '../ImageDropzone';
+import { Box, Button, IconButton } from '@material-ui/core';
+import { FC, useEffect, useState } from 'react';
+import UploadIcon from 'src/icons/Upload';
+import { TextFieldLabel } from 'src/shared-styled-components/dashboard';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('Upload Image');
 
 interface UploadImageProps {
   label: string;
@@ -19,7 +22,7 @@ const UploadImage: FC<UploadImageProps> = ({
   imageFile,
   onImgUpload,
   disable = false,
-  error,
+  error
 }) => {
   useEffect(() => {}, [imageFile, error]);
   const [sizeError, setSizeError] = useState(false);
@@ -33,7 +36,7 @@ const UploadImage: FC<UploadImageProps> = ({
     try {
       onImgUpload(file);
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
   };
 
@@ -42,14 +45,15 @@ const UploadImage: FC<UploadImageProps> = ({
     onImgUpload(null);
   };
 
-  const ToggleImageDropZone = (elem: JSX.Element) =>
-    disable ? (
+  const ToggleImageDropZone = (elem: JSX.Element) => {
+    return disable ? (
       <>{elem}</>
     ) : (
-      <ImageDropzone accept="image/*" onDrop={handleDrop}>
+      <ImageDropzone accept='image/*' onDrop={handleDrop}>
         {elem}
       </ImageDropzone>
     );
+  };
 
   return (
     <>
@@ -65,18 +69,18 @@ const UploadImage: FC<UploadImageProps> = ({
                       <ErrorMsg>File must be 1MB size or less</ErrorMsg>
                       <TryAgainButton
                         sx={{ mt: 1 }}
-                        onClick={(e) => setSizeError(false)}
-                        variant="outlined"
+                        onClick={() => setSizeError(false)}
+                        variant='outlined'
                       >
                         Try again
-                      </TryAgainButton>{" "}
+                      </TryAgainButton>{' '}
                     </>
                   ) : (
                     <>
                       <ErrorMsg>{error}</ErrorMsg>
-                      <TryAgainButton sx={{ mt: 1 }} variant="outlined">
+                      <TryAgainButton sx={{ mt: 1 }} variant='outlined'>
                         Upload
-                      </TryAgainButton>{" "}
+                      </TryAgainButton>{' '}
                     </>
                   )}
                 </ImgBoxError>
@@ -84,22 +88,22 @@ const UploadImage: FC<UploadImageProps> = ({
                 <>
                   <IconButton
                     sx={{
-                      position: "absolute",
-                      right: "-21px",
-                      top: "-20px",
+                      position: 'absolute',
+                      right: '-21px',
+                      top: '-20px'
                     }}
                     onClick={handleRemove}
                   >
-                    <XIcon fontSize="small" />
+                    <XIcon fontSize='small' />
                   </IconButton>
                   <Box
-                    component="img"
+                    component='img'
                     src={URL.createObjectURL(imageFile)}
                     sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      borderRadius: "22.2px",
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '22.2px'
                     }}
                   />
                 </>
@@ -127,7 +131,7 @@ const ImgBoxError = styled(Box)`
 
 const ErrorMsg = styled(Box)`
   && {
-    font-family: "Gilroy Regular";
+    font-family: 'Gilroy Regular';
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -188,5 +192,5 @@ export const StyledElements = {
   TryAgainButton,
   StyledUploadIcon,
   UploadBox,
-  FlexCenterBox,
+  FlexCenterBox
 };

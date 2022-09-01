@@ -1,34 +1,28 @@
-import {
-  Box,
-  Grid,
-  IconButton,
-  Avatar,
-  Container,
-  Typography,
-} from "@material-ui/core";
-import { FC, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
-import styled from "styled-components";
-import NotificationIcon from "../../icons/WorkspaceNotification";
-import useSettings from "../../hooks/useSettings";
-import gtm from "../../lib/gtm";
+import useSettings from '../../hooks/useSettings';
+import NotificationIcon from '../../icons/WorkspaceNotification';
+import gtm from '../../lib/gtm';
+import { Avatar, Box, Container, Grid, IconButton, Typography } from '@material-ui/core';
+import React, { FC, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import styled from 'styled-components';
 
 interface DashboardContentWrapperProps {
   title: string;
   metaDataTitle?: string;
   contentHeight?: string;
+  children: React.ReactNode;
 }
 
 const DashboardContentWrapper: FC<DashboardContentWrapperProps> = ({
   children,
   title,
   metaDataTitle,
-  contentHeight,
+  contentHeight
 }) => {
   const { settings } = useSettings();
 
   useEffect(() => {
-    gtm.push({ event: "page_view" });
+    gtm.push({ event: 'page_view' });
   }, []);
   return (
     <>
@@ -37,17 +31,14 @@ const DashboardContentWrapper: FC<DashboardContentWrapperProps> = ({
       </Helmet>
       <Box
         sx={{
-          backgroundColor: "#1D140C",
-          minHeight: "100%",
-          pt: "55px",
-          pb: "61px",
+          backgroundColor: '#1D140C',
+          minHeight: '100%',
+          pt: '55px',
+          pb: '61px'
         }}
       >
-        <StyledContainer
-          maxWidth={settings.compact ? "xl" : false}
-          sx={{ p: "0 28px !important" }}
-        >
-          <Grid container justifyContent="space-between">
+        <StyledContainer maxWidth={settings.compact ? 'xl' : false} sx={{ p: '0 28px !important' }}>
+          <Grid container justifyContent='space-between'>
             <Grid item>
               <ContentTitleTypography>{title}</ContentTitleTypography>
             </Grid>
@@ -59,15 +50,13 @@ const DashboardContentWrapper: FC<DashboardContentWrapperProps> = ({
               </IconBox>
               <Box>
                 <Avatar
-                  src="/static/mock-images/avatars/gowild.png"
+                  src='/static/mock-images/avatars/gowild.png'
                   sx={{ width: 44, height: 44 }}
                 />
               </Box>
             </FlexiGrid>
           </Grid>
-          <Box sx={{ mt: "27px", height: contentHeight ?? "auto" }}>
-            {children}
-          </Box>
+          <Box sx={{ mt: '27px', height: contentHeight ?? 'auto' }}>{children}</Box>
         </StyledContainer>
       </Box>
     </>
@@ -85,7 +74,7 @@ const StyledContainer = styled(Container)`
 
 const ContentTitleTypography = styled(Typography)`
   && {
-    font-family: "Samsung Sharp Sans Bold";
+    font-family: 'Samsung Sharp Sans Bold';
     font-style: normal;
     font-weight: 700;
     font-size: 40px;

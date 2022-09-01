@@ -1,7 +1,8 @@
 /* eslint-disable react/no-array-index-key */
-import { useState } from 'react';
-import type { FC, KeyboardEvent } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import SearchIcon from '../../icons/Search';
+import XIcon from '../../icons/X';
+import wait from '../../utils/wait';
+import Scrollbar from '../Scrollbar';
 import {
   Box,
   Button,
@@ -15,10 +16,9 @@ import {
   Tooltip,
   Typography
 } from '@mui/material';
-import SearchIcon from '../../icons/Search';
-import XIcon from '../../icons/X';
-import Scrollbar from '../Scrollbar';
-import wait from '../../utils/wait';
+import { useState } from 'react';
+import type { FC, KeyboardEvent } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 interface Result {
   description: string;
@@ -27,15 +27,18 @@ interface Result {
 
 const results: Result[] = [
   {
-    description: 'Algolia broadly consists of two parts: search implementation and search analytics. We provide tools that make it easy for your developers...',
+    description:
+      'Algolia broadly consists of two parts: search implementation and search analytics. We provide tools that make it easy for your developers...',
     title: 'What does Algolia do?'
   },
   {
-    description: 'To be clear, search doesn’t know the direction that your business should take. However, it can help you gather information on what your customers want...',
+    description:
+      'To be clear, search doesn’t know the direction that your business should take. However, it can help you gather information on what your customers want...',
     title: 'Search as a feedback loop'
   },
   {
-    description: 'Algolia provides your users with a fast and rich search experience. Your Algolia search interface can contain a search bar, filters, infinite scrolling...',
+    description:
+      'Algolia provides your users with a fast and rich search experience. Your Algolia search interface can contain a search bar, filters, infinite scrolling...',
     title: 'What can Algolia do for my users?'
   }
 ];
@@ -75,23 +78,20 @@ const ContentSearch: FC = () => {
 
   return (
     <>
-      <Tooltip title="Search">
-        <IconButton
-          color="inherit"
-          onClick={handleOpen}
-        >
-          <SearchIcon fontSize="small" />
+      <Tooltip title='Search'>
+        <IconButton color='inherit' onClick={handleOpen}>
+          <SearchIcon fontSize='small' />
         </IconButton>
       </Tooltip>
       <Drawer
-        anchor="top"
+        anchor='top'
         ModalProps={{ BackdropProps: { invisible: true } }}
         onClose={handleClose}
         open={open}
         PaperProps={{
           sx: { width: '100%' }
         }}
-        variant="temporary"
+        variant='temporary'
       >
         <Box sx={{ p: 3 }}>
           <Box
@@ -101,12 +101,12 @@ const ContentSearch: FC = () => {
             }}
           >
             <IconButton onClick={handleClose}>
-              <XIcon fontSize="small" />
+              <XIcon fontSize='small' />
             </IconButton>
           </Box>
         </Box>
         <Box sx={{ p: 3 }}>
-          <Container maxWidth="md">
+          <Container maxWidth='md'>
             <Box
               sx={{
                 alignItems: 'center',
@@ -117,70 +117,60 @@ const ContentSearch: FC = () => {
                 fullWidth
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                    <InputAdornment position='start'>
+                      <SearchIcon fontSize='small' />
                     </InputAdornment>
                   )
                 }}
                 onChange={(event): void => setValue(event.target.value)}
                 onKeyUp={handleKeyUp}
-                placeholder="Search..."
+                placeholder='Search...'
                 value={value}
               />
               <Button
-                color="primary"
+                color='primary'
                 onClick={handleClick}
-                size="large"
+                size='large'
                 sx={{ ml: 2 }}
-                variant="contained"
+                variant='contained'
               >
                 Search
               </Button>
             </Box>
             <Box sx={{ mt: 3 }}>
               <Scrollbar options={{ suppressScrollX: true }}>
-                {
-                  isLoading
-                    ? (
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center'
-                        }}
-                      >
-                        <CircularProgress />
-                      </Box>
-                    )
-                    : (
+                {isLoading ? (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                ) : (
+                  <>
+                    {showResults && (
                       <>
-                        {showResults && (
-                          <>
-                            {results.map((result, i) => (
-                              <Box
-                                key={i}
-                                sx={{ mb: 2 }}
-                              >
-                                <Link
-                                  color="textPrimary"
-                                  component={RouterLink}
-                                  to="/dashboard"
-                                  variant="h5"
-                                >
-                                  {result.title}
-                                </Link>
-                                <Typography
-                                  color="textPrimary"
-                                  variant="body2"
-                                >
-                                  {result.description}
-                                </Typography>
-                              </Box>
-                            ))}
-                          </>
-                        )}
+                        {results.map((result, i) => (
+                          <Box key={i} sx={{ mb: 2 }}>
+                            <Link
+                              color='textPrimary'
+                              component={RouterLink}
+                              to='/dashboard'
+                              variant='h5'
+                            >
+                              {result.title}
+                            </Link>
+                            <Typography color='textPrimary' variant='body2'>
+                              {result.description}
+                            </Typography>
+                          </Box>
+                        ))}
                       </>
-                    )
-                }
+                    )}
+                  </>
+                )}
               </Scrollbar>
             </Box>
           </Container>

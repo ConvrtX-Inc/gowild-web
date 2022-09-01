@@ -1,27 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
-import type { FC } from "react";
-import { Helmet } from "react-helmet-async";
-import axios from "axios";
-import {
-  Avatar,
-  Box,
-  Container,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import styled from "styled-components";
-import { RouteListTable } from "../../components/dashboard/route-list";
-import useMounted from "../../hooks/useMounted";
-import NotificationIcon from "../../icons/WorkspaceNotification";
-import useSettings from "../../hooks/useSettings";
-import gtm from "../../lib/gtm";
-import type { NormalRoute } from "../../types/route-lists";
-import {
-  refreshListOnDelete,
-  setRouteListIsLoading,
-} from "../../slices/route-list";
-import { useDispatch, useSelector } from "../../store";
+import { RouteListTable } from '../../components/dashboard/route-list';
+import useMounted from '../../hooks/useMounted';
+import useSettings from '../../hooks/useSettings';
+import NotificationIcon from '../../icons/WorkspaceNotification';
+import gtm from '../../lib/gtm';
+import { refreshListOnDelete, setRouteListIsLoading } from '../../slices/route-list';
+import { useDispatch, useSelector } from '../../store';
+import type { NormalRoute } from '../../types/route-lists';
+import { Avatar, Box, Container, Grid, IconButton, Typography } from '@mui/material';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('Route List');
 
 const RouteList: FC = () => {
   const mounted = useMounted();
@@ -31,38 +24,38 @@ const RouteList: FC = () => {
   const [routeLists, setRouteLists] = useState<NormalRoute[]>([]);
 
   useEffect(() => {
-    gtm.push({ event: "page_view" });
+    gtm.push({ event: 'page_view' });
   }, []);
 
   const getRouteLists = useCallback(async () => {
     try {
-      const token = sessionStorage.getItem("token");
+      const token = sessionStorage.getItem('token');
       const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route?sort=created_date%2CDESC`;
       const CONFIG = {
         headers: {
-          Authorization: `bearer ${token}`,
-        },
+          Authorization: `bearer ${token}`
+        }
       };
 
       const apiResponse = await axios.get(URL, CONFIG);
-      // console.log("Route Lists", apiResponse.data);
+      // logger.debug("Route Lists", apiResponse.data);
       if (mounted.current) {
-        //console.log(apiResponse.data);
+        // logger.debug(apiResponse.data);
         setRouteLists(apiResponse.data);
         dispatch(setRouteListIsLoading(false));
       }
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
   }, [mounted, dispatch]);
 
-  //INITIAL LOAD LIST
+  // INITIAL LOAD LIST
   useEffect(() => {
     dispatch(setRouteListIsLoading(true));
     getRouteLists();
   }, [getRouteLists, dispatch]);
 
-  //REFRESH LIST
+  // REFRESH LIST
   useEffect(() => {
     if (rowDeleted === true) {
       getRouteLists();
@@ -78,17 +71,17 @@ const RouteList: FC = () => {
       <Box
         sx={{
           // backgroundColor: "background.default",
-          backgroundColor: "#1D140C",
-          minHeight: "100%",
-          pt: "55px",
-          pb: "61px",
+          backgroundColor: '#1D140C',
+          minHeight: '100%',
+          pt: '55px',
+          pb: '61px'
         }}
       >
         <StyledContainer
-          maxWidth={settings.compact ? "xl" : false}
-          sx={{ pl: "28px !important", pr: "28px !important" }}
+          maxWidth={settings.compact ? 'xl' : false}
+          sx={{ pl: '28px !important', pr: '28px !important' }}
         >
-          <Grid container justifyContent="space-between">
+          <Grid container justifyContent='space-between'>
             <Grid item>
               <ContentTitleTypography>Normal Route</ContentTitleTypography>
             </Grid>
@@ -100,13 +93,13 @@ const RouteList: FC = () => {
               </IconBox>
               <Box>
                 <Avatar
-                  src="/static/mock-images/avatars/gowild.png"
+                  src='/static/mock-images/avatars/gowild.png'
                   sx={{ width: 44, height: 44 }}
                 />
               </Box>
             </FlexiGrid>
           </Grid>
-          <Box sx={{ mt: "27px" }}>
+          <Box sx={{ mt: '27px' }}>
             <RouteListTable normalRoutes={routeLists} />
           </Box>
         </StyledContainer>
@@ -119,14 +112,14 @@ export default RouteList;
 
 const StyledContainer = styled(Container)`
   && {
-    padding-left: "70px !important";
-    padding-right: "60px !important";
+    padding-left: '70px !important';
+    padding-right: '60px !important';
   }
 `;
 
 const ContentTitleTypography = styled(Typography)`
   && {
-    font-family: "Samsung Sharp Sans Bold";
+    font-family: 'Samsung Sharp Sans Bold';
     font-style: normal;
     font-weight: 700;
     font-size: 40px;

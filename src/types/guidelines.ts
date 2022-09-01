@@ -1,4 +1,4 @@
-import { GuidelineType } from "src/enums";
+import { GuidelineType } from 'src/enums';
 
 export interface Guideline {
   id?: string;

@@ -1,18 +1,12 @@
-import { useEffect, useState } from "react";
-import type { FC, ReactNode } from "react";
-import PropTypes from "prop-types";
-import {
-  Card,
-  CardHeader,
-  Divider,
-  IconButton,
-  ThemeProvider,
-} from "@mui/material";
-import { THEMES } from "../constants";
-import useSettings from "../hooks/useSettings";
-import MoonIcon from "../icons/Moon";
-import SunIcon from "../icons/Sun";
-import { createCustomTheme } from "../theme";
+import { THEMES } from '../constants';
+import useSettings from '../hooks/useSettings';
+import MoonIcon from '../icons/Moon';
+import SunIcon from '../icons/Sun';
+import { createCustomTheme } from '../theme';
+import { Card, CardHeader, Divider, IconButton, ThemeProvider } from '@mui/material';
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import type { FC, ReactNode } from 'react';
 
 interface DemoPreviewerProps {
   element: ReactNode;
@@ -43,18 +37,18 @@ const WidgetPreviewer: FC<DemoPreviewerProps> = (props) => {
 
   const theme = createCustomTheme({
     ...settings,
-    theme: selectedTheme,
+    theme: selectedTheme
   });
 
   return (
-    <Card variant="outlined" sx={{ mb: 8 }} {...other}>
+    <Card variant='outlined' sx={{ mb: 8 }} {...other}>
       <CardHeader
         action={
           <IconButton onClick={handleSwitch}>
-            {selectedTheme === "LIGHT" ? (
-              <MoonIcon fontSize="small" />
+            {selectedTheme === 'LIGHT' ? (
+              <MoonIcon fontSize='small' />
             ) : (
-              <SunIcon fontSize="small" />
+              <SunIcon fontSize='small' />
             )}
           </IconButton>
         }
@@ -68,7 +62,7 @@ const WidgetPreviewer: FC<DemoPreviewerProps> = (props) => {
 
 WidgetPreviewer.propTypes = {
   element: PropTypes.node.isRequired,
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired
 };
 
 export default WidgetPreviewer;

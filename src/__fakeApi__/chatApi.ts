@@ -1,222 +1,225 @@
-import { subDays, subHours, subMinutes } from "date-fns";
-import type { Contact, Thread, Message, Participant } from "../types/chat";
-import createResourceId from "../utils/createResourceId";
-import deepCopy from "../utils/deepCopy";
+import type { Contact, Message, Participant, Thread } from '../types/chat';
+import createResourceId from '../utils/createResourceId';
+import deepCopy from '../utils/deepCopy';
+import { subDays, subHours, subMinutes } from 'date-fns';
+import { getLogger } from 'src/utils/loggin';
 
 const now = new Date();
 
 const contacts: Contact[] = [
   {
-    id: "5e8891ab188cd2855e6029b7",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e8891ab188cd2855e6029b7',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: true,
     lastActivity: now.getTime(),
-    name: "Alcides Antonio",
-    username: "alcides.antonio",
+    name: 'Alcides Antonio',
+    username: 'alcides.antonio'
   },
   {
-    id: "5e887a62195cc5aef7e8ca5d",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e887a62195cc5aef7e8ca5d',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: false,
     lastActivity: subHours(now, 2).getTime(),
-    name: "Marcus Finn",
-    username: "marcus.finn",
+    name: 'Marcus Finn',
+    username: 'marcus.finn'
   },
   {
-    id: "5e887ac47eed253091be10cb",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e887ac47eed253091be10cb',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: false,
     lastActivity: subMinutes(now, 15).getTime(),
-    name: "Carson Darrin",
-    username: "carson.darrin",
+    name: 'Carson Darrin',
+    username: 'carson.darrin'
   },
   {
-    id: "5e887b209c28ac3dd97f6db5",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e887b209c28ac3dd97f6db5',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: true,
     lastActivity: now.getTime(),
-    name: "Fran Perez",
-    username: "fran.perez",
+    name: 'Fran Perez',
+    username: 'fran.perez'
   },
   {
-    id: "5e887b7602bdbc4dbb234b27",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e887b7602bdbc4dbb234b27',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: true,
     lastActivity: now.getTime(),
-    name: "Jie Yan Song",
-    username: "jie.yan.song",
+    name: 'Jie Yan Song',
+    username: 'jie.yan.song'
   },
   {
-    id: "5e86805e2bafd54f66cc95c3",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e86805e2bafd54f66cc95c3',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: false,
     lastActivity: subDays(now, 2).getTime(),
-    name: "Miron Vitold",
-    username: "miron.vitold",
+    name: 'Miron Vitold',
+    username: 'miron.vitold'
   },
   {
-    id: "5e887a1fbefd7938eea9c981",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e887a1fbefd7938eea9c981',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: false,
     lastActivity: subHours(now, 6).getTime(),
-    name: "Penjani Inyene",
-    username: "penjani.inyene",
+    name: 'Penjani Inyene',
+    username: 'penjani.inyene'
   },
   {
-    id: "5e887d0b3d090c1b8f162003",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e887d0b3d090c1b8f162003',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: true,
     lastActivity: now.getTime(),
-    name: "Omar Darobe",
-    username: "omar.darobe",
+    name: 'Omar Darobe',
+    username: 'omar.darobe'
   },
   {
-    id: "5e88792be2d4cfb4bf0971d9",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e88792be2d4cfb4bf0971d9',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: true,
     lastActivity: now.getTime(),
-    name: "Siegbert Gottfried",
-    username: "siegbert.gottfried",
+    name: 'Siegbert Gottfried',
+    username: 'siegbert.gottfried'
   },
   {
-    id: "5e8877da9a65442b11551975",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e8877da9a65442b11551975',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: true,
     lastActivity: now.getTime(),
-    name: "Iulia Albu",
-    username: "iulia.albu",
+    name: 'Iulia Albu',
+    username: 'iulia.albu'
   },
   {
-    id: "5e8680e60cba5019c5ca6fda",
-    avatar: "/static/mock-images/avatars/jurisdiction.png",
+    id: '5e8680e60cba5019c5ca6fda',
+    avatar: '/static/mock-images/avatars/jurisdiction.png',
     isActive: true,
     lastActivity: now.getTime(),
-    name: "Nasimiyu Danai",
-    username: "nasimiyu.danai",
-  },
+    name: 'Nasimiyu Danai',
+    username: 'nasimiyu.danai'
+  }
 ];
+
+const authLogger = getLogger('Chat Api');
 
 const threads: Thread[] = [
   {
-    id: "5e867eb9de721aecaccf4f7b",
+    id: '5e867eb9de721aecaccf4f7b',
     messages: [
       {
-        id: "5e867f0a5bc0ff2bfa07bfa6",
+        id: '5e867f0a5bc0ff2bfa07bfa6',
         attachments: [],
-        body: "Lorem Ipsum is simply dummy text of the printing.",
-        contentType: "text",
+        body: 'Lorem Ipsum is simply dummy text of the printing.',
+        contentType: 'text',
         createdAt: subHours(now, 10).getTime(),
-        senderId: "5e86805e2bafd54f66cc95c3",
+        senderId: '5e86805e2bafd54f66cc95c3'
       },
       {
-        id: "5e867f167d5f78109ae9f2a4",
+        id: '5e867f167d5f78109ae9f2a4',
         attachments: [],
-        body: "Lorem Ipsum is simply dummy text of the printing.",
-        contentType: "text",
+        body: 'Lorem Ipsum is simply dummy text of the printing.',
+        contentType: 'text',
         createdAt: subHours(now, 2).getTime(),
-        senderId: "5e86809283e28b96d2d38537",
+        senderId: '5e86809283e28b96d2d38537'
       },
       {
-        id: "5e867f1c9ca72084693528f4",
+        id: '5e867f1c9ca72084693528f4',
         attachments: [],
         body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard ",
-        contentType: "text",
+        contentType: 'text',
         createdAt: subMinutes(now, 5).getTime(),
-        senderId: "5e86805e2bafd54f66cc95c3",
+        senderId: '5e86805e2bafd54f66cc95c3'
       },
       {
-        id: "5e867f22fd2e27a09849b4db",
+        id: '5e867f22fd2e27a09849b4db',
         attachments: [],
         body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard ",
-        contentType: "text",
+        contentType: 'text',
         createdAt: subMinutes(now, 3).getTime(),
-        senderId: "5e86809283e28b96d2d38537",
+        senderId: '5e86809283e28b96d2d38537'
       },
       {
-        id: "5e867f28a34d45ac6eb5c41f",
+        id: '5e867f28a34d45ac6eb5c41f',
         attachments: [],
         body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard ",
-        contentType: "text",
+        contentType: 'text',
         createdAt: subMinutes(now, 1).getTime(),
-        senderId: "5e86805e2bafd54f66cc95c3",
+        senderId: '5e86805e2bafd54f66cc95c3'
       },
       {
-        id: "5e867f2dba984a3f78b33526",
+        id: '5e867f2dba984a3f78b33526',
         attachments: [],
-        body: "/static/mock-images/case/evidence1.png",
-        contentType: "image",
+        body: '/static/mock-images/case/evidence1.png',
+        contentType: 'image',
         createdAt: subMinutes(now, 1).getTime(),
-        senderId: "5e86805e2bafd54f66cc95c3",
-      },
+        senderId: '5e86805e2bafd54f66cc95c3'
+      }
     ],
     participants: [
       {
-        id: "5e86809283e28b96d2d38537",
-        avatar: "/static/mock-images/avatars/jurisdiction.png",
-        name: "Jurisdiction01",
-        username: "jurisdiction.01",
+        id: '5e86809283e28b96d2d38537',
+        avatar: '/static/mock-images/avatars/jurisdiction.png',
+        name: 'Jurisdiction01',
+        username: 'jurisdiction.01'
       },
       {
-        id: "5e86805e2bafd54f66cc95c3",
-        avatar: "/static/mock-images/avatars/jurisdiction.png",
-        name: "Jurisdiction02",
-        username: "jurisdiction.02",
-      },
+        id: '5e86805e2bafd54f66cc95c3',
+        avatar: '/static/mock-images/avatars/jurisdiction.png',
+        name: 'Jurisdiction02',
+        username: 'jurisdiction.02'
+      }
     ],
-    type: "ONE_TO_ONE",
-    unreadCount: 2,
+    type: 'ONE_TO_ONE',
+    unreadCount: 2
   },
   {
-    id: "5e867fa7082c3c5921403a26",
+    id: '5e867fa7082c3c5921403a26',
     messages: [
       {
-        id: "5e867fc180837d901bd9bca1",
+        id: '5e867fc180837d901bd9bca1',
         attachments: [],
-        body: "Hey, would you like to collaborate?",
-        contentType: "text",
+        body: 'Hey, would you like to collaborate?',
+        contentType: 'text',
         createdAt: subMinutes(now, 6).getTime(),
-        senderId: "5e8680e60cba5019c5ca6fda",
+        senderId: '5e8680e60cba5019c5ca6fda'
       },
       {
-        id: "5e8d6fb695df7971237fc173",
+        id: '5e8d6fb695df7971237fc173',
         attachments: [],
-        body: "Hi, Merrile!",
-        contentType: "text",
+        body: 'Hi, Merrile!',
+        contentType: 'text',
         createdAt: subMinutes(now, 5).getTime(),
-        senderId: "5e86809283e28b96d2d38537",
+        senderId: '5e86809283e28b96d2d38537'
       },
       {
-        id: "58825a290eb4d4271a54f188",
+        id: '58825a290eb4d4271a54f188',
         attachments: [],
-        body: "Hello everyone 😀",
-        contentType: "text",
+        body: 'Hello everyone 😀',
+        contentType: 'text',
         createdAt: subMinutes(now, 2).getTime(),
-        senderId: "5e8891ab188cd2855e6029b7",
-      },
+        senderId: '5e8891ab188cd2855e6029b7'
+      }
     ],
     participants: [
       {
-        id: "5e86809283e28b96d2d38537",
-        avatar: "/static/mock-images/avatars/jurisdiction.png",
-        name: "Jurisdiction01",
-        username: "jurisdiction.01",
+        id: '5e86809283e28b96d2d38537',
+        avatar: '/static/mock-images/avatars/jurisdiction.png',
+        name: 'Jurisdiction01',
+        username: 'jurisdiction.01'
       },
       {
-        id: "5e8680e60cba5019c5ca6fda",
-        avatar: "/static/mock-images/avatars/jurisdiction.png",
-        name: "Jurisdiction02",
-        username: "jurisdiction.01",
+        id: '5e8680e60cba5019c5ca6fda',
+        avatar: '/static/mock-images/avatars/jurisdiction.png',
+        name: 'Jurisdiction02',
+        username: 'jurisdiction.01'
       },
       {
-        id: "5e8891ab188cd2855e6029b7",
-        avatar: "/static/mock-images/avatars/jurisdiction.png",
-        name: "Jurisdiction03",
-        username: "jurisdiction.01",
-      },
+        id: '5e8891ab188cd2855e6029b7',
+        avatar: '/static/mock-images/avatars/jurisdiction.png',
+        name: 'Jurisdiction03',
+        username: 'jurisdiction.01'
+      }
     ],
-    type: "GROUP",
-    unreadCount: 0,
-  },
+    type: 'GROUP',
+    unreadCount: 0
+  }
 ];
 
 const findContactByUsername = (username: string): Contact | null => {
@@ -232,11 +235,9 @@ const findThreadById = (threadId: string): Thread | null => {
 };
 
 // This means that we are looking for ONE_TO_ONE thread
-const findThreadByOtherParticipantId = (
-  participantId: string
-): Thread | null => {
+const findThreadByOtherParticipantId = (participantId: string): Thread | null => {
   const thread = threads.find((_thread) => {
-    if (_thread.type !== "ONE_TO_ONE") {
+    if (_thread.type !== 'ONE_TO_ONE') {
       return false;
     }
 
@@ -250,9 +251,7 @@ const findThreadByOtherParticipantId = (
   return thread || null;
 };
 
-const findThreadByParticipantIds = (
-  participantIds: string[]
-): Thread | null => {
+const findThreadByParticipantIds = (participantIds: string[]): Thread | null => {
   const thread = threads.find((_thread) => {
     if (_thread.participants.length < participantIds.length) {
       return false;
@@ -289,8 +288,8 @@ class ChatApi {
 
         resolve(deepCopy(foundContacts));
       } catch (err) {
-        console.error("[Chat Api]: ", err);
-        reject(new Error("Internal server error"));
+        authLogger.error(err);
+        reject(new Error('Internal server error'));
       }
     });
   }
@@ -314,15 +313,15 @@ class ChatApi {
               id: contact.id,
               avatar: contact.avatar,
               name: contact.name,
-              username: contact.username,
+              username: contact.username
             });
           }
         }
 
         resolve(deepCopy(participants));
       } catch (err) {
-        console.error("[Chat Api]: ", err);
-        reject(new Error("Internal server error"));
+        authLogger.error(err);
+        reject(new Error('Internal server error'));
       }
     });
   }
@@ -349,7 +348,7 @@ class ChatApi {
         const contact = findContactByUsername(threadKey);
 
         if (!contact) {
-          reject(new Error("Unable to find the contact"));
+          reject(new Error('Unable to find the contact'));
           return;
         }
 
@@ -358,8 +357,8 @@ class ChatApi {
 
         resolve(deepCopy(thread));
       } catch (err) {
-        console.error("[Chat Api]: ", err);
-        reject(new Error("Internal server error"));
+        authLogger.error(err);
+        reject(new Error('Internal server error'));
       }
     });
   }
@@ -375,8 +374,8 @@ class ChatApi {
 
         resolve(true);
       } catch (err) {
-        console.error("[Chat Api]: ", err);
-        reject(new Error("Internal server error"));
+        authLogger.error(err);
+        reject(new Error('Internal server error'));
       }
     });
   }
@@ -391,10 +390,10 @@ class ChatApi {
       try {
         // On server get current identity (user) from the request
         const user = {
-          id: "5e86809283e28b96d2d38537",
-          avatar: "/static/mock-images/avatars/avatar-jane_rotanson.png",
-          name: "Jane Rotanson",
-          username: "jane.rotanson",
+          id: '5e86809283e28b96d2d38537',
+          avatar: '/static/mock-images/avatars/avatar-jane_rotanson.png',
+          name: 'Jane Rotanson',
+          username: 'jane.rotanson'
         };
 
         let thread = null;
@@ -404,7 +403,7 @@ class ChatApi {
           thread = findThreadById(threadId);
 
           if (!thread) {
-            reject(new Error("Invalid thread id"));
+            reject(new Error('Invalid thread id'));
             return;
           }
         }
@@ -420,9 +419,9 @@ class ChatApi {
           id: createResourceId(),
           attachments: [],
           body,
-          contentType: "text",
+          contentType: 'text',
           createdAt: now.getTime(),
-          senderId: user.id,
+          senderId: user.id
         };
 
         // If thread exists, add the message
@@ -433,20 +432,18 @@ class ChatApi {
           const participants = [user];
 
           recipientIds.forEach((recipientId) => {
-            const contact = contacts.find(
-              (_contact) => _contact.id === recipientId
-            );
+            const contact = contacts.find((_contact) => _contact.id === recipientId);
 
             // This should not naturally occur
             if (!contact) {
-              throw new Error("Contact not found");
+              throw new Error('Contact not found');
             }
 
             participants.push({
               id: contact.id,
               avatar: contact.avatar,
               name: contact.name,
-              username: contact.username,
+              username: contact.username
             });
           });
 
@@ -454,18 +451,18 @@ class ChatApi {
             id: createResourceId(),
             messages: [message],
             participants,
-            type: participants.length === 2 ? "ONE_TO_ONE" : "GROUP",
-            unreadCount: 0,
+            type: participants.length === 2 ? 'ONE_TO_ONE' : 'GROUP',
+            unreadCount: 0
           };
         }
 
         resolve({
           threadId: thread.id,
-          message,
+          message
         });
       } catch (err) {
-        console.error("[Chat Api]: ", err);
-        reject(new Error("Internal server error"));
+        authLogger.error(err);
+        reject(new Error('Internal server error'));
       }
     });
   }

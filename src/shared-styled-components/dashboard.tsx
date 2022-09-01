@@ -1,12 +1,5 @@
-import {
-  Box,
-  Button,
-  Card,
-  TableCell,
-  TextField,
-  Typography,
-} from "@material-ui/core";
-import styled from "styled-components";
+import { Box, Button, Card, TableCell, TextField, Typography } from '@material-ui/core';
+import styled from 'styled-components';
 
 const AbsCircularLoadingBox = styled(Box)`
   && {
@@ -34,13 +27,13 @@ const TableCellStyled = styled(TableCell)`
     border-color: rgba(255, 120, 81, 1);
     padding: 23px 0;
     text-align: center;
-    font-family: "Gilroy Semibold", "Gilroy Regular";
+    font-family: 'Gilroy Semibold', 'Gilroy Regular';
   }
 `;
 
 const Typography400 = styled(Typography)`
   && {
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-weight: 400;
     font-size: 18px;
     line-height: 21px;
@@ -70,7 +63,7 @@ const StyledTextField = styled(TextField)`
     && input {
       height: 67px;
       padding: 20px 33px 20px 33px;
-      font-family: "Gilroy Semibold";
+      font-family: 'Gilroy Semibold';
       font-size: 16px;
       line-height: 24px;
       letter-spacing: -0.025em;
@@ -85,7 +78,7 @@ const StyledTextField = styled(TextField)`
     input {
       color: rgba(0, 0, 0, 0.4);
       &::placeholder {
-        font-family: "Gilroy Semibold";
+        font-family: 'Gilroy Semibold';
         font-weight: 500;
         font-size: 17.7561px;
         line-height: 27px;
@@ -116,7 +109,7 @@ const StyledTextField = styled(TextField)`
     }
 
     && textarea {
-      font-family: "Gilroy Semibold";
+      font-family: 'Gilroy Semibold';
       font-size: 16px;
       line-height: 24px;
       letter-spacing: -0.025em;
@@ -133,11 +126,11 @@ const DashboardButton = styled(Button)`
   && {
     border-radius: 10px;
     padding: 13px 15px 13px 16px;
-    font-family: "Gilroy Bold";
+    font-family: 'Gilroy Bold';
     font-size: 14px;
     line-height: 16px;
     text-align: center;
-    background-image: url("/static/route-list/create-btn.png");
+    background-image: url('/static/route-list/create-btn.png');
     background-color: #00755e;
     color: #ffffff;
   }
@@ -145,7 +138,7 @@ const DashboardButton = styled(Button)`
 
 const TextFieldLabel = styled(Typography)`
   && {
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-size: 16px;
     line-height: 17.76px;
     color: #22333b;
@@ -169,7 +162,7 @@ const OptionsBox = styled(Box)`
 const StyledOption = styled.option`
   && {
     cursor: pointer;
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-size: 0.875rem;
     line-height: 16px;
     letter-spacing: 0.02rem;
@@ -190,5 +183,5 @@ export {
   TextFieldLabel,
   OptionsBox,
   StyledOption,
-  AbsCircularLoadingBox,
+  AbsCircularLoadingBox
 };

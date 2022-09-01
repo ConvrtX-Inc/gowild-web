@@ -1,27 +1,24 @@
-import { Box, CircularProgress } from "@material-ui/core";
-import axios from "axios";
-import { FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import DashboardContentWrapper from "src/components/dashboard/DashboardContentWrapper";
-import { TreasureChestEditForm } from "src/components/dashboard/treasure-chest";
-import {
-  AbsCircularLoadingBox,
-  StyledCard,
-} from "src/shared-styled-components/dashboard";
-import { TreasureChest } from "src/types/treasurechest";
+import { Box, CircularProgress } from '@material-ui/core';
+import axios from 'axios';
+import { FC, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import DashboardContentWrapper from 'src/components/dashboard/DashboardContentWrapper';
+import { TreasureChestEditForm } from 'src/components/dashboard/treasure-chest';
+import { AbsCircularLoadingBox, StyledCard } from 'src/shared-styled-components/dashboard';
+import { TreasureChest } from 'src/types/treasurechest';
 
-const pageTitle = "Edit Treasure Chest";
-const accessToken = sessionStorage.getItem("token");
+const pageTitle = 'Edit Treasure Chest';
+const accessToken = sessionStorage.getItem('token');
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
 const CONFIG = {
   headers: {
     Authorization: `Bearer ${accessToken}`,
-    "Content-Type": "application/json",
-  },
+    'Content-Type': 'application/json'
+  }
 };
 
 const TreasureChestEdit: FC = () => {
-  let { id } = useParams();
+  const { id } = useParams();
   const [editTreasureChest, setEditChest] = useState<TreasureChest>(null);
 
   useEffect(() => {
@@ -35,14 +32,14 @@ const TreasureChestEdit: FC = () => {
     };
     getEditTreasureChest();
   }, [id]);
-  
+
   return (
     <DashboardContentWrapper title={pageTitle}>
       <StyledCard
         sx={{
-          minHeight: "500px",
-          height: "calc(100% - 87.5px)",
-          position: "relative",
+          minHeight: '500px',
+          height: 'calc(100% - 87.5px)',
+          position: 'relative'
         }}
       >
         <Box pt={2} px={2}>

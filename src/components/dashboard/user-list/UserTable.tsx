@@ -1,107 +1,84 @@
-import { FC, useEffect, useState } from "react";
-import { EndUser } from "src/types/end-user";
-import TableList from "../TableList";
 import {
-  OptionsBox,
-  StyledOption,
   TableCellStyled as CustomTableCell,
-} from "../../../shared-styled-components/dashboard";
-import styled from "styled-components";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import UserOutline from "src/icons/UserOutline";
-import DisableCircle from "src/icons/DisableCircle";
-import UserModal from "./UserModal";
-import { RootState, useDispatch } from "src/store";
-import { fetchUsers, onViewUser } from "src/slices/user-list";
-import { useSelector } from "react-redux";
-import { AccountStatus } from "src/enums/user-list";
+  OptionsBox,
+  StyledOption
+} from '../../../shared-styled-components/dashboard';
+import TableList from '../TableList';
+import UserModal from './UserModal';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import { FC, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { AccountStatus } from 'src/enums/user-list';
+import DisableCircle from 'src/icons/DisableCircle';
+import UserOutline from 'src/icons/UserOutline';
+import { fetchUsers, onViewUser } from 'src/slices/user-list';
+import { RootState, useDispatch } from 'src/store';
+import { EndUser } from 'src/types/end-user';
+import styled from 'styled-components';
 
-const headers = ["NAME", "ONLINE STATUS", "LOCATION", "ACCOUNT STATUS"];
-const sampleData: EndUser[] = [
-  {
-    id: "be86ae83-5c91-475d-a79d-2560e52e465c",
-    full_name: "john doe",
-    username: "johndoe",
-    email: "johndoe@example.com",
-    phone_no: "+639506703401",
-    address_line1: null,
-    address_line2: "7 Carlson St, Kitimat, BC V8C 1A9, Canada",
-    profile_photo: null,
-    img_url:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&q=80",
-    created_date: "2022-05-12T14:35:37.316Z",
-    updated_date: "2022-05-12T14:38:33.598Z",
-    deleted_date: null,
-  },
-];
+const headers = ['NAME', 'ONLINE STATUS', 'LOCATION', 'ACCOUNT STATUS'];
 
 enum RowAction {
-  DISABLE = "Disable",
-  VIEW = "View",
+  DISABLE = 'Disable',
+  VIEW = 'View'
 }
 const rowOptions = [
   {
     label: RowAction.VIEW,
-    icon: <UserOutline fontSize="small" viewBox="0 0 12 12" />,
-    value: "View Profile",
+    icon: <UserOutline fontSize='small' viewBox='0 0 12 12' />,
+    value: 'View Profile'
   },
   {
     label: RowAction.DISABLE,
-    icon: <DisableCircle fontSize="small" viewBox="0 0 13 13" />,
-    value: "Disable User",
-  },
+    icon: <DisableCircle fontSize='small' viewBox='0 0 13 13' />,
+    value: 'Disable User'
+  }
 ];
 
 const elementsBuilder = (item: EndUser) => {
   return [
-    <StyledTableCell>
+    <StyledTableCell key='01'>
       <FlexBox>
         <NameBox>
-          <CircularAvatar component="img" src={item?.img_url}></CircularAvatar>
-          <Box sx={{
-            wordBreak: "break-all"
-          }}>
+          <CircularAvatar component='img' src={item?.img_url} />
+          <Box
+            sx={{
+              wordBreak: 'break-all'
+            }}
+          >
             <NameTypography>{item.full_name}</NameTypography>
             <EmailTypography>{item.email}</EmailTypography>
           </Box>
         </NameBox>
       </FlexBox>
     </StyledTableCell>,
-    <StyledTableCell>
+    <StyledTableCell key='02'>
       <FlexBox>
         <OnlineStatusBox>
           <CircleStatus $inactive={!item?.status?.is_active} />
           <OnlineTypography $inactive={!item?.status?.is_active}>
-            {item?.status?.is_active ? "Active" : "Inactive"}
+            {item?.status?.is_active ? 'Active' : 'Inactive'}
           </OnlineTypography>
         </OnlineStatusBox>
       </FlexBox>
     </StyledTableCell>,
-    <StyledTableCell>
+    <StyledTableCell key='03'>
       <LocationTypography>
-        {item?.address_line1
-          ? item.address_line1
-          : item?.address_line2
-          ? item.address_line2
-          : ""}
+        {item?.address_line1 ? item.address_line1 : item?.address_line2 ? item.address_line2 : ''}
       </LocationTypography>
     </StyledTableCell>,
-    <StyledTableCell>
-      <AccountTypography
-        $inactive={item?.status?.status_name !== AccountStatus.ACTIVE}
-      >
-        {item?.status?.status_name === AccountStatus.ACTIVE
-          ? "ACTIVE"
-          : "DISABLED"}
+    <StyledTableCell key='04'>
+      <AccountTypography $inactive={item?.status?.status_name !== AccountStatus.ACTIVE}>
+        {item?.status?.status_name === AccountStatus.ACTIVE ? 'ACTIVE' : 'DISABLED'}
       </AccountTypography>
-    </StyledTableCell>,
+    </StyledTableCell>
   ];
 };
 
 const UserTable: FC = () => {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [actionLoading] = useState(false);
   const { users, filteredUsers, isFiltered, isLoading } = useSelector(
     (state: RootState) => state.userList
   );
@@ -114,23 +91,23 @@ const UserTable: FC = () => {
 
   useEffect(() => {
     dispatch(fetchUsers());
-  }, []);
+  }, [dispatch]);
 
-  const rowOptionsBuilder = (tc: EndUser, handleClose) => {
+  const rowOptionsBuilder = (tc: EndUser, _handleClose: (e) => void) => {
     return tc
       ? actionLoading
         ? [
-            <ActionLoadingBox>
-              <CircularProgress color="success" />
+            <ActionLoadingBox key={`ActionLoadingBox--${tc.id}`}>
+              <CircularProgress color='success' />
               Deleting
-            </ActionLoadingBox>,
+            </ActionLoadingBox>
           ]
         : rowOptions.map((option) => (
             <OptionsBox
               key={`${tc.id}-${option.label}`}
               onClick={async (e) => {
                 if (option.label === RowAction.VIEW) handleOpen(tc.id);
-                handleClose();
+                _handleClose(e);
               }}
             >
               <OptionIconBox label={option.label}>{option.icon}</OptionIconBox>
@@ -156,7 +133,7 @@ const UserTable: FC = () => {
 
 export default UserTable;
 
-const OptionIconBox = styled(Box)`
+const OptionIconBox = styled(Box)<{ label: RowAction }>`
   && {
     display: flex;
     justify-content: center;
@@ -166,9 +143,11 @@ const OptionIconBox = styled(Box)`
     background-color: ${(props) => {
       switch (props.label) {
         case RowAction.VIEW:
-          return "#062D62";
+          return '#062D62';
         case RowAction.DISABLE:
-          return "#FE7171";
+          return '#FE7171';
+        default:
+          return '';
       }
     }};
     && .MuiSvgIcon-root {
@@ -180,7 +159,7 @@ const OptionIconBox = styled(Box)`
 
 const RowOption = styled(StyledOption)`
   && {
-    font-family: "Gilroy Regular";
+    font-family: 'Gilroy Regular';
     font-weight: 500;
     font-size: 14px;
     line-height: 16px;
@@ -198,7 +177,7 @@ const ActionLoadingBox = styled(Box)`
     align-items: center;
     width: 161px;
     height: 142.43px;
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-size: 25px;
     color: #878787;
   }
@@ -216,11 +195,11 @@ const OnlineStatusBox = styled(Box)`
   }
 `;
 
-const CircleStatus = styled(Box)`
+const CircleStatus = styled(Box)<{ $inactive?: boolean }>`
   && {
     width: 6px;
     height: 6px;
-    background: ${(props) => (props.$inactive ? "#6E6893" : "#ff7851")};
+    background: ${(props) => (props.$inactive ? '#6E6893' : '#ff7851')};
     border-radius: 50%;
     margin-right: 5px;
   }
@@ -228,7 +207,7 @@ const CircleStatus = styled(Box)`
 
 const NameTypography = styled(Typography)`
   && {
-    font-family: "Inter";
+    font-family: 'Inter';
     font-weight: 500;
     font-size: 14px;
     line-height: 17px;
@@ -238,7 +217,7 @@ const NameTypography = styled(Typography)`
 `;
 const EmailTypography = styled(Typography)`
   && {
-    font-family: "Inter";
+    font-family: 'Inter';
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
@@ -248,7 +227,7 @@ const EmailTypography = styled(Typography)`
 `;
 const LocationTypography = styled(Typography)`
   && {
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-weight: 600;
     font-size: 14px;
     line-height: 17px;
@@ -259,18 +238,19 @@ const LocationTypography = styled(Typography)`
     color: #25213b;
   }
 `;
-const OnlineTypography = styled(Typography)`
+const OnlineTypography = styled(Typography)<{ $inactive?: boolean }>`
   && {
-    font-family: "Inter";
+    font-family: 'Inter';
     font-weight: 500;
     font-size: 12px;
     line-height: 15px;
-    color: ${(props) => (props.$inactive ? "#6E6893" : "#ff7851")};
+    color: ${(props) => (props.$inactive ? '#6E6893' : '#ff7851')};
   }
 `;
-const AccountTypography = styled(Typography)`
+
+const AccountTypography = styled(Typography)<{ $inactive?: boolean }>`
   && {
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-size: 14px;
     line-height: 12px;
 
@@ -278,7 +258,7 @@ const AccountTypography = styled(Typography)`
     letter-spacing: 0.5px;
     text-transform: uppercase;
 
-    color: ${(props) => (props.$inactive ? "#FF2F6D" : "#00cc52")};
+    color: ${(props) => (props.$inactive ? '#FF2F6D' : '#00cc52')};
   }
 `;
 
@@ -305,7 +285,7 @@ const NameBox = styled(Box)`
   }
 `;
 
-const CircularAvatar = styled(Box)`
+const CircularAvatar = styled(Box)<{ src?: string }>`
   && {
     height: 45px;
     width: 45px;

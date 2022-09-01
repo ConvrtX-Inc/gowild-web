@@ -1,18 +1,18 @@
-import type { FC } from "react";
-import { useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import { Box, Button, Container, Typography } from "@mui/material";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
-import gtm from "../lib/gtm";
+import gtm from '../lib/gtm';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { Box, Button, Container, Typography } from '@mui/material';
+import type { FC } from 'react';
+import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link as RouterLink } from 'react-router-dom';
 
 const ServerError: FC = () => {
   const theme = useTheme();
-  const mobileDevice = useMediaQuery(theme.breakpoints.down("sm"));
+  const mobileDevice = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    gtm.push({ event: "page_view" });
+    gtm.push({ event: 'page_view' });
   }, []);
 
   return (
@@ -22,63 +22,49 @@ const ServerError: FC = () => {
       </Helmet>
       <Box
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           // backgroundColor: "background.paper",
-          backgroundColor: "#FAFBFC",
-          display: "flex",
-          minHeight: "100%",
+          backgroundColor: '#FAFBFC',
+          display: 'flex',
+          minHeight: '100%',
           px: 3,
-          py: "80px",
+          py: '80px'
         }}
       >
-        <Container maxWidth="lg">
-          <Typography
-            align="center"
-            color="textPrimary"
-            variant={mobileDevice ? "h4" : "h1"}
-          >
+        <Container maxWidth='lg'>
+          <Typography align='center' color='textPrimary' variant={mobileDevice ? 'h4' : 'h1'}>
             500: Internal Server Error
           </Typography>
-          <Typography
-            align="center"
-            color="textSecondary"
-            sx={{ mt: 0.5 }}
-            variant="subtitle2"
-          >
-            You either tried some shady route or you came here by mistake.
-            Whichever it is, try using the navigation.
+          <Typography align='center' color='textSecondary' sx={{ mt: 0.5 }} variant='subtitle2'>
+            You either tried some shady route or you came here by mistake. Whichever it is, try
+            using the navigation.
           </Typography>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              mt: 6,
+              display: 'flex',
+              justifyContent: 'center',
+              mt: 6
             }}
           >
             <Box
-              alt="Under development"
-              component="img"
+              alt='Under development'
+              component='img'
               src={`/static/error/error500_${theme.palette.mode}.png`}
               sx={{
-                height: "auto",
-                maxWidth: "100%",
-                width: 400,
+                height: 'auto',
+                maxWidth: '100%',
+                width: 400
               }}
             />
           </Box>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              mt: 6,
+              display: 'flex',
+              justifyContent: 'center',
+              mt: 6
             }}
           >
-            <Button
-              color="primary"
-              component={RouterLink}
-              to="/"
-              variant="outlined"
-            >
+            <Button color='primary' component={RouterLink} to='/' variant='outlined'>
               Back to Home
             </Button>
           </Box>

@@ -1,120 +1,98 @@
-import { Suspense, lazy } from "react";
-import type { PartialRouteObject } from "react-router";
 // import { Navigate } from "react-router-dom";
-import AuthGuard from "./components/AuthGuard";
-import DashboardLayout from "./components/dashboard/DashboardLayout";
-import GuestGuard from "./components/GuestGuard";
-import LoadingScreen from "./components/LoadingScreen";
+import AuthGuard from './components/AuthGuard';
+import GuestGuard from './components/GuestGuard';
+import LoadingScreen from './components/LoadingScreen';
+import DashboardLayout from './components/dashboard/DashboardLayout';
+import { Suspense, lazy } from 'react';
+import type { RouteObject } from 'react-router';
 
-const Loadable = (Component) => (props) =>
-  (
-    <Suspense fallback={<LoadingScreen />}>
-      <Component {...props} />
-    </Suspense>
-  );
+const Loadable = (Component) =>
+  function loadable(props) {
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <Component {...props} />
+      </Suspense>
+    );
+  };
 
 // Authentication pages
-const Login = Loadable(lazy(() => import("./pages/authentication/Login")));
-const PasswordRecovery = Loadable(
-  lazy(() => import("./pages/authentication/PasswordRecovery"))
-);
-const PasswordReset = Loadable(
-  lazy(() => import("./pages/authentication/PasswordReset"))
-);
-const Register = Loadable(
-  lazy(() => import("./pages/authentication/Register"))
-);
-const VerifyCode = Loadable(
-  lazy(() => import("./pages/authentication/VerifyCode"))
-);
+const Login = Loadable(lazy(() => import('./pages/authentication/Login')));
+const PasswordRecovery = Loadable(lazy(() => import('./pages/authentication/PasswordRecovery')));
+const PasswordReset = Loadable(lazy(() => import('./pages/authentication/PasswordReset')));
+const Register = Loadable(lazy(() => import('./pages/authentication/Register')));
+const VerifyCode = Loadable(lazy(() => import('./pages/authentication/VerifyCode')));
 
 // Dashboard pages
-const Overview = Loadable(lazy(() => import("./pages/dashboard/Overview")));
-const RouteList = Loadable(lazy(() => import("./pages/dashboard/RouteList")));
+const Overview = Loadable(lazy(() => import('./pages/dashboard/Overview')));
+const RouteList = Loadable(lazy(() => import('./pages/dashboard/RouteList')));
 
-const RouteListCreate = Loadable(
-  lazy(() => import("./pages/dashboard/RouteListCreate"))
-);
-const RouteListEdit = Loadable(
-  lazy(() => import("./pages/dashboard/RouteListEdit"))
-);
-const RouteListView = Loadable(
-  lazy(() => import("./pages/dashboard/RouteListView"))
-);
+const RouteListCreate = Loadable(lazy(() => import('./pages/dashboard/RouteListCreate')));
+const RouteListEdit = Loadable(lazy(() => import('./pages/dashboard/RouteListEdit')));
+const RouteListView = Loadable(lazy(() => import('./pages/dashboard/RouteListView')));
 
-const Guidelines = Loadable(lazy(() => import("./pages/dashboard/Guidelines")));
+const Guidelines = Loadable(lazy(() => import('./pages/dashboard/Guidelines')));
 
-const TreasureChestList = Loadable(
-  lazy(() => import("./pages/dashboard/TreasureChestList"))
-);
-const CreateTreasureChest = Loadable(
-  lazy(() => import("./pages/dashboard/TreasureChestCreate"))
-);
+const TreasureChestList = Loadable(lazy(() => import('./pages/dashboard/TreasureChestList')));
+const CreateTreasureChest = Loadable(lazy(() => import('./pages/dashboard/TreasureChestCreate')));
 
-const ViewTreasureChest = Loadable(
-  lazy(() => import("./pages/dashboard/TreasureChestView"))
-);
+const ViewTreasureChest = Loadable(lazy(() => import('./pages/dashboard/TreasureChestView')));
 
-const EditTreasureChest = Loadable(
-  lazy(() => import("./pages/dashboard/TreasureChestEdit"))
-);
+const EditTreasureChest = Loadable(lazy(() => import('./pages/dashboard/TreasureChestEdit')));
 
 // const Chat = Loadable(lazy(() => import("./pages/dashboard/Chat")));
 
 // Error pages
-const AuthorizationRequired = Loadable(
-  lazy(() => import("./pages/AuthorizationRequired"))
-);
-const NotFound = Loadable(lazy(() => import("./pages/NotFound")));
-const ServerError = Loadable(lazy(() => import("./pages/ServerError")));
+const AuthorizationRequired = Loadable(lazy(() => import('./pages/AuthorizationRequired')));
+const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
+const ServerError = Loadable(lazy(() => import('./pages/ServerError')));
 
 // Other pages
 // const Home = Loadable(lazy(() => import("./pages/Home")));
 
-const routes: PartialRouteObject[] = [
+const routes: RouteObject[] = [
   {
-    path: "authentication",
+    path: 'authentication',
     children: [
       {
-        path: "login",
+        path: 'login',
         element: (
           <GuestGuard>
             <Login />
           </GuestGuard>
-        ),
+        )
       },
       {
-        path: "login-unguarded",
-        element: <Login />,
+        path: 'login-unguarded',
+        element: <Login />
       },
       {
-        path: "password-recovery",
-        element: <PasswordRecovery />,
+        path: 'password-recovery',
+        element: <PasswordRecovery />
       },
       {
-        path: "password-reset",
-        element: <PasswordReset />,
+        path: 'password-reset',
+        element: <PasswordReset />
       },
       {
-        path: "register",
+        path: 'register',
         element: (
           <GuestGuard>
             <Register />
           </GuestGuard>
-        ),
+        )
       },
       {
-        path: "register-unguarded",
-        element: <Register />,
+        path: 'register-unguarded',
+        element: <Register />
       },
       {
-        path: "verify-code",
-        element: <VerifyCode />,
-      },
-    ],
+        path: 'verify-code',
+        element: <VerifyCode />
+      }
+    ]
   },
   {
-    path: "dashboard",
+    path: 'dashboard',
     element: (
       <AuthGuard>
         <DashboardLayout />
@@ -122,59 +100,59 @@ const routes: PartialRouteObject[] = [
     ),
     children: [
       {
-        path: "/",
-        element: <Overview />,
+        path: '',
+        element: <Overview />
       },
       // {
       //   path: "/route-list",
       //   element: <RouteList />,
       // },
       {
-        path: "route-list",
+        path: 'route-list',
         children: [
           {
-            path: "/",
-            element: <RouteList />,
+            path: '',
+            element: <RouteList />
           },
           {
-            path: "new",
-            element: <RouteListCreate />,
+            path: 'new',
+            element: <RouteListCreate />
           },
           {
-            path: "edit",
-            element: <RouteListEdit />,
+            path: 'edit',
+            element: <RouteListEdit />
           },
           {
-            path: "view",
-            element: <RouteListView />,
-          },
-        ],
+            path: 'view',
+            element: <RouteListView />
+          }
+        ]
       },
       {
-        path: "/guidelines",
-        element: <Guidelines />,
+        path: 'guidelines',
+        element: <Guidelines />
       },
       {
-        path: "/treasure-chest-list",
+        path: 'treasure-chest-list',
         children: [
           {
-            path: "/",
-            element: <TreasureChestList />,
+            path: '',
+            element: <TreasureChestList />
           },
           {
-            path: "new",
-            element: <CreateTreasureChest />,
+            path: 'new',
+            element: <CreateTreasureChest />
           },
           {
-            path: "view/:id",
-            element: <ViewTreasureChest />,
+            path: 'view/:id',
+            element: <ViewTreasureChest />
           },
           {
-            path: "edit/:id",
-            element: <EditTreasureChest />,
-          },
-        ],
-      },
+            path: 'edit/:id',
+            element: <EditTreasureChest />
+          }
+        ]
+      }
       // {
       //   path: "chat",
       //   children: [
@@ -192,12 +170,12 @@ const routes: PartialRouteObject[] = [
       //     },
       //   ],
       // },
-    ],
+    ]
   },
 
   // ----WILD CARD (DEFAULT MAIN ROUTES) localhost:3000 or main endpt----
   {
-    path: "*",
+    path: '*',
     element: (
       <AuthGuard>
         <DashboardLayout />
@@ -205,28 +183,28 @@ const routes: PartialRouteObject[] = [
     ),
     children: [
       {
-        path: "/",
+        path: '',
         // element: <Home />,
-        element: <Overview />,
+        element: <Overview />
       },
       {
-        path: "401",
-        element: <AuthorizationRequired />,
+        path: '401',
+        element: <AuthorizationRequired />
       },
       {
-        path: "404",
-        element: <NotFound />,
+        path: '404',
+        element: <NotFound />
       },
       {
-        path: "500",
-        element: <ServerError />,
+        path: '500',
+        element: <ServerError />
       },
       {
-        path: "*",
-        element: <NotFound />,
-      },
-    ],
-  },
+        path: '*',
+        element: <NotFound />
+      }
+    ]
+  }
 ];
 
 export default routes;

@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
-import type { FC } from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@mui/material';
-import type { Message, Participant } from '../../../types/chat';
 import useAuth from '../../../hooks/useAuth';
+import type { Message, Participant } from '../../../types/chat';
 import Scrollbar from '../../Scrollbar';
 import ChatMessage from './ChatMessage';
+import { Box } from '@mui/material';
+import PropTypes from 'prop-types';
+import { useEffect, useRef } from 'react';
+import type { FC } from 'react';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -17,7 +17,6 @@ const ChatMessages: FC<ChatMessagesProps> = (props) => {
   const rootRef = useRef<any>(null);
   const { user } = useAuth();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const scrollToBottom = () => {
     // eslint-disable-next-line no-underscore-dangle
     if (rootRef?.current?._container) {
@@ -31,15 +30,12 @@ const ChatMessages: FC<ChatMessagesProps> = (props) => {
   }, [messages, scrollToBottom]);
 
   return (
-    <Scrollbar
-      options={{ suppressScrollX: true }}
-      ref={rootRef}
-      {...other}
-    >
+    <Scrollbar options={{ suppressScrollX: true }} ref={rootRef} {...other}>
       <Box sx={{ p: 2 }}>
         {messages.map((message) => {
-          const participant = participants
-            .find((_participant) => _participant.id === message.senderId);
+          const participant = participants.find(
+            (_participant) => _participant.id === message.senderId
+          );
           let senderAvatar;
           let senderName;
           let senderType;
@@ -74,9 +70,8 @@ const ChatMessages: FC<ChatMessagesProps> = (props) => {
 };
 
 ChatMessages.propTypes = {
-  // @ts-ignore
-  messages: PropTypes.array,
-  participants: PropTypes.array
+  messages: PropTypes['array'],
+  participants: PropTypes['array']
 };
 
 export default ChatMessages;

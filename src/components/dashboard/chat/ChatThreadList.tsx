@@ -1,8 +1,8 @@
-import type { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { List } from '@mui/material';
 import { useSelector } from '../../../store';
 import ChatThreadItem from './ChatThreadItem';
+import { List } from '@mui/material';
+import type { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ChatThreadList: FC = (props) => {
   const { threads, activeThreadId } = useSelector((state) => state.chat);
@@ -19,9 +19,9 @@ const ChatThreadList: FC = (props) => {
       // with the auth provider.
       // When implementing this app with a real database, replace this
       // ID with the ID from Auth Context.
-      const otherParticipant = thread.participants.find((participant) => (
-        participant.id !== '5e86809283e28b96d2d38537'
-      ));
+      const otherParticipant = thread.participants.find(
+        (participant) => participant.id !== '5e86809283e28b96d2d38537'
+      );
 
       threadKey = otherParticipant.username;
     }

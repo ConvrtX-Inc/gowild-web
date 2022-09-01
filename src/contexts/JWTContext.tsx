@@ -1,8 +1,11 @@
+import { authApi } from '../__fakeApi__/authApi';
+import type { User } from '../types/user';
+import PropTypes from 'prop-types';
 import { createContext, useEffect, useReducer } from 'react';
 import type { FC, ReactNode } from 'react';
-import PropTypes from 'prop-types';
-import type { User } from '../types/user';
-import { authApi } from '../__fakeApi__/authApi';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('Jwt Context');
 
 interface State {
   isInitialized: boolean;
@@ -47,11 +50,7 @@ type RegisterAction = {
   };
 };
 
-type Action =
-  | InitializeAction
-  | LoginAction
-  | LogoutAction
-  | RegisterAction;
+type Action = InitializeAction | LoginAction | LogoutAction | RegisterAction;
 
 const initialState: State = {
   isAuthenticated: false,
@@ -95,9 +94,9 @@ const handlers: Record<string, (state: State, action: Action) => State> = {
   }
 };
 
-const reducer = (state: State, action: Action): State => (
-  handlers[action.type] ? handlers[action.type](state, action) : state
-);
+const reducer = (state: State, action: Action): State => {
+  return handlers[action.type] ? handlers[action.type](state, action) : state;
+};
 
 const AuthContext = createContext<AuthContextValue>({
   ...initialState,
@@ -136,7 +135,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
           });
         }
       } catch (err) {
-        console.error(err);
+        logger.error(err);
         dispatch({
           type: 'INITIALIZE',
           payload: {
@@ -169,11 +168,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     dispatch({ type: 'LOGOUT' });
   };
 
-  const register = async (
-    email: string,
-    name: string,
-    password: string
-  ): Promise<void> => {
+  const register = async (email: string, name: string, password: string): Promise<void> => {
     const accessToken = await authApi.register({ email, name, password });
     const user = await authApi.me(accessToken);
 

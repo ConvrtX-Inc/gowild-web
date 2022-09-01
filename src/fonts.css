@@ -1,63 +1,56 @@
 /* https://www.fontshmonts.com/text-fonts/gilroy/ */
 @font-face {
-  font-family: "Gilroy Thin"; /*Can be any text*/
-  src: local("Gilroy-Thin"), url("./fonts/Gilroy-Thin.ttf") format("truetype");
+  font-family: 'Gilroy Thin'; /*Can be any text*/
+  src: local('Gilroy-Thin'), url('./fonts/Gilroy-Thin.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Gilroy Light"; /*Can be any text*/
-  src: local("Gilroy-Light"), url("./fonts/Gilroy-Light.ttf") format("truetype");
+  font-family: 'Gilroy Light'; /*Can be any text*/
+  src: local('Gilroy-Light'), url('./fonts/Gilroy-Light.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Gilroy Regular"; /*Can be any text*/
-  src: local("Gilroy-Regular"),
-    url("./fonts/Gilroy-Regular.ttf") format("truetype");
+  font-family: 'Gilroy Regular'; /*Can be any text*/
+  src: local('Gilroy-Regular'), url('./fonts/Gilroy-Regular.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Gilroy Medium"; /*Can be any text*/
-  src: local("Gilroy-Medium"),
-    url("./fonts/Gilroy-Medium.ttf") format("truetype");
+  font-family: 'Gilroy Medium'; /*Can be any text*/
+  src: local('Gilroy-Medium'), url('./fonts/Gilroy-Medium.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Gilroy SemiBold"; /*Can be any text*/
-  src: local("Gilroy-SemiBold"),
-    url("./fonts/Gilroy-SemiBold.ttf") format("truetype");
+  font-family: 'Gilroy SemiBold'; /*Can be any text*/
+  src: local('Gilroy-SemiBold'), url('./fonts/Gilroy-SemiBold.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Gilroy Bold"; /*Can be any text*/
-  src: local("Gilroy-Bold"), url("./fonts/Gilroy-Bold.ttf") format("truetype");
+  font-family: 'Gilroy Bold'; /*Can be any text*/
+  src: local('Gilroy-Bold'), url('./fonts/Gilroy-Bold.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Gilroy ExtraBold"; /*Can be any text*/
-  src: local("Gilroy-ExtraBold"),
-    url("./fonts/Gilroy-ExtraBold.ttf") format("truetype");
+  font-family: 'Gilroy ExtraBold'; /*Can be any text*/
+  src: local('Gilroy-ExtraBold'), url('./fonts/Gilroy-ExtraBold.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Gilroy Black"; /*Can be any text*/
-  src: local("Gilroy-Black"), url("./fonts/Gilroy-Black.ttf") format("truetype");
+  font-family: 'Gilroy Black'; /*Can be any text*/
+  src: local('Gilroy-Black'), url('./fonts/Gilroy-Black.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Gilroy Heavy"; /*Can be any text*/
-  src: local("Gilroy-Heavy"), url("./fonts/Gilroy-Heavy.ttf") format("truetype");
+  font-family: 'Gilroy Heavy'; /*Can be any text*/
+  src: local('Gilroy-Heavy'), url('./fonts/Gilroy-Heavy.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: "Samsung Sharp Sans"; /*Can be any text*/
-  src: local("Samsung-Sharp-Sans"),
-    url("./fonts/samsungsharpsans.otf") format("opentype");
+  font-family: 'Samsung Sharp Sans'; /*Can be any text*/
+  src: local('Samsung-Sharp-Sans'), url('./fonts/samsungsharpsans.otf') format('opentype');
 }
 @font-face {
-  font-family: "Samsung Sharp Sans Medium"; /*Can be any text*/
-  src: local("Samsung-Sharp-Sans-Medium"),
-    url("./fonts/samsungsharpsans-medium.otf") format("opentype");
+  font-family: 'Samsung Sharp Sans Medium'; /*Can be any text*/
+  src: local('Samsung-Sharp-Sans-Medium'),
+    url('./fonts/samsungsharpsans-medium.otf') format('opentype');
 }
 @font-face {
-  font-family: "Samsung Sharp Sans Bold"; /*Can be any text*/
-  src: local("Samsung-Sharp-Sans-Bold"),
-    url("./fonts/samsungsharpsans-bold.otf") format("opentype");
+  font-family: 'Samsung Sharp Sans Bold'; /*Can be any text*/
+  src: local('Samsung-Sharp-Sans-Bold'), url('./fonts/samsungsharpsans-bold.otf') format('opentype');
 }
 
 @font-face {
-  font-family: "Circular Std Bold"; /*Can be any text*/
-  src: local("Circular-Std-Bold"),
-    url("./fonts/Circular-Std-Bold.ttf") format("truetype");
+  font-family: 'Circular Std Bold'; /*Can be any text*/
+  src: local('Circular-Std-Bold'), url('./fonts/Circular-Std-Bold.ttf') format('truetype');
 }

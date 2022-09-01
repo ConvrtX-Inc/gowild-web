@@ -1,18 +1,14 @@
-import type { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import { Formik } from 'formik';
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormHelperText,
-  Link,
-  TextField,
-  Typography
-} from '@mui/material';
 import useAuth from '../../../hooks/useAuth';
 import useMounted from '../../../hooks/useMounted';
+import { Box, Button, Checkbox, FormHelperText, Link, TextField, Typography } from '@mui/material';
+import { Formik } from 'formik';
+import type { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { errorMessage } from 'src/utils/formik.utils';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('RegisterAmplify');
 
 const RegisterAmplify: FC = (props) => {
   const mounted = useMounted();
@@ -28,30 +24,12 @@ const RegisterAmplify: FC = (props) => {
           policy: true,
           submit: null
         }}
-        validationSchema={
-          Yup
-            .object()
-            .shape({
-              email: Yup
-                .string()
-                .email('Must be a valid email')
-                .max(255)
-                .required('Email is required'),
-              password: Yup
-                .string()
-                .min(7)
-                .max(255)
-                .required('Password is required'),
-              policy: Yup
-                .boolean()
-                .oneOf([true], 'This field must be checked')
-            })
-        }
-        onSubmit={async (values, {
-          setErrors,
-          setStatus,
-          setSubmitting
-        }): Promise<void> => {
+        validationSchema={Yup['object']().shape({
+          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          password: Yup.string().min(7).max(255).required('Password is required'),
+          policy: Yup.boolean().oneOf([true], 'This field must be checked')
+        })}
+        onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
           try {
             await register(values.email, values.password);
 
@@ -61,7 +39,7 @@ const RegisterAmplify: FC = (props) => {
               }
             });
           } catch (err) {
-            console.error(err);
+            logger.error(err);
             if (mounted.current) {
               setStatus({ success: false });
               setErrors({ submit: err.message });
@@ -79,36 +57,32 @@ const RegisterAmplify: FC = (props) => {
           touched,
           values
         }): JSX.Element => (
-          <form
-            noValidate
-            onSubmit={handleSubmit}
-            {...props}
-          >
+          <form noValidate onSubmit={handleSubmit} {...props}>
             <TextField
               error={Boolean(touched.email && errors.email)}
               fullWidth
               helperText={touched.email && errors.email}
-              label="Email Address"
-              margin="normal"
-              name="email"
+              label='Email Address'
+              margin='normal'
+              name='email'
               onBlur={handleBlur}
               onChange={handleChange}
-              type="email"
+              type='email'
               value={values.email}
-              variant="outlined"
+              variant='outlined'
             />
             <TextField
               error={Boolean(touched.password && errors.password)}
               fullWidth
               helperText={touched.password && errors.password}
-              label="Password"
-              margin="normal"
-              name="password"
+              label='Password'
+              margin='normal'
+              name='password'
               onBlur={handleBlur}
               onChange={handleChange}
-              type="password"
+              type='password'
               value={values.password}
-              variant="outlined"
+              variant='outlined'
             />
             <Box
               sx={{
@@ -120,45 +94,33 @@ const RegisterAmplify: FC = (props) => {
             >
               <Checkbox
                 checked={values.policy}
-                color="primary"
-                name="policy"
+                color='primary'
+                name='policy'
                 onChange={handleChange}
               />
-              <Typography
-                color="textSecondary"
-                variant="body2"
-              >
-                I have read the
-                {' '}
-                <Link
-                  color="primary"
-                  component="a"
-                  href="#"
-                >
+              <Typography color='textSecondary' variant='body2'>
+                I have read the{' '}
+                <Link color='primary' component='a' href='#'>
                   Terms and Conditions
                 </Link>
               </Typography>
             </Box>
             {Boolean(touched.policy && errors.policy) && (
-              <FormHelperText error>
-                {errors.policy}
-              </FormHelperText>
+              <FormHelperText error>{errors.policy}</FormHelperText>
             )}
             {errors.submit && (
               <Box sx={{ mt: 3 }}>
-                <FormHelperText error>
-                  {errors.submit}
-                </FormHelperText>
+                <FormHelperText error>{errorMessage(errors.submit)}</FormHelperText>
               </Box>
             )}
             <Box sx={{ mt: 2 }}>
               <Button
-                color="primary"
+                color='primary'
                 disabled={isSubmitting}
                 fullWidth
-                size="large"
-                type="submit"
-                variant="contained"
+                size='large'
+                type='submit'
+                variant='contained'
               >
                 Register
               </Button>

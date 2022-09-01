@@ -1,16 +1,14 @@
-import type { FC } from "react";
-import { useNavigate } from "react-router-dom";
-import * as Yup from "yup";
-import { Formik } from "formik";
-import {
-  Alert,
-  Box,
-  Button,
-  FormHelperText,
-  TextField,
-} from "@mui/material";
-import useAuth from "../../../hooks/useAuth";
-import useMounted from "../../../hooks/useMounted";
+import * as Yup from 'yup';
+import useAuth from '../../../hooks/useAuth';
+import useMounted from '../../../hooks/useMounted';
+import { Alert, Box, Button, FormHelperText, TextField } from '@mui/material';
+import { Formik } from 'formik';
+import type { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { errorMessage } from 'src/utils/formik.utils';
+import { getLogger } from 'src/utils/loggin';
+
+const loginAuthLogger = getLogger('Login Amplify');
 
 const LoginAmplify: FC = (props) => {
   const mounted = useMounted();
@@ -20,20 +18,14 @@ const LoginAmplify: FC = (props) => {
   return (
     <Formik
       initialValues={{
-        email: "admin@gowild.com",
-        password: "qwerty123",
-        submit: null,
+        email: 'admin@gowild.com',
+        password: 'qwerty123',
+        submit: null
       }}
-      validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email("Must be a valid email")
-          .max(255)
-          .required("Email is required"),
+      validationSchema={Yup['object']().shape({
+        email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
       })}
-      onSubmit={async (
-        values,
-        { setErrors, setStatus, setSubmitting }
-      ): Promise<void> => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
           await login(values.email, values.password);
 
@@ -42,13 +34,13 @@ const LoginAmplify: FC = (props) => {
             setSubmitting(false);
           }
         } catch (err) {
-          console.error(err);
+          loginAuthLogger.error(err);
 
-          if (err.code === "UserNotConfirmedException") {
-            navigate("/authentication/verify-code", {
+          if (err.code === 'UserNotConfirmedException') {
+            navigate('/authentication/verify-code', {
               state: {
-                username: values.email,
-              },
+                username: values.email
+              }
             });
             return;
           }
@@ -68,7 +60,7 @@ const LoginAmplify: FC = (props) => {
         handleSubmit,
         isSubmitting,
         touched,
-        values,
+        values
       }): JSX.Element => (
         <form noValidate onSubmit={handleSubmit} {...props}>
           <TextField
@@ -76,49 +68,51 @@ const LoginAmplify: FC = (props) => {
             error={Boolean(touched.email && errors.email)}
             fullWidth
             helperText={touched.email && errors.email}
-            label="Email Address"
-            margin="normal"
-            name="email"
+            label='Email Address'
+            margin='normal'
+            name='email'
             onBlur={handleBlur}
             onChange={handleChange}
-            type="email"
+            type='email'
             value={values.email}
-            variant="outlined"
+            variant='outlined'
           />
           <TextField
             error={Boolean(touched.password && errors.password)}
             fullWidth
             helperText={touched.password && errors.password}
-            label="Password"
-            margin="normal"
-            name="password"
+            label='Password'
+            margin='normal'
+            name='password'
             onBlur={handleBlur}
             onChange={handleChange}
-            type="password"
+            type='password'
             value={values.password}
-            variant="outlined"
+            variant='outlined'
           />
           {errors.submit && (
             <Box sx={{ mt: 3 }}>
-              <FormHelperText error>{errors.submit}</FormHelperText>
+              <FormHelperText error>{errorMessage(errors.submit)}</FormHelperText>
             </Box>
           )}
           <Box sx={{ mt: 2 }}>
             <Button
-              color="primary"
+              color='primary'
               disabled={isSubmitting}
               fullWidth
-              size="large"
-              type="submit"
-              variant="contained"
+              size='large'
+              type='submit'
+              variant='contained'
             >
               Log In
             </Button>
           </Box>
           <Box sx={{ mt: 3 }}>
-            <Alert severity="info">
+            <Alert severity='info'>
               <div>
-                You can use <b>email</b> and password{" "}
+                You can use
+                <b>email</b>
+                and password
                 <b>qwerty</b>
               </div>
             </Alert>

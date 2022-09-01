@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import PropTypes from 'prop-types';
+import type { Thread } from '../../../types/chat';
 import {
   Avatar,
   AvatarGroup,
@@ -9,7 +8,8 @@ import {
   ListItemAvatar,
   ListItemText
 } from '@mui/material';
-import type { Thread } from '../../../types/chat';
+import PropTypes, { Validator } from 'prop-types';
+import type { FC } from 'react';
 
 interface ChatThreadItemProps {
   active?: boolean;
@@ -18,9 +18,9 @@ interface ChatThreadItemProps {
 }
 
 const getDetails = (thread: Thread, currentUserId: string) => {
-  const otherParticipants = thread.participants.filter((participant) => (
-    participant.id !== currentUserId
-  ));
+  const otherParticipants = thread.participants.filter(
+    (participant) => participant.id !== currentUserId
+  );
   const displayNames = otherParticipants
     .reduce((names, participant) => [...names, participant.name], [])
     .join(', ');
@@ -29,9 +29,7 @@ const getDetails = (thread: Thread, currentUserId: string) => {
 
   if (lastMessage) {
     const sender = lastMessage.senderId === currentUserId ? 'Me: ' : '';
-    const message = lastMessage.contentType === 'image'
-      ? 'Sent a photo'
-      : lastMessage.body;
+    const message = lastMessage.contentType === 'image' ? 'Sent a photo' : lastMessage.body;
 
     displayText = `${sender}${message}`;
   }
@@ -44,12 +42,7 @@ const getDetails = (thread: Thread, currentUserId: string) => {
 };
 
 const ChatThreadItem: FC<ChatThreadItemProps> = (props) => {
-  const {
-    active,
-    thread,
-    onSelect,
-    ...other
-  } = props;
+  const { active, thread, onSelect, ...other } = props;
 
   // We hardcode the current user ID because the mocked that is not in sync with the auth provider.
   // When implementing this app with a real database, replace this ID with the ID from Auth Context.
@@ -77,25 +70,23 @@ const ChatThreadItem: FC<ChatThreadItemProps> = (props) => {
         <AvatarGroup
           max={2}
           sx={{
-            '& .MuiAvatar-root': details.otherParticipants.length > 1
-              ? {
-                height: 26,
-                width: 26,
-                '&:nth-of-type(2)': {
-                  mt: '10px'
-                }
-              }
-              : {
-                height: 36,
-                width: 36
-              }
+            '& .MuiAvatar-root':
+              details.otherParticipants.length > 1
+                ? {
+                    height: 26,
+                    width: 26,
+                    '&:nth-of-type(2)': {
+                      mt: '10px'
+                    }
+                  }
+                : {
+                    height: 36,
+                    width: 36
+                  }
           }}
         >
           {details.otherParticipants.map((participant) => (
-            <Avatar
-              key={participant.id}
-              src={participant.avatar}
-            />
+            <Avatar key={participant.id} src={participant.avatar} />
           ))}
         </AvatarGroup>
       </ListItemAvatar>
@@ -132,9 +123,9 @@ const ChatThreadItem: FC<ChatThreadItemProps> = (props) => {
       >
         {thread.unreadCount > 0 && (
           <Chip
-            color="primary"
+            color='primary'
             label={thread.unreadCount}
-            size="small"
+            size='small'
             sx={{
               height: 18,
               mt: '2px',
@@ -151,8 +142,7 @@ const ChatThreadItem: FC<ChatThreadItemProps> = (props) => {
 ChatThreadItem.propTypes = {
   active: PropTypes.bool,
   onSelect: PropTypes.func,
-  // @ts-ignore
-  thread: PropTypes.object.isRequired
+  thread: PropTypes['object'].isRequired as Validator<Thread>
 };
 
 ChatThreadItem.defaultProps = {

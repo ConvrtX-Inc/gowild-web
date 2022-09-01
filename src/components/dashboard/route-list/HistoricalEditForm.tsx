@@ -1,18 +1,20 @@
-import type { FC } from "react";
-import PropTypes from "prop-types";
-import toast from "react-hot-toast";
-import * as Yup from "yup";
-import { Formik } from "formik";
+// import styled from "styled-components";
+import * as Yup from 'yup';
+import wait from '../../../utils/wait';
 import {
   Box,
   Button,
-  Card,
-  // Grid,
+  Card // Grid,
   // TextField,
   // Typography,
-} from "@mui/material";
-// import styled from "styled-components";
-import wait from "../../../utils/wait";
+} from '@mui/material';
+import { Formik } from 'formik';
+import PropTypes from 'prop-types';
+import type { FC } from 'react';
+import toast from 'react-hot-toast';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('HistoricalEditForm');
 
 interface HistoricalEditFormProps {
   customer: any;
@@ -24,11 +26,11 @@ const HistoricalEditForm: FC<HistoricalEditFormProps> = (props) => {
   return (
     <Formik
       initialValues={{
-        address1: customer.address1 || "",
-        submit: null,
+        address1: customer.address1 || '',
+        submit: null
       }}
-      validationSchema={Yup.object().shape({
-        address1: Yup.string().max(255),
+      validationSchema={Yup['object']().shape({
+        address1: Yup.string().max(255)
       })}
       onSubmit={async (
         values,
@@ -40,36 +42,23 @@ const HistoricalEditForm: FC<HistoricalEditFormProps> = (props) => {
           resetForm();
           setStatus({ success: true });
           setSubmitting(false);
-          toast.success("Customer updated!");
+          toast.success('Customer updated!');
         } catch (err) {
-          console.error(err);
-          toast.error("Something went wrong!");
+          logger.error(err);
+          toast.error('Something went wrong!');
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);
         }
       }}
     >
-      {({
-        errors,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        isSubmitting,
-        touched,
-        values,
-      }): JSX.Element => (
+      {({ handleSubmit, isSubmitting }): JSX.Element => (
         <form onSubmit={handleSubmit} {...other}>
           <Card>
             <Box sx={{ p: 3 }}>
               {/* //Your Form here */}
               <Box sx={{ mt: 2 }}>
-                <Button
-                  color="primary"
-                  disabled={isSubmitting}
-                  type="submit"
-                  variant="contained"
-                >
+                <Button color='primary' disabled={isSubmitting} type='submit' variant='contained'>
                   Save Changes
                 </Button>
               </Box>
@@ -82,8 +71,7 @@ const HistoricalEditForm: FC<HistoricalEditFormProps> = (props) => {
 };
 
 HistoricalEditForm.propTypes = {
-  // @ts-ignore
-  customer: PropTypes.object.isRequired,
+  customer: PropTypes['object'].isRequired
 };
 
 export default HistoricalEditForm;

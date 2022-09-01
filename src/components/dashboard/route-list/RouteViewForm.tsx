@@ -1,28 +1,32 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import type { FC } from "react";
-import axios from "axios";
-import toast from "react-hot-toast";
-import * as Yup from "yup";
-import { Formik } from "formik";
+import * as Yup from 'yup';
+import ExpandMoreIcon from '../../../icons/ExpandAccordion';
+import FinishingPtIcon from '../../../icons/LocationFinishingPt';
+import HistoricalEventIcon from '../../../icons/LocationHistoricalEvent';
+import StartingPtIcon from '../../../icons/LocationStartingPt';
+import Scrollbar from '../../Scrollbar';
+import RouteViewMap from './RouteViewMap';
 import {
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Card,
   CardContent,
   CircularProgress,
   FormHelperText,
-  Grid,
-} from "@mui/material";
-import styled from "styled-components";
-import Scrollbar from "../../Scrollbar";
-import RouteViewMap from "./RouteViewMap";
-import StartingPtIcon from "../../../icons/LocationStartingPt";
-import FinishingPtIcon from "../../../icons/LocationFinishingPt";
-import HistoricalEventIcon from "../../../icons/LocationHistoricalEvent";
-import ExpandMoreIcon from "../../../icons/ExpandAccordion";
+  Grid
+} from '@mui/material';
+import axios from 'axios';
+import { Formik } from 'formik';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type { FC } from 'react';
+import toast from 'react-hot-toast';
+import { errorMessage } from 'src/utils/formik.utils';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('RouteViewForm');
 
 const RouteViewForm: FC<any> = (props) => {
   const { singleRoute } = props;
@@ -42,19 +46,19 @@ const RouteViewForm: FC<any> = (props) => {
   };
 
   const getHistoricalEvents = useCallback(async () => {
-    // console.log(
+    // logger.debug(
     //   `(View-Form) Getting Historical Events of Route-ID#${singleRoute.id}...: `
     // );
-    const accessToken = sessionStorage.getItem("token");
+    const accessToken = sessionStorage.getItem('token');
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events?filter=route_id||$eq||${singleRoute.id}`;
     const CONFIG = {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     };
     setLoadGmapAfterGetEvents(false);
     const apiResponse = await axios.get(URL, CONFIG);
-    // console.log(
+    // logger.debug(
     //   "(View-Form) Historical Events Api Response: ",
     //   apiResponse.data.data
     // );
@@ -70,7 +74,7 @@ const RouteViewForm: FC<any> = (props) => {
 
   return (
     <Formik
-      enableReinitialize={true}
+      enableReinitialize
       initialValues={{
         startPtLong: singleRoute.start_point_long,
         startPtLat: singleRoute.start_point_lat,
@@ -78,37 +82,35 @@ const RouteViewForm: FC<any> = (props) => {
         endPtLat: singleRoute.stop_point_lat,
         raceTitle: singleRoute.route_name,
         description: singleRoute.description,
-        histoLong: "",
-        histoLat: "",
-        histoTitle: "",
-        histoSubTitle: "",
-        histoDescription: "",
-        submit: null,
+        histoLong: '',
+        histoLat: '',
+        histoTitle: '',
+        histoSubTitle: '',
+        histoDescription: '',
+        submit: null
       }}
-      validationSchema={Yup.object().shape({
-        startPtLong: Yup.number().max(80).required("This field is required"),
-        startPtLat: Yup.number().max(80).required("This field is required"),
-        endPtLong: Yup.number().max(80).required("This field is required"),
-        endPtLat: Yup.number().max(80).required("This field is required"),
-        raceTitle: Yup.string().max(80).required("This field is required"),
-        description: Yup.string().max(255).required("This field is required"),
+      validationSchema={Yup['object']().shape({
+        startPtLong: Yup.number().max(80).required('This field is required'),
+        startPtLat: Yup.number().max(80).required('This field is required'),
+        endPtLong: Yup.number().max(80).required('This field is required'),
+        endPtLat: Yup.number().max(80).required('This field is required'),
+        raceTitle: Yup.string().max(80).required('This field is required'),
+        description: Yup.string().max(255).required('This field is required'),
         histoLong: Yup.number().max(80),
         histoLat: Yup.number().max(80),
         histoTitle: Yup.string().max(80),
         histoSubTitle: Yup.string().max(80),
-        histoDescription: Yup.string().max(80),
+        histoDescription: Yup.string().max(80)
       })}
-      onSubmit={async (
-        values,
-        { setErrors, setStatus, setSubmitting, resetForm }
-      ): Promise<void> => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
-          //Note: Upload Img to Firebase
+          logger.info(`Values: ${values}`);
+          // Note: Upload Img to Firebase
           // REDUNDANT
           // NOTE: Make API request
           // REDUNDANT
         } catch (err) {
-          console.error(err);
+          logger.error(err);
           if (err.response.status === 413) {
             err.message = `Image ${err.response.statusText} (${err.response.status})`;
           }
@@ -116,25 +118,14 @@ const RouteViewForm: FC<any> = (props) => {
             err.message = `${err.response.statusText} (${err.response.status})`;
           }
 
-          toast.error("Something went wrong!");
+          toast.error('Something went wrong!');
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);
         }
       }}
     >
-      {({
-        errors,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        isSubmitting,
-        setFieldValue,
-        setFieldError,
-        setFieldTouched,
-        touched,
-        values,
-      }): JSX.Element => (
+      {({ errors, handleSubmit, values }): JSX.Element => (
         <StyledForm onSubmit={handleSubmit} {...props}>
           <span ref={scrollRef} />
           <Grid container spacing={3}>
@@ -142,24 +133,24 @@ const RouteViewForm: FC<any> = (props) => {
               <Card>
                 <CardContent>
                   <RowBox>
-                    <Box sx={{ width: "293px", mr: "18px" }}>
+                    <Box sx={{ width: '293px', mr: '18px' }}>
                       <LegendBox>
-                        <FlexiBox sx={{ mb: "17px" }}>
-                          <StartingPtIcon fontSize="small" />
+                        <FlexiBox sx={{ mb: '17px' }}>
+                          <StartingPtIcon fontSize='small' />
                           <LegendItem>Starting Point</LegendItem>
                         </FlexiBox>
-                        <FlexiBox sx={{ mb: "17px" }}>
-                          <FinishingPtIcon fontSize="small" />
+                        <FlexiBox sx={{ mb: '17px' }}>
+                          <FinishingPtIcon fontSize='small' />
                           <LegendItem>Finishing Point</LegendItem>
                         </FlexiBox>
                         <FlexiBox>
-                          <HistoricalEventIcon fontSize="small" />
+                          <HistoricalEventIcon fontSize='small' />
                           <LegendItem>Historical Event</LegendItem>
                         </FlexiBox>
                       </LegendBox>
                       <FieldLabel>Starting Point</FieldLabel>
-                      <Box sx={{ mt: "26px" }}>
-                        <SubLabel sx={{ mb: "6px" }}>Longitude</SubLabel>
+                      <Box sx={{ mt: '26px' }}>
+                        <SubLabel sx={{ mb: '6px' }}>Longitude</SubLabel>
                         <ViewField>
                           {values.startPtLong ? (
                             `${values.startPtLong}°`
@@ -168,8 +159,8 @@ const RouteViewForm: FC<any> = (props) => {
                           )}
                         </ViewField>
                       </Box>
-                      <Box sx={{ mt: "20px", mb: "20px" }}>
-                        <SubLabel sx={{ mb: "6px" }}>Latitude</SubLabel>
+                      <Box sx={{ mt: '20px', mb: '20px' }}>
+                        <SubLabel sx={{ mb: '6px' }}>Latitude</SubLabel>
                         <ViewField>
                           {values.startPtLat ? (
                             `${values.startPtLat}°`
@@ -179,8 +170,8 @@ const RouteViewForm: FC<any> = (props) => {
                         </ViewField>
                       </Box>
                       <FieldLabel>End Point</FieldLabel>
-                      <Box sx={{ mt: "26px" }}>
-                        <SubLabel sx={{ mb: "6px" }}>Longitude</SubLabel>
+                      <Box sx={{ mt: '26px' }}>
+                        <SubLabel sx={{ mb: '6px' }}>Longitude</SubLabel>
                         <ViewField>
                           {values.endPtLong ? (
                             `${values.endPtLong}°`
@@ -189,8 +180,8 @@ const RouteViewForm: FC<any> = (props) => {
                           )}
                         </ViewField>
                       </Box>
-                      <Box sx={{ mt: "20px", mb: "20px" }}>
-                        <SubLabel sx={{ mb: "6px" }}>Latitude</SubLabel>
+                      <Box sx={{ mt: '20px', mb: '20px' }}>
+                        <SubLabel sx={{ mb: '6px' }}>Latitude</SubLabel>
                         <ViewField>
                           {values.endPtLat ? (
                             `${values.endPtLat}°`
@@ -201,46 +192,48 @@ const RouteViewForm: FC<any> = (props) => {
                       </Box>
                       <Box
                         sx={{
-                          width: "289px",
-                          height: "89.98px",
+                          width: '289px',
+                          height: '89.98px'
                         }}
                       >
                         <Box
                           sx={{
-                            position: "relative",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "flex-start",
-                            alignItems: "flex-start",
-                            mb: "20px",
+                            position: 'relative',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-start',
+                            alignItems: 'flex-start',
+                            mb: '20px'
                           }}
                         >
                           {singleRoute.img_url ? (
                             <img
-                              height="90px"
-                              width="90px"
+                              height='90px'
+                              width='90px'
                               src={singleRoute.img_url}
-                              alt="route-img"
+                              alt='route-img'
                             />
                           ) : (
                             <StyledCircularProgress
                               size={17.7561}
-                              sx={{ opacity: "0.4" }}
+                              sx={{
+                                opacity: '0.4'
+                              }}
                             />
                           )}
                         </Box>
                       </Box>
-                      <FieldLabel sx={{ mt: "14px" }}>Title</FieldLabel>
-                      <ViewField sx={{ mt: "26px", mb: "40px" }}>
-                        {values.raceTitle ? (
-                          values.raceTitle
-                        ) : (
-                          <CircularProgress size={17.7561} />
-                        )}
+                      <FieldLabel sx={{ mt: '14px' }}>Title</FieldLabel>
+                      <ViewField sx={{ mt: '26px', mb: '40px' }}>
+                        {values.raceTitle ? values.raceTitle : <CircularProgress size={17.7561} />}
                       </ViewField>
                       <FieldLabel>Description</FieldLabel>
                       <ViewField
-                        sx={{ height: "100px", mt: "26px", pr: "70px" }}
+                        sx={{
+                          height: '100px',
+                          mt: '26px',
+                          pr: '70px'
+                        }}
                       >
                         <Scrollbar>
                           {values.description ? (
@@ -252,9 +245,9 @@ const RouteViewForm: FC<any> = (props) => {
                       </ViewField>
                       <Box
                         sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          mt: "16px",
+                          display: 'flex',
+                          justifyContent: 'center',
+                          mt: '16px'
                         }}
                       >
                         {/* <SaveButton
@@ -281,23 +274,27 @@ const RouteViewForm: FC<any> = (props) => {
                         </SaveButton> */}
                       </Box>
                       {errors.submit && (
-                        <Box sx={{ mt: 3, position: "relative" }}>
-                          <FormHelperText error>{errors.submit}</FormHelperText>
+                        <Box
+                          sx={{
+                            mt: 3,
+                            position: 'relative'
+                          }}
+                        >
+                          <FormHelperText error>{errorMessage(errors.submit)}</FormHelperText>
                         </Box>
                       )}
                     </Box>
 
                     <Box
                       sx={{
-                        height: "982px",
-                        width: "100%",
-                        borderRadius: "20px",
-                        position: "relative",
-                        border: "1px solid rgba(0,0,0,0.1)",
+                        height: '982px',
+                        width: '100%',
+                        borderRadius: '20px',
+                        position: 'relative',
+                        border: '1px solid rgba(0,0,0,0.1)'
                       }}
                     >
-                      {Object.keys(singleRoute).length !== 0 &&
-                      loadGmapAfterGetEvents ? (
+                      {Object.keys(singleRoute).length !== 0 && loadGmapAfterGetEvents ? (
                         <RouteViewMap
                           loadRouteMarkers={singleRoute}
                           loadEventMarkers={historicalEvents}
@@ -305,13 +302,13 @@ const RouteViewForm: FC<any> = (props) => {
                       ) : (
                         <Box
                           sx={{
-                            position: "absolute",
-                            top: "491px",
-                            left: "330px",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            position: 'absolute',
+                            top: '491px',
+                            left: '330px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center'
                           }}
                         >
                           <StyledCircularProgress />
@@ -320,99 +317,117 @@ const RouteViewForm: FC<any> = (props) => {
                       )}
                     </Box>
                   </RowBox>
-                  {/* -----------------------------HISTORICAL------------------------------------- */}
+                  {/* -----------------------------HISTORICAL------------------- */}
 
                   <HistoricalBox>
                     <ToolbarBox>
-                      <Title sx={{ cursor: "pointer" }}>Historical</Title>
-                      <OrangeBorder></OrangeBorder>
-                      <Box
-                        sx={{ ml: "auto" }}
-                        onClick={scrollToHistoricalEvents}
-                      >
+                      <Title sx={{ cursor: 'pointer' }}>Historical</Title>
+                      <OrangeBorder />
+                      <Box sx={{ ml: 'auto' }} onClick={scrollToHistoricalEvents}>
                         <Button
-                          sx={{ color: "#0E5753", borderColor: "#0E5753" }}
-                          variant="outlined"
+                          sx={{
+                            color: '#0E5753',
+                            borderColor: '#0E5753'
+                          }}
+                          variant='outlined'
                         >
                           🔺 Scroll Up
                         </Button>
                       </Box>
                     </ToolbarBox>
-                    <Box sx={{ height: "457px" }}>
+                    <Box sx={{ height: '457px' }}>
                       <Scrollbar>
-                        {/* ---------------------------------------------------------------- ACCORDION */}
+                        {/* ---------------------------- ACCORDION */}
                         <span ref={scrollToEvents} />
                         {historicalEvents.length > 0 ? (
-                          historicalEvents.map((historical, index) => (
-                            <StyledAccordion square={true} key={historical.id}>
+                          historicalEvents.map((historical) => (
+                            <StyledAccordion square key={historical.id}>
                               <AccordionSummary
-                                sx={{ pl: "36px" }}
+                                sx={{
+                                  pl: '36px'
+                                }}
                                 expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1a-content"
-                                id="panel1a-header"
+                                aria-controls='panel1a-content'
+                                id='panel1a-header'
                               >
                                 <Box
                                   sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    mr: "81px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    mr: '81px'
                                   }}
                                 >
-                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                  <AccordionTitle
+                                    sx={{
+                                      mb: '15px'
+                                    }}
+                                  >
                                     Historical Event
                                   </AccordionTitle>
-                                  <Box sx={{ display: "flex" }}>
-                                    <AccordionValue sx={{ mr: "23px" }}>
+                                  <Box
+                                    sx={{
+                                      display: 'flex'
+                                    }}
+                                  >
+                                    <AccordionValue
+                                      sx={{
+                                        mr: '23px'
+                                      }}
+                                    >
                                       {`${historical.event_long}°`}
                                     </AccordionValue>
-                                    <AccordionValue>
-                                      {`${historical.event_lat}°`}
-                                    </AccordionValue>
+                                    <AccordionValue>{`${historical.event_lat}°`}</AccordionValue>
                                   </Box>
                                 </Box>
                                 <Box
                                   sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    mr: "81px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    mr: '81px'
                                   }}
                                 >
-                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                  <AccordionTitle
+                                    sx={{
+                                      mb: '15px'
+                                    }}
+                                  >
                                     Title
                                   </AccordionTitle>
-                                  <AccordionValue>
-                                    {historical.event_title}
-                                  </AccordionValue>
+                                  <AccordionValue>{historical.event_title}</AccordionValue>
                                 </Box>
                                 <Box
                                   sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    mr: "81px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    mr: '81px'
                                   }}
                                 >
-                                  <AccordionTitle sx={{ mb: "15px" }}>
+                                  <AccordionTitle
+                                    sx={{
+                                      mb: '15px'
+                                    }}
+                                  >
                                     Sub Title
                                   </AccordionTitle>
-                                  <AccordionValue>
-                                    {historical.event_subtitle}
-                                  </AccordionValue>
+                                  <AccordionValue>{historical.event_subtitle}</AccordionValue>
                                 </Box>
                               </AccordionSummary>
-                              <AccordionDetails sx={{ pl: "36px", pt: "16px" }}>
+                              <AccordionDetails
+                                sx={{
+                                  pl: '36px',
+                                  pt: '16px'
+                                }}
+                              >
                                 {historical.description}
                               </AccordionDetails>
                             </StyledAccordion>
                           ))
                         ) : loadGmapAfterGetEvents ? (
-                          "No Historical Events"
+                          'No Historical Events'
                         ) : (
-                          <StyledCircularProgress
-                            sx={{ opacity: "0.4" }}
-                            size={17.7561}
-                          />
+                          <StyledCircularProgress sx={{ opacity: '0.4' }} size={17.7561} />
                         )}
-                        {/* ----------------------------------------------------------------------- ACCORDION END */}
+                        {/* ----------------------------------- ACCORDION END */}
                       </Scrollbar>
                     </Box>
                   </HistoricalBox>
@@ -442,7 +457,7 @@ const LegendBox = styled(Box)`
 const LegendItem = styled(Box)`
   && {
     margin-left: 18px;
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-weight: 400;
     font-size: 13.6592px;
     line-height: 14px;
@@ -471,7 +486,7 @@ const StyledForm = styled.form`
 
 const FieldLabel = styled(Box)`
   && {
-    font-family: "Gilroy SemiBold";
+    font-family: 'Gilroy SemiBold';
     font-size: 16px;
     line-height: 18px;
     color: #22333b;
@@ -480,7 +495,7 @@ const FieldLabel = styled(Box)`
 
 const SubLabel = styled(Box)`
   && {
-    font-family: "Gilroy Medium";
+    font-family: 'Gilroy Medium';
     font-style: normal;
     font-weight: 400;
     font-size: 17.7561px;
@@ -504,7 +519,7 @@ const RowBox = styled(Box)`
   }
 `;
 
-//---------------------------------HISTORICAL EVENTS
+// ---------------------------------HISTORICAL EVENTS
 const HistoricalBox = styled(Box)`
   && {
     margin-top: 46px;
@@ -515,7 +530,7 @@ const Title = styled(Box)`
   && {
     margin-left: 128px;
     margin-bottom: 21px;
-    font-family: "Circular Std Bold";
+    font-family: 'Circular Std Bold';
     font-style: normal;
     font-weight: 700;
     font-size: 30px;
@@ -549,7 +564,7 @@ const OrangeBorder = styled(Box)`
 
 const ViewField = styled(Box)`
   && {
-    font-family: "Gilroy Semibold";
+    font-family: 'Gilroy Semibold';
     font-style: normal;
     font-weight: 500;
     font-size: 17.7561px;
@@ -579,7 +594,7 @@ const StyledAccordion = styled(Accordion)`
 
 const AccordionTitle = styled(Box)`
   && {
-    font-family: "Gilroy Regular";
+    font-family: 'Gilroy Regular';
     font-size: 16px;
     line-height: 18px;
     color: #22333b;
@@ -588,7 +603,7 @@ const AccordionTitle = styled(Box)`
 
 const AccordionValue = styled(Box)`
   && {
-    font-family: "Gilroy Semibold";
+    font-family: 'Gilroy Semibold';
     font-weight: 400;
     font-size: 20px;
     line-height: 18px;

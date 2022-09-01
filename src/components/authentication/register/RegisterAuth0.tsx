@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import type { FC } from 'react';
-import { Box, Button, FormHelperText } from '@mui/material';
 import useAuth from '../../../hooks/useAuth';
 import useMounted from '../../../hooks/useMounted';
+import { Box, Button, FormHelperText } from '@mui/material';
+import { useState } from 'react';
+import type { FC } from 'react';
+import { getLogger } from 'src/utils/loggin';
+
+const logger = getLogger('RegisterAuth0');
 
 const RegisterAuth0: FC = (props) => {
   const mounted = useMounted();
@@ -13,7 +16,7 @@ const RegisterAuth0: FC = (props) => {
     try {
       await loginWithPopup();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       if (mounted.current) {
         setError(err.message);
       }
@@ -24,9 +27,7 @@ const RegisterAuth0: FC = (props) => {
     <div {...props}>
       {error && (
         <Box sx={{ my: 3 }}>
-          <FormHelperText error>
-            {error}
-          </FormHelperText>
+          <FormHelperText error>{error}</FormHelperText>
         </Box>
       )}
       <Box
@@ -35,11 +36,7 @@ const RegisterAuth0: FC = (props) => {
           justifyContent: 'center'
         }}
       >
-        <Button
-          color="primary"
-          onClick={handleRegister}
-          variant="contained"
-        >
+        <Button color='primary' onClick={handleRegister} variant='contained'>
           Register
         </Button>
       </Box>

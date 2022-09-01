@@ -1,5 +1,5 @@
-import type { FC } from "react";
+import type { FC } from 'react';
 
-const OverviewSomething: FC = (props) => <div>OverviewSomething</div>;
+const OverviewSomething: FC = () => <div>OverviewSomething</div>;
 
 export default OverviewSomething;
