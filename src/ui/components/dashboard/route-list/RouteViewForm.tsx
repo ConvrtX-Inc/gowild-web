@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { useAuth } from '../../../../lib/hooks/use-auth';
 import ExpandMoreIcon from '../../../icons/ExpandAccordion';
 import FinishingPtIcon from '../../../icons/LocationFinishingPt';
 import HistoricalEventIcon from '../../../icons/LocationHistoricalEvent';
@@ -29,6 +30,7 @@ import styled from 'styled-components';
 const logger = getLogger('RouteViewForm');
 
 const RouteViewForm: FC<any> = (props) => {
+  const { token } = useAuth();
   const { singleRoute } = props;
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const [loadGmapAfterGetEvents, setLoadGmapAfterGetEvents] = useState(false);
@@ -49,11 +51,10 @@ const RouteViewForm: FC<any> = (props) => {
     // logger.debug(
     //   `(View-Form) Getting Historical Events of Route-ID#${singleRoute.id}...: `
     // );
-    const accessToken = sessionStorage.getItem('token');
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events?filter=route_id||$eq||${singleRoute.id}`;
     const CONFIG = {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token?.accessToken}`
       }
     };
     setLoadGmapAfterGetEvents(false);
@@ -105,7 +106,7 @@ const RouteViewForm: FC<any> = (props) => {
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
           logger.info(`Values: ${values}`);
-          // Note: Upload Img to Firebase
+          // Note: Upload Img to API service
           // REDUNDANT
           // NOTE: Make API request
           // REDUNDANT

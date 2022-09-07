@@ -3,7 +3,7 @@ import ImageDropzone from '../ImageDropzone';
 import { StyledElements } from './UploadImage';
 import { Box, IconButton } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
-import { TextFieldLabel } from 'src/ui/shared-styled-components/dashboard';
+import { TextFieldLabel } from 'src/ui/style/dashboard';
 import { getLogger } from 'src/utils/loggin';
 import styled from 'styled-components';
 

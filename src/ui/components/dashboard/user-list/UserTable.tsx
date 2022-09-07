@@ -2,7 +2,7 @@ import {
   TableCellStyled as CustomTableCell,
   OptionsBox,
   StyledOption
-} from '../../../shared-styled-components/dashboard';
+} from '../../../style/dashboard';
 import TableList from '../TableList';
 import UserModal from './UserModal';
 import { Box, CircularProgress, Typography } from '@mui/material';

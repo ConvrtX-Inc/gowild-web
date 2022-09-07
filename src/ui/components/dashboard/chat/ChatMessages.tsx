@@ -1,4 +1,4 @@
-import { useAuth } from '../../../../lib/hooks/useAuth';
+import { useAuth } from '../../../../lib/hooks/use-auth';
 import type { Message, Participant } from '../../../../types/chat';
 import Scrollbar from '../../Scrollbar';
 import ChatMessage from './ChatMessage';

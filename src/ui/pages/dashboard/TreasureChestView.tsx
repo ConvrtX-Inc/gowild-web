@@ -1,3 +1,4 @@
+import { useAuth } from '../../../lib/hooks/use-auth';
 import { Box, CircularProgress, Grid, TextField } from '@mui/material';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -9,29 +10,25 @@ import { ViewTMap } from 'src/ui/components/dashboard/treasure-chest';
 import { StyledElements as SponsorStyled } from 'src/ui/components/dashboard/treasure-chest/SponsorList';
 import { StyledElements as TreasureChestStyled } from 'src/ui/components/dashboard/treasure-chest/TreasureChestCreateForm';
 import WebLink from 'src/ui/icons/WebLink';
-import {
-  AbsCircularLoadingBox,
-  StyledCard,
-  TextFieldLabel
-} from 'src/ui/shared-styled-components/dashboard';
+import { AbsCircularLoadingBox, StyledCard, TextFieldLabel } from 'src/ui/style/dashboard';
 import styled from 'styled-components';
 
 const pageTitle = 'Treasure Chest Details';
-const accessToken = sessionStorage.getItem('token');
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
 
-const CONFIG = {
-  headers: {
-    Authorization: `Bearer ${accessToken}`,
-    'Content-Type': 'application/json'
-  }
-};
-
-const getSponsors = async (chestData: TreasureChest) => {
-  return await axios.get(`${BASE_URL}/sponsor?s={"treasure_chest_id":"${chestData.id}"}`, CONFIG);
-};
-
 const TreasureChestView: FC = () => {
+  const { token } = useAuth();
+  const CONFIG = {
+    headers: {
+      Authorization: `Bearer ${token?.accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const getSponsors = async (chestData: TreasureChest) => {
+    return await axios.get(`${BASE_URL}/sponsor?s={"treasure_chest_id":"${chestData.id}"}`, CONFIG);
+  };
+
   const { id } = useParams();
   const [treasureData, setTreasureData] = useState<TreasureChest>(null);
   const [sponsors, setSponsors] = useState<Sponsor[]>(null);

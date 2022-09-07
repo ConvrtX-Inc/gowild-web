@@ -2,7 +2,7 @@ import Logo from './Logo';
 import { Box, CircularProgress } from '@mui/material';
 import type { FC } from 'react';
 
-const SlashScreen: FC = () => (
+export const SplashScreen: FC = () => (
   <Box
     sx={{
       alignItems: 'center',
@@ -45,5 +45,3 @@ const SlashScreen: FC = () => (
     </Box>
   </Box>
 );
-
-export default SlashScreen;

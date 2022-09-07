@@ -1,3 +1,4 @@
+import { useAuth } from '../../../../lib/hooks/use-auth';
 import type { NormalRoute } from '../../../../types/route-lists';
 import formatDate from '../../../../utils/formatDate';
 import DeleteIcon from '../../../icons/RouteListDelete';
@@ -179,6 +180,7 @@ const applySort = (normalRoutes: NormalRoute[], sort: Sort): NormalRoute[] => {
 };
 
 const RouteListTable: FC<RouteListTableProps> = (props) => {
+  const { token } = useAuth();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -213,14 +215,13 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
   const handleRowAction = useCallback(
     async (event: React.MouseEvent<any>, action?: string) => {
       const { value } = event.target as any;
-      const accessToken = sessionStorage.getItem('token');
 
       if (value === 'delete' || action === 'delete') {
         logger.debug(`ROW ACTION fn: ${value}, id: ${selectedRouteId}`);
         const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${selectedRouteId}`;
         const CONFIG = {
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token?.accessToken}`
             // "Content-Type": "application/json",
           }
         };

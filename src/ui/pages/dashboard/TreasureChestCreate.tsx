@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { FC } from 'react';
 import { DashboardContentWrapper } from 'src/ui/components/dashboard/DashboardContentWrapper';
 import { TreasureChestCreateForm } from 'src/ui/components/dashboard/treasure-chest';
-import { StyledCard } from 'src/ui/shared-styled-components/dashboard';
+import { StyledCard } from 'src/ui/style/dashboard';
 
 const pageTitle = 'New Treasure Chest';
 const TreasureChestCreate: FC = () => {

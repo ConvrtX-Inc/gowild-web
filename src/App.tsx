@@ -3,8 +3,8 @@ import './i18n';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import type { FC } from 'react';
 import { useRoutes } from 'react-router-dom';
-import useScrollReset from 'src/lib/hooks/useScrollReset';
-import useSettings from 'src/lib/hooks/useSettings';
+import useScrollReset from 'src/lib/hooks/use-scroll-reset';
+import useSettings from 'src/lib/hooks/use-settings';
 import RTL from 'src/ui/components/RTL';
 import { createCustomTheme } from 'src/ui/theme';
 

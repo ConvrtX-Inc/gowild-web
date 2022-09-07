@@ -1,4 +1,4 @@
-import useSettings from '../../../lib/hooks/useSettings';
+import useSettings from '../../../lib/hooks/use-settings';
 import { RouteCreateForm } from '../../components/dashboard/route-list';
 import NotificationIcon from '../../icons/WorkspaceNotification';
 import { Avatar, Box, Container, Grid, IconButton, Typography } from '@mui/material';
@@ -15,7 +15,6 @@ const RouteListCreate: FC = () => {
       </Helmet>
       <Box
         sx={{
-          // backgroundColor: "background.default",
           backgroundColor: '#1D140C',
           minHeight: '100%',
           pt: '55px',

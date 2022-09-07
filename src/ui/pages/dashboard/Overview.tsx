@@ -1,4 +1,4 @@
-import useSettings from '../../../lib/hooks/useSettings';
+import useSettings from '../../../lib/hooks/use-settings';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';

@@ -22,7 +22,7 @@ import type { ChangeEvent, FC, MouseEvent } from 'react';
 import React, { cloneElement, useState } from 'react';
 import { EndUser } from 'src/types/end-user';
 import { TreasureChest } from 'src/types/treasurechest';
-import { TableCellStyled } from 'src/ui/shared-styled-components/dashboard';
+import { TableCellStyled } from 'src/ui/style/dashboard';
 import { getLogger } from 'src/utils/loggin';
 import styled from 'styled-components';
 

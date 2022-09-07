@@ -4,6 +4,7 @@ import { Guideline, GuidelineLog } from 'src/types/guidelines';
 
 const accessToken = sessionStorage.getItem('token');
 const userId = sessionStorage.getItem('user_id');
+
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
 const GUIDELINES_URL = `${BASE_URL}/guidelines`;
 const LOG_URL = `${BASE_URL}/guideline-logs`;

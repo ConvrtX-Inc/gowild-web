@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
-import { storage } from '../../../../firebase';
+import { useAuth } from '../../../../lib/hooks/use-auth';
+import { useUploadImgFile } from '../../../../lib/hooks/use-upload';
 import { useAppDispatch } from '../../../../lib/store';
 import ExpandMoreIcon from '../../../icons/ExpandAccordion';
 import FinishingPtIcon from '../../../icons/LocationFinishingPt';
@@ -26,7 +27,6 @@ import {
   TextField
 } from '@mui/material';
 import axios from 'axios';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { Formik } from 'formik';
 import type { FC } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -38,12 +38,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 const logger = getLogger('RouteEditForm');
 
-// interface RouteEditFormProps {
-//   // normalRoutes: NormalRoute[];
-//   normalRoutes: NormalRoute[];
-// }
-
 const RouteEditForm: FC<any> = (props) => {
+  const uploadImgFile = useUploadImgFile();
+  const { token, sub } = useAuth();
+
   const { singleRoute } = props;
   logger.debug('EDIT FORM PROPS: ', singleRoute);
   const dispatch = useAppDispatch();
@@ -144,37 +142,12 @@ const RouteEditForm: FC<any> = (props) => {
     setHistoricalFiles([]);
   };
 
-  const uploadImgToFirebase = async (file) => {
-    if (!file) return logger.debug('No Image File Attached');
-    return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `web/normal-route/${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      // on(next, error, complete)
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const prog = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          setProgress(prog);
-        },
-        (err) => {
-          logger.debug('FIREBASE ERROR: ', err);
-          reject(err);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((url) => resolve(url));
-        }
-      );
-    });
-  };
-
   const getHistoricalEvents = useCallback(async () => {
     logger.debug('Get Historical Events by ID loaded: ', singleRoute.id);
-    const accessToken = sessionStorage.getItem('token');
     const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events?filter=route_id||$eq||${singleRoute.id}`;
     const CONFIG = {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token?.accessToken}`
       }
     };
     setLoadGmapAfterGetEvents(false);
@@ -195,18 +168,16 @@ const RouteEditForm: FC<any> = (props) => {
   // Add HistoricalEvent & Photo
   const handleAddEventPhoto = useCallback(async () => {
     try {
-      // Get firebase img url
-      const firebaseImgUrl = await uploadEventImgToFirebase(historicalFiles[0]);
+      const uploaded = await uploadImgFile(historicalFiles[0]);
 
-      const accessToken = sessionStorage.getItem('token');
       const IMGURL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-event-photo`;
       const IMGBODY = {
         route_historical_event_id: eventId,
-        event_photo_url: firebaseImgUrl
+        event_photo_url: uploaded.path
       };
       const IMGCONFIG = {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token?.accessToken}`,
           'Content-Type': 'application/json'
         }
       };
@@ -229,7 +200,6 @@ const RouteEditForm: FC<any> = (props) => {
         logger.debug('SHOW CURRENT route_id: ', singleRoute.id);
         const uuid = uuidv4();
         logger.debug('uuid generated ', uuid);
-        const accessToken = sessionStorage.getItem('token');
         const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events`;
         const DATA = {
           route_id: singleRoute.id,
@@ -243,7 +213,7 @@ const RouteEditForm: FC<any> = (props) => {
         };
         const CONFIG = {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token?.accessToken}`,
             'Content-Type': 'application/json'
           }
         };
@@ -260,30 +230,6 @@ const RouteEditForm: FC<any> = (props) => {
     },
     [singleRoute.id, getHistoricalEvents, gmapMarkerUid]
   );
-
-  const uploadEventImgToFirebase = (histoFile) => {
-    if (!histoFile) return logger.debug('No Image File Attached');
-    return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `web/normal-route/historical-event/${histoFile.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, histoFile);
-
-      // on(next, error, complete)
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const prog = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          setProgress(prog);
-        },
-        (err) => {
-          logger.debug('FIREBASE ERROR: ', err);
-          reject(err);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((url) => resolve(url));
-        }
-      );
-    });
-  };
 
   const handleEditSelectedEvent = () => {
     setEventIsEditing(true);
@@ -330,27 +276,23 @@ const RouteEditForm: FC<any> = (props) => {
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }): Promise<void> => {
         try {
-          // Note: Upload Img to Firebase
-          const firebaseImgUrl = await uploadImgToFirebase(files[0]);
+          const uploaded = await uploadImgFile(files[0]);
 
-          // NOTE: Make API request
-          const accessToken = sessionStorage.getItem('token');
-          const userId = sessionStorage.getItem('user_id');
           const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${singleRoute.id}`;
           const DATA = {
-            user_id: userId,
+            user_id: sub,
             route_name: values.raceTitle.trim(),
             route_photo: 'byte64image',
             start_point_long: Number(values.startPtLong),
             start_point_lat: Number(values.startPtLat),
             stop_point_long: Number(values.endPtLong),
             stop_point_lat: Number(values.endPtLat),
-            img_url: firebaseImgUrl,
+            img_url: uploaded.path,
             description: values.description.trim()
           };
           const CONFIG = {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${token?.accessToken}`,
               'Content-Type': 'application/json'
             }
           };

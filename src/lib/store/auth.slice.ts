@@ -17,6 +17,7 @@ export class SimpleUser {
 export interface AccessToken {
   user: SimpleUser;
   email: string | null;
+  sub: string;
 }
 
 interface AuthToken {

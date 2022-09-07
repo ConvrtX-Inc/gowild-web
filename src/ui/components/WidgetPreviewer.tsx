@@ -1,5 +1,5 @@
 import { THEMES } from '../../constants';
-import useSettings from '../../lib/hooks/useSettings';
+import useSettings from '../../lib/hooks/use-settings';
 import MoonIcon from '../icons/Moon';
 import SunIcon from '../icons/Sun';
 import { createCustomTheme } from '../theme';

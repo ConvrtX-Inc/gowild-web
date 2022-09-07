@@ -1,23 +1,11 @@
-import { useAuth } from '../../../lib/hooks/useAuth';
-import {
-  PasswordResetAmplify,
-  PasswordResetJWT
-} from '../../components/authentication/password-reset';
+import { PasswordResetJWT } from '../../components/authentication/password-reset';
 import { Box, Container } from '@mui/material';
 import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
 import styled from 'styled-components';
 
-const platformIcons = {
-  Amplify: '/static/icons/amplify.svg',
-  Auth0: '/static/icons/auth0.svg',
-  Firebase: '/static/icons/firebase.svg',
-  JWT: '/static/icons/jwt.svg'
-};
-
 const PasswordReset: FC = () => {
-  const { platform } = useAuth() as any;
   return (
     <>
       <Helmet>
@@ -53,20 +41,17 @@ const PasswordReset: FC = () => {
                   <SubTitle>Enter your details below</SubTitle>
                 </div>
 
-                {/* ------------------DYNAMIC FORMS------------------ */}
-                {platform !== 'JWT' && (
-                  <Box
-                    sx={{
-                      height: 32,
-                      '& > img': {
-                        maxHeight: '100%',
-                        width: 'auto'
-                      }
-                    }}
-                  >
-                    <img alt='Auth platform' src={platformIcons[platform]} />
-                  </Box>
-                )}
+                <Box
+                  sx={{
+                    height: 32,
+                    '& > img': {
+                      maxHeight: '100%',
+                      width: 'auto'
+                    }
+                  }}
+                >
+                  <img alt='Auth platform' src='/static/icons/jwt.svg' />
+                </Box>
               </Box>
 
               <Box
@@ -75,20 +60,8 @@ const PasswordReset: FC = () => {
                   mt: 3
                 }}
               >
-                {platform === 'JWT' && <PasswordResetJWT />}
-                {platform === 'Amplify' && <PasswordResetAmplify />}
+                <PasswordResetJWT />
               </Box>
-              {/* <Divider sx={{ my: 3 }} />
-              {platform === "Amplify" && (
-                <Link
-                  color="textSecondary"
-                  component={RouterLink}
-                  to="/authentication/password-recovery"
-                  variant="body2"
-                >
-                  Did you not receive the code?
-                </Link>
-              )} */}
             </Box>
           </StyledContainer>
         </BackgroundGradient>

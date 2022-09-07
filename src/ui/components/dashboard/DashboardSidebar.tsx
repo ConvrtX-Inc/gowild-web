@@ -1,4 +1,4 @@
-import { useAuth } from '../../../lib/hooks/useAuth';
+import { useAuth } from '../../../lib/hooks/use-auth';
 import CardsIcon from '../../icons/GoWildNavCards';
 import GuidelinesIcon from '../../icons/GoWildNavGuidelines';
 import HomeIcon from '../../icons/GoWildNavHome';

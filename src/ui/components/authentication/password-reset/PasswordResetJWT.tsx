@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import useMounted from '../../../../lib/hooks/useMounted';
+import useMounted from '../../../../lib/hooks/use-mounted';
 import PasswordIcon from '../../../icons/LoginPadlock';
 import { Box, Button, FormHelperText, InputAdornment, TextField } from '@mui/material';
 import { Formik } from 'formik';

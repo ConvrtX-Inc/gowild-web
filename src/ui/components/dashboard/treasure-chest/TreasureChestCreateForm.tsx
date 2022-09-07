@@ -1,4 +1,6 @@
 import * as Yup from 'yup';
+import { useAuth } from '../../../../lib/hooks/use-auth';
+import { useUploadImgFile } from '../../../../lib/hooks/use-upload';
 import SponsorList, { SponsorState } from './SponsorList';
 import TMap from './TreasureChestMap';
 import UploadImage from './UploadImage';
@@ -8,12 +10,7 @@ import { Formik } from 'formik';
 import { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TreasureChest } from 'src/types/treasurechest';
-import {
-  DashboardButton,
-  StyledTextField,
-  TextFieldLabel
-} from 'src/ui/shared-styled-components/dashboard';
-import { uploadImgToFirebase } from 'src/utils/firebaseUtils';
+import { DashboardButton, StyledTextField, TextFieldLabel } from 'src/ui/style/dashboard';
 import { getLogger } from 'src/utils/loggin';
 import styled from 'styled-components';
 
@@ -63,18 +60,19 @@ const initFormObject = {
 };
 
 const TreasureChestCreateForm: FC = () => {
+  const { token } = useAuth();
   const navigate = useNavigate();
+  const uploadImgFile = useUploadImgFile();
 
   const [sponsors, setSponsors] = useState<SponsorState[]>([]);
 
   const createNewChest = async (values: ChestFormObject): Promise<boolean> => {
-    const accessToken = sessionStorage.getItem('token');
     const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
     const TREASURE_URL = `${BASE_URL}/treasure-chest`;
     const SPONSOR_URL = `${BASE_URL}/sponsor`;
 
     try {
-      const fbThumbnailLink = await uploadImgToFirebase(values.thumbnailImage);
+      const fbThumbnailLink = await uploadImgFile(values.thumbnailImage);
       const DATA: TreasureChest = {
         title: values.title,
         description: values.description,
@@ -84,12 +82,12 @@ const TreasureChestCreateForm: FC = () => {
         event_time: values.eventTime,
         no_of_participants: values.numParticipants,
         thumbnail_img: '',
-        img_url: fbThumbnailLink,
+        img_url: fbThumbnailLink.path,
         a_r: '' // TODO: Update AR image upload when supported.
       };
       const CONFIG = {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token?.accessToken}`,
           'Content-Type': 'application/json'
         }
       };
@@ -101,14 +99,14 @@ const TreasureChestCreateForm: FC = () => {
         await Promise.all(
           sponsors.map(async (sponsor) => {
             if (sponsor.imageFile) {
-              const fbImageLink = await uploadImgToFirebase(sponsor.imageFile);
+              const fbImageLink = await uploadImgFile(sponsor.imageFile);
               await axios.post(
                 SPONSOR_URL,
                 {
                   treasure_chest_id: treasureChestId,
                   img: '',
                   link: sponsor.link,
-                  img_url: fbImageLink
+                  img_url: fbImageLink.path
                 },
                 CONFIG
               );

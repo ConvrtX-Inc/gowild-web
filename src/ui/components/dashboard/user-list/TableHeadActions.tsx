@@ -4,7 +4,7 @@ import { FC, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'src/lib/store';
 import FilterTriangle from 'src/ui/icons/FilterTriangle';
 import Search from 'src/ui/icons/Search';
-import { DashboardButton } from 'src/ui/shared-styled-components/dashboard';
+import { DashboardButton } from 'src/ui/style/dashboard';
 import styled from 'styled-components';
 
 const TableHeadActions: FC = () => {

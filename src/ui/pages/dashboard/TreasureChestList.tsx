@@ -1,3 +1,4 @@
+import { useAuth } from '../../../lib/hooks/use-auth';
 import { DashboardContentWrapper } from '../../components/dashboard/DashboardContentWrapper';
 import DeleteIcon from '../../icons/RouteListDelete';
 import EditIcon from '../../icons/RouteListEdit';
@@ -6,7 +7,7 @@ import { Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useMounted from 'src/lib/hooks/useMounted';
+import useMounted from 'src/lib/hooks/use-mounted';
 import { TreasureChest } from 'src/types/treasurechest';
 import TableList from 'src/ui/components/dashboard/TableList';
 import {
@@ -16,7 +17,7 @@ import {
   StyledOption,
   TableCellStyled,
   Typography400
-} from 'src/ui/shared-styled-components/dashboard';
+} from 'src/ui/style/dashboard';
 import formatDate from 'src/utils/formatDate';
 import { getLogger } from 'src/utils/loggin';
 import styled from 'styled-components';
@@ -53,6 +54,7 @@ const rowOptions = [
 
 const TreasureChestList: FC = () => {
   const mounted = useMounted();
+  const { token } = useAuth();
 
   const navigate = useNavigate();
   const [treasureChests, setTreasureChests] = useState<TreasureChest[]>([]);
@@ -61,11 +63,9 @@ const TreasureChestList: FC = () => {
 
   const getTreasureChests = useCallback(async () => {
     try {
-      const token = sessionStorage.getItem('token');
-
       const CONFIG = {
         headers: {
-          Authorization: `bearer ${token}`
+          Authorization: `bearer ${token?.accessToken}`
         }
       };
       const apiResponse = await axios.get(`${API_URL}/?sort=event_date,ASC`, CONFIG);
@@ -114,10 +114,9 @@ const TreasureChestList: FC = () => {
   };
 
   const onDelete = async (id) => {
-    const token = sessionStorage.getItem('token');
     const CONFIG = {
       headers: {
-        Authorization: `bearer ${token}`
+        Authorization: `bearer ${token?.accessToken}`
       }
     };
     return axios.delete(`${API_URL}/${id}`, CONFIG);

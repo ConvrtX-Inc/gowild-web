@@ -12,7 +12,7 @@ import { Box, Button, Card, CircularProgress, TextField } from '@mui/material';
 import { Formik } from 'formik';
 import { FC, useEffect, useState } from 'react';
 import { Guideline, GuidelineLog } from 'src/types/guidelines';
-import { AbsCircularLoadingBox } from 'src/ui/shared-styled-components/dashboard';
+import { AbsCircularLoadingBox } from 'src/ui/style/dashboard';
 import { getLogger } from 'src/utils/loggin';
 import styled from 'styled-components';
 

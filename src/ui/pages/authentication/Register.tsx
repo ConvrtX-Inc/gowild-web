@@ -1,22 +1,9 @@
 import Logo from '../../components/Logo';
-import {
-  RegisterAmplify,
-  RegisterAuth0,
-  RegisterJWT
-} from '../../components/authentication/register';
+import { RegisterJWT } from '../../components/authentication/register';
 import { Box, Card, CardContent, Container, Divider, Link, Typography } from '@mui/material';
 import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
-
-const platformIcons = {
-  Amplify: '/static/icons/amplify.svg',
-  Auth0: '/static/icons/auth0.svg',
-  Firebase: '/static/icons/firebase.svg',
-  JWT: '/static/icons/jwt.svg'
-};
-
-const platform: string = undefined;
 
 const Register: FC = () => {
   return (
@@ -82,7 +69,7 @@ const Register: FC = () => {
                     }
                   }}
                 >
-                  <img alt='Auth platform' src={platformIcons[platform]} />
+                  <img alt='Auth platform' src='/static/icons/jwt.svg' />
                 </Box>
               </Box>
               <Box
@@ -91,9 +78,7 @@ const Register: FC = () => {
                   mt: 3
                 }}
               >
-                {platform === 'Amplify' && <RegisterAmplify />}
-                {platform === 'Auth0' && <RegisterAuth0 />}
-                {platform === 'JWT' && <RegisterJWT />}
+                <RegisterJWT />
               </Box>
               <Divider sx={{ my: 3 }} />
               <Link

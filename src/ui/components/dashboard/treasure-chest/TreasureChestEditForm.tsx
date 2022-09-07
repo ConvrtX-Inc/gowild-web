@@ -1,4 +1,6 @@
 import * as Yup from 'yup';
+import { useAuth } from '../../../../lib/hooks/use-auth';
+import { useUploadImgFile } from '../../../../lib/hooks/use-upload';
 import EditSponsorList, { SponsorState } from './EditSponsorList';
 import EditUploadImage from './EditUploadImage';
 import { StyledElements } from './TreasureChestCreateForm';
@@ -10,8 +12,7 @@ import { Formik } from 'formik';
 import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TreasureChest } from 'src/types/treasurechest';
-import { StyledTextField, TextFieldLabel } from 'src/ui/shared-styled-components/dashboard';
-import { uploadImgToFirebase } from 'src/utils/firebaseUtils';
+import { StyledTextField, TextFieldLabel } from 'src/ui/style/dashboard';
 import { getLogger } from 'src/utils/loggin';
 
 const logger = getLogger('TreasureChestEditForm');
@@ -51,18 +52,18 @@ interface TreasureChestEditFormProps {
   editTreasure: TreasureChest;
 }
 
-const accessToken = sessionStorage.getItem('token');
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
-
-const CONFIG = {
-  headers: {
-    Authorization: `Bearer ${accessToken}`,
-    'Content-Type': 'application/json'
-  }
-};
 
 const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({ editTreasure }) => {
   const navigate = useNavigate();
+  const uploadImgFile = useUploadImgFile();
+  const { token } = useAuth();
+  const CONFIG = {
+    headers: {
+      Authorization: `Bearer ${token?.accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  };
 
   const [replaceThumbnailImg, setReplaceThumbnail] = useState<boolean>(false);
 
@@ -85,9 +86,9 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({ editTreasure })
     const TREASURE_URL = `${BASE_URL}/treasure-chest`;
     const SPONSOR_URL = `${BASE_URL}/sponsor`;
     try {
-      const thumbnailImgUrl = values?.thumbnailImage
-        ? await uploadImgToFirebase(values.thumbnailImage)
-        : '';
+      const thumbnailImg = values?.thumbnailImage
+        ? await uploadImgFile(values.thumbnailImage)
+        : undefined;
 
       const DATA: TreasureChest = {
         title: values.title,
@@ -98,7 +99,7 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({ editTreasure })
         event_time: values.eventTime,
         no_of_participants: values.numParticipants,
         thumbnail_img: '',
-        img_url: thumbnailImgUrl || editTreasure.img_url,
+        img_url: thumbnailImg?.path || editTreasure.img_url,
         a_r: '' // TODO: Update AR image upload when supported.
       };
 
@@ -110,27 +111,29 @@ const TreasureChestEditForm: FC<TreasureChestEditFormProps> = ({ editTreasure })
             if (sponsor?.deleted && sponsor?.id) {
               await axios.delete(`${SPONSOR_URL}/${sponsor.id}`, CONFIG);
             } else if (sponsor?.id && sponsor?.updated) {
-              const updatedImgLink = sponsor.imageFile
-                ? await uploadImgToFirebase(sponsor.imageFile)
-                : '';
+              const updatedImg = sponsor.imageFile
+                ? await uploadImgFile(sponsor.imageFile)
+                : undefined;
 
               await axios.patch(
                 `${SPONSOR_URL}/${sponsor.id}`,
                 {
                   treasure_chest_id: editTreasure.id,
                   link: sponsor.link,
-                  img_url: updatedImgLink || sponsor.img_url
+                  img_url: updatedImg?.path || sponsor.img_url
                 },
                 CONFIG
               );
             } else if (!sponsor.id) {
-              const imgLink = sponsor.imageFile ? await uploadImgToFirebase(sponsor.imageFile) : '';
+              const imgLink = sponsor.imageFile
+                ? await uploadImgFile(sponsor.imageFile)
+                : undefined;
               await axios.post(
                 SPONSOR_URL,
                 {
                   treasure_chest_id: editTreasure.id,
                   link: sponsor.link,
-                  img_url: imgLink
+                  img_url: imgLink.path
                 },
                 CONFIG
               );

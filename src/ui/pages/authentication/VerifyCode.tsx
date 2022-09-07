@@ -1,20 +1,10 @@
-import { useAuth } from '../../../lib/hooks/useAuth';
 import Logo from '../../components/Logo';
-import { VerifyCodeAmplify } from '../../components/authentication/verify-code';
-import { Box, Card, CardContent, Container, Divider, Link, Typography } from '@mui/material';
+import { Box, Card, CardContent, Container, Typography } from '@mui/material';
 import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
 
-const platformIcons = {
-  Amplify: '/static/icons/amplify.svg',
-  Auth0: '/static/icons/auth0.svg',
-  Firebase: '/static/icons/firebase.svg',
-  JWT: '/static/icons/jwt.svg'
-};
-
 const VerifyCode: FC = () => {
-  const { platform } = useAuth() as any;
   return (
     <>
       <Helmet>
@@ -84,28 +74,9 @@ const VerifyCode: FC = () => {
                     }
                   }}
                 >
-                  <img alt='Auth platform' src={platformIcons[platform]} />
+                  <img alt='Auth platform' src='/static/icons/jwt.svg' />
                 </Box>
               </Box>
-              <Box
-                sx={{
-                  flexGrow: 1,
-                  mt: 3
-                }}
-              >
-                {platform === 'Amplify' && <VerifyCodeAmplify />}
-              </Box>
-              <Divider sx={{ my: 3 }} />
-              {platform === 'Amplify' && (
-                <Link
-                  color='textSecondary'
-                  component={RouterLink}
-                  to='/authentication/password-recovery'
-                  variant='body2'
-                >
-                  Did you not receive the code?
-                </Link>
-              )}
             </CardContent>
           </Card>
         </Container>

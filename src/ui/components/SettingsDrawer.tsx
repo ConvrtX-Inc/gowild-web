@@ -1,5 +1,5 @@
 import { THEMES } from '../../constants';
-import useSettings from '../../lib/hooks/useSettings';
+import useSettings from '../../lib/hooks/use-settings';
 import AdjustmentsIcon from '../icons/Adjustments';
 import {
   Box,

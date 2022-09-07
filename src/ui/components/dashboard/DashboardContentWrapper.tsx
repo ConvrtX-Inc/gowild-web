@@ -1,4 +1,4 @@
-import useSettings from '../../../lib/hooks/useSettings';
+import useSettings from '../../../lib/hooks/use-settings';
 import NotificationIcon from '../../icons/WorkspaceNotification';
 import { Avatar, Box, Container, Grid, IconButton, Typography } from '@mui/material';
 import React, { FC } from 'react';

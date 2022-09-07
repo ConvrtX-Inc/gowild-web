@@ -1,19 +1,10 @@
-import { LoginAmplify, LoginAuth0, LoginJWT } from '../../components/authentication/login';
-import { Box, Container, Link } from '@mui/material';
+import { LoginJWT } from '../../components/authentication/login';
+import { Box, Container } from '@mui/material';
 import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
 import SmallWhiteMoonIcon from 'src/ui/icons/LoginWhiteMoon';
 import styled from 'styled-components';
-
-const platformIcons = {
-  Amplify: '/static/icons/amplify.svg',
-  Auth0: '/static/icons/auth0.svg',
-  Firebase: '/static/icons/firebase.svg',
-  JWT: '/static/icons/jwt.svg'
-};
-
-const platform: string = 'JWT';
 
 const Login: FC = () => {
   return (
@@ -50,20 +41,17 @@ const Login: FC = () => {
                     <SubTitle>Enter your details below</SubTitle>
                   </div>
 
-                  {/* ------------------DYNAMIC FORMS------------------ */}
-                  {platform !== 'JWT' && platform !== 'Axios' && (
-                    <Box
-                      sx={{
-                        height: 32,
-                        '& > img': {
-                          maxHeight: '100%',
-                          width: 'auto'
-                        }
-                      }}
-                    >
-                      <img alt='Auth platform' src={platformIcons[platform]} />
-                    </Box>
-                  )}
+                  <Box
+                    sx={{
+                      height: 32,
+                      '& > img': {
+                        maxHeight: '100%',
+                        width: 'auto'
+                      }
+                    }}
+                  >
+                    <img alt='Auth platform' src='/static/icons/jwt.svg' />
+                  </Box>
                 </Box>
 
                 <Box
@@ -72,22 +60,8 @@ const Login: FC = () => {
                     mt: '54px'
                   }}
                 >
-                  {platform === 'Amplify' && <LoginAmplify />}
-                  {platform === 'Auth0' && <LoginAuth0 />}
-                  {platform === 'JWT' && <LoginJWT />}
-                  {platform === 'Axios' && <LoginJWT />}
+                  <LoginJWT />
                 </Box>
-                {platform === 'Amplify' && (
-                  <Link
-                    color='textSecondary'
-                    component={RouterLink}
-                    sx={{ mt: 1 }}
-                    to='/authentication/password-recovery'
-                    variant='body2'
-                  >
-                    Forgot password
-                  </Link>
-                )}
               </FormContainer>
             </Background1stLineWave>
           </BackgroundImg2ndLayer>

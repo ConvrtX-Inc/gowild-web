@@ -1,20 +1,10 @@
-import { useAuth } from '../../../lib/hooks/useAuth';
-import {
-  PasswordRecoveryAmplify,
-  PasswordRecoveryJWT
-} from '../../components/authentication/password-recovery';
+import { useAuth } from '../../../lib/hooks/use-auth';
+import { PasswordRecoveryJWT } from '../../components/authentication/password-recovery';
 import { Box, Container } from '@mui/material';
 import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
 import styled from 'styled-components';
-
-const platformIcons = {
-  Amplify: '/static/icons/amplify.svg',
-  Auth0: '/static/icons/auth0.svg',
-  Firebase: '/static/icons/firebase.svg',
-  JWT: '/static/icons/jwt.svg'
-};
 
 const PasswordRecovery: FC = () => {
   const { platform } = useAuth() as any;
@@ -52,20 +42,17 @@ const PasswordRecovery: FC = () => {
                   <SubTitle>Enter your details below</SubTitle>
                 </div>
 
-                {/* ------------------DYNAMIC FORMS------------------ */}
-                {platform !== 'JWT' && (
-                  <Box
-                    sx={{
-                      height: 32,
-                      '& > img': {
-                        maxHeight: '100%',
-                        width: 'auto'
-                      }
-                    }}
-                  >
-                    <img alt='Auth platform' src={platformIcons[platform]} />
-                  </Box>
-                )}
+                <Box
+                  sx={{
+                    height: 32,
+                    '& > img': {
+                      maxHeight: '100%',
+                      width: 'auto'
+                    }
+                  }}
+                >
+                  <img alt='Auth platform' src='/static/icons/jwt.svg' />
+                </Box>
               </Box>
               <Box
                 sx={{
@@ -73,17 +60,7 @@ const PasswordRecovery: FC = () => {
                   mt: 3
                 }}
               >
-                {platform === 'JWT' && <PasswordRecoveryJWT />}
-              </Box>
-
-              {/* -------For Amplify------- */}
-              <Box
-                sx={{
-                  flexGrow: 1,
-                  mt: 3
-                }}
-              >
-                {platform === 'Amplify' && <PasswordRecoveryAmplify />}
+                <PasswordRecoveryJWT />
               </Box>
             </Box>
           </StyledContainer>

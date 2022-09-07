@@ -3,7 +3,7 @@ import { Avatar, Box, Divider, IconButton, TextField, Tooltip } from '@mui/mater
 import PropTypes from 'prop-types';
 import type { ChangeEvent, FC, KeyboardEvent } from 'react';
 import { useRef, useState } from 'react';
-import { useAuth } from 'src/lib/hooks/useAuth';
+import { useAuth } from 'src/lib/hooks/use-auth';
 
 interface ChatMessageAddProps {
   disabled?: boolean;

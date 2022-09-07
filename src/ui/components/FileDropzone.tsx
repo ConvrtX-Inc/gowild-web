@@ -6,8 +6,6 @@ import type { DropzoneOptions } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 
-// import bytesToSize from "../utils/bytesToSize";
-
 interface FileDropzoneProps extends DropzoneOptions {
   files?: any[];
   onRemove?: (file: any) => void;
@@ -175,16 +173,6 @@ const CaptionTypo = styled(Box)`
     color: rgba(0, 0, 0, 0.2);
   }
 `;
-
-// const ImageSize = styled(Box)`
-//   && {
-//     font-family: "Gilroy Medium";
-//     font-style: normal;
-//     line-height: 27px;
-//     color: #000000;
-//     opacity: 0.4;
-//   }
-// `;
 
 const ImgBoxError = styled(Box)`
   && {

@@ -1,4 +1,4 @@
-import { useAuth } from '../../../lib/hooks/useAuth';
+import { useAuth } from '../../../lib/hooks/use-auth';
 import CogIcon from '../../icons/Cog';
 import UserIcon from '../../icons/User';
 import {

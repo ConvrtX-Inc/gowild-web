@@ -1,5 +1,6 @@
-import useMounted from '../../../lib/hooks/useMounted';
-import useSettings from '../../../lib/hooks/useSettings';
+import { useAuth } from '../../../lib/hooks/use-auth';
+import useMounted from '../../../lib/hooks/use-mounted';
+import useSettings from '../../../lib/hooks/use-settings';
 import type { SingleRoute } from '../../../types/route-lists';
 import { RouteViewForm } from '../../components/dashboard/route-list';
 import NotificationIcon from '../../icons/WorkspaceNotification';
@@ -16,6 +17,7 @@ import styled from 'styled-components';
 const logger = getLogger('Route View Page');
 
 const RouteListView: FC = () => {
+  const { token, sub } = useAuth();
   const { state } = useLocation();
   const { routeId } = state as any;
   const mounted = useMounted();
@@ -24,11 +26,10 @@ const RouteListView: FC = () => {
   const [selectedRoute, setSelectedRoute] = useState<SingleRoute[]>([]);
   const getOneRoute = useCallback(async () => {
     try {
-      const token = sessionStorage.getItem('token');
       const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route/${routeId}`;
       const CONFIG = {
         headers: {
-          Authorization: `bearer ${token}`
+          Authorization: `Bearer ${token?.accessToken}`
         }
       };
       const apiResponse = await axios.get(URL, CONFIG);

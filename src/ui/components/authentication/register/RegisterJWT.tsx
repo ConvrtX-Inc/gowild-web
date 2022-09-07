@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
-import { useAuth } from '../../../../lib/hooks/useAuth';
-import useMounted from '../../../../lib/hooks/useMounted';
+import { useAuth } from '../../../../lib/hooks/use-auth';
+import useMounted from '../../../../lib/hooks/use-mounted';
 import { Box, Button, Checkbox, FormHelperText, Link, TextField, Typography } from '@mui/material';
 import { Formik } from 'formik';
 import type { FC } from 'react';

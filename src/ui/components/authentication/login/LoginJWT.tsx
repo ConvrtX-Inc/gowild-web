@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { useAuthControllerLoginMutation } from '../../../../lib/api/go-wild.api';
-import useMounted from '../../../../lib/hooks/useMounted';
+import useMounted from '../../../../lib/hooks/use-mounted';
 import { useAppDispatch } from '../../../../lib/store';
 import { setToken } from '../../../../lib/store/auth.slice';
 import EmailIcon from '../../../icons/LoginEmail';
