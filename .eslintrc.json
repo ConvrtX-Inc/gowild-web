@@ -33,12 +33,12 @@
     "operator-linebreak": "off",
     "react/jsx-curly-newline": "off",
     "@typescript-eslint/indent": "off",
-    "react/jsx-indent": "off",
+    "react/jsx-indent": "warn",
     "jsx-quotes": ["error", "prefer-single"],
     "react/require-default-props": "off",
     "@typescript-eslint/dot-notation": "off",
-    "react/no-array-index-key": "off",
+    "react/no-array-index-key": "warn",
     "react/jsx-wrap-multilines": "off",
-    "jsx-a11y/anchor-is-valid": "off"
+    "jsx-a11y/anchor-is-valid": "warn"
   }
 }
