@@ -8,7 +8,7 @@
     "lint-fix": "eslint --fix ./src",
     "start": "serve -s build",
     "dev": "DISABLE_ESLINT_PLUGIN=true BROWSER=none react-scripts start",
-    "build": "react-scripts build",
+    "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "eject": "react-scripts eject",
     "prepare": "husky install",
     "format": "prettier --write ./src"
