@@ -2430,7 +2430,7 @@ export type FileMetaData = {
   encoding: string | null;
 };
 export type FileEntity = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   path: string;
@@ -2440,7 +2440,7 @@ export type FileEntity = {
   metaData: FileMetaData | null;
 };
 export type Status = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   statusName:
@@ -2456,7 +2456,7 @@ export type Status = {
   isActive: boolean;
 };
 export type User = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   firstName: string | null;
@@ -2487,7 +2487,7 @@ export type GetManyStatusResponseDto = {
   pageCount: number;
 };
 export type Notification = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2541,7 +2541,7 @@ export type AuthGoogleLoginDto = {
   id_token: string;
 };
 export type Currency = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   code: string;
@@ -2564,7 +2564,7 @@ export type CheckVerificationTokenDto = {
   verify_code: string;
 };
 export type Room = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   name: string;
@@ -2578,7 +2578,7 @@ export type GetManyRoomResponseDto = {
   pageCount: number;
 };
 export type Participant = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2592,7 +2592,7 @@ export type GetManyParticipantResponseDto = {
   pageCount: number;
 };
 export type Friends = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2607,7 +2607,7 @@ export type GetManyFriendsResponseDto = {
   pageCount: number;
 };
 export type Route = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2628,7 +2628,7 @@ export type GetManyRouteResponseDto = {
   pageCount: number;
 };
 export type RouteClue = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   route_id: string;
@@ -2650,7 +2650,7 @@ export type GetManyRouteClueResponseDto = {
   pageCount: number;
 };
 export type PostFeed = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2668,7 +2668,7 @@ export type GetManyPostFeedResponseDto = {
   pageCount: number;
 };
 export type Like = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2682,7 +2682,7 @@ export type GetManyLikeResponseDto = {
   pageCount: number;
 };
 export type Share = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2697,7 +2697,7 @@ export type GetManyShareResponseDto = {
   pageCount: number;
 };
 export type Comment = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2712,7 +2712,7 @@ export type GetManyCommentResponseDto = {
   pageCount: number;
 };
 export type TreasureChest = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   title: string;
@@ -2734,7 +2734,7 @@ export type GetManyTreasureChestResponseDto = {
   pageCount: number;
 };
 export type Sponsor = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   treasure_chest_id: string;
@@ -2750,7 +2750,7 @@ export type GetManySponsorResponseDto = {
   pageCount: number;
 };
 export type Guideline = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   type: string;
@@ -2765,7 +2765,7 @@ export type GetManyGuidelineResponseDto = {
   pageCount: number;
 };
 export type GuidelineLog = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   userId: string;
@@ -2779,7 +2779,7 @@ export type GetManyGuidelineLogResponseDto = {
   pageCount: number;
 };
 export type RouteHistoricalEvent = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   route_id: string;
@@ -2798,7 +2798,7 @@ export type GetManyRouteHistoricalEventResponseDto = {
   pageCount: number;
 };
 export type RouteHistoricalEventPhoto = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   route_historical_event_id: string;
@@ -2812,7 +2812,7 @@ export type GetManyRouteHistoricalEventPhotoResponseDto = {
   pageCount: number;
 };
 export type Ticket = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2829,7 +2829,7 @@ export type GetManyTicketResponseDto = {
   pageCount: number;
 };
 export type TicketMessage = {
-  id: string;
+  id: string | null;
   createdDate: string | null;
   updatedDate: string | null;
   ticket_id: string;

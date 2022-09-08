@@ -11,8 +11,8 @@ import styled from 'styled-components';
 // import bytesToSize from "../utils/bytesToSize";
 
 interface FileDropzoneHistoricalProps extends DropzoneOptions {
-  files?: any[];
-  onRemove?: (file: any) => void;
+  files?: File[];
+  onRemove?: (file: File) => void;
   onRemoveAll?: () => void;
   onUpload?: () => void;
 }

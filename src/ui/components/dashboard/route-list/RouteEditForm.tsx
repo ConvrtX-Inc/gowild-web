@@ -1,7 +1,11 @@
 import * as Yup from 'yup';
+import {
+  RouteHistoricalEvent,
+  useCreateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoMutation,
+  useCreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventMutation
+} from '../../../../lib/api/go-wild.api';
 import { useAuth } from '../../../../lib/hooks/use-auth';
 import { useUploadImgFile } from '../../../../lib/hooks/use-upload';
-import { useAppDispatch } from '../../../../lib/store';
 import ExpandMoreIcon from '../../../icons/ExpandAccordion';
 import FinishingPtIcon from '../../../icons/LocationFinishingPt';
 import HistoricalEventIcon from '../../../icons/LocationHistoricalEvent';
@@ -42,23 +46,25 @@ const RouteEditForm: FC<any> = (props) => {
   const uploadImgFile = useUploadImgFile();
   const { token, sub } = useAuth();
 
+  const [createRouteHistoricalEventPhoto] =
+    useCreateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoMutation();
+  const [createRouteHistoricalEvents] =
+    useCreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventMutation();
+
   const { singleRoute } = props;
-  logger.debug('EDIT FORM PROPS: ', singleRoute);
-  const dispatch = useAppDispatch();
   const [
     ,
     // b64files
     setB64files
   ] = useState<any>('');
-  const [files, setFiles] = useState<any[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [isImgLoaded, setIsImgLoaded] = useState(true);
   const [
     ,
     // b64historicalFiles
     setB64historicalFiles
   ] = useState<any>('');
-  const [historicalFiles, setHistoricalFiles] = useState<any[]>([]);
-  const [eventId, setEventId] = useState<string>('');
+  const [historicalFiles, setHistoricalFiles] = useState<File[]>([]);
   const [gmapMarkerUid, setGmapMarkerUid] = useState('');
   const [historicalEvents, setHistoricalEvents] = useState([]);
   const [loadGmapAfterGetEvents, setLoadGmapAfterGetEvents] = useState(false);
@@ -97,7 +103,6 @@ const RouteEditForm: FC<any> = (props) => {
   const handleDrop = (newFiles: any): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const file = newFiles.find((f) => f);
-    logger.debug(file);
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -134,7 +139,7 @@ const RouteEditForm: FC<any> = (props) => {
     };
   };
 
-  const handleHistoricalRemove = (file): void => {
+  const handleHistoricalRemove = (file: File): void => {
     setHistoricalFiles((prevFiles) => prevFiles.filter((_file) => _file.path !== file.path));
   };
 
@@ -163,72 +168,64 @@ const RouteEditForm: FC<any> = (props) => {
       getHistoricalEvents();
     }
   }, [singleRoute.id, getHistoricalEvents]);
-  logger.debug('EVENT ID AFTER: ', eventId);
 
+  logger.debug('historicalFiles images : ' + historicalFiles.length);
   // Add HistoricalEvent & Photo
-  const handleAddEventPhoto = useCallback(async () => {
+  const handleAddEventPhoto = async (eventId: string) => {
     try {
-      const uploaded = await uploadImgFile(historicalFiles[0]);
+      if (historicalFiles.length === 0) {
+        return;
+      }
 
-      const IMGURL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-event-photo`;
-      const IMGBODY = {
-        route_historical_event_id: eventId,
-        event_photo_url: uploaded.path
-      };
-      const IMGCONFIG = {
-        headers: {
-          Authorization: `Bearer ${token?.accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      };
-      const apiResponseImg = await axios.post(IMGURL, IMGBODY, IMGCONFIG);
-      logger.debug('Add Historical Event Photo Response: ', apiResponseImg);
+      logger.debug('Should upload Historical Event Photo');
+      const uploaded = await uploadImgFile(historicalFiles[0]);
+      const result = await createRouteHistoricalEventPhoto({
+        routeHistoricalEventPhoto: {
+          route_historical_event_id: eventId,
+          event_photo_url: uploaded.path
+        } as any
+      });
+
+      if ('data' in result) {
+        logger.debug('Add Historical Event Photo Response: ', result);
+      }
     } catch (err) {
       logger.debug('Handle Add Event Photo Error: ', err);
     }
-  }, [eventId]);
-
-  useEffect(() => {
-    if (eventId) {
-      handleAddEventPhoto();
-    }
-  }, [eventId, handleAddEventPhoto]);
+  };
 
   const handleAddHistorical = useCallback(
     async (histoLong, histoLat, histoTitle, histoSubTitle, histoDescription) => {
       try {
-        logger.debug('SHOW CURRENT route_id: ', singleRoute.id);
-        const uuid = uuidv4();
-        logger.debug('uuid generated ', uuid);
-        const URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1/route-historical-events`;
-        const DATA = {
+        const routeHistoricalEvent: RouteHistoricalEvent = {
           route_id: singleRoute.id,
-          route_clue_id: uuid,
           closure_uid: gmapMarkerUid,
           event_long: histoLong,
           event_lat: histoLat,
           event_title: histoTitle,
           event_subtitle: histoSubTitle,
-          description: histoDescription
+          description: histoDescription,
+          id: undefined,
+          createdDate: undefined,
+          updatedDate: undefined
         };
-        const CONFIG = {
-          headers: {
-            Authorization: `Bearer ${token?.accessToken}`,
-            'Content-Type': 'application/json'
-          }
-        };
-        const apiResponse = await axios.post(URL, DATA, CONFIG);
-        logger.debug('Add Historical Event Response: ', apiResponse);
-        setEventId(apiResponse.data.id);
-        getHistoricalEvents();
-        scrollToHistoricalEvents();
-        setHistoricalFiles([]);
-        setB64historicalFiles('');
+
+        const result = await createRouteHistoricalEvents({ routeHistoricalEvent });
+        if ('data' in result) {
+          const apiResponse: RouteHistoricalEvent = result.data;
+
+          await handleAddEventPhoto(apiResponse.id);
+          getHistoricalEvents();
+          scrollToHistoricalEvents();
+          setHistoricalFiles([]);
+          setB64historicalFiles('');
+          logger.debug('Add Historical Event Response: ', apiResponse);
+        }
       } catch (err) {
         logger.debug('Adding Historical Event Error: ', err);
       }
     },
-    [singleRoute.id, getHistoricalEvents, gmapMarkerUid]
+    [singleRoute.id, getHistoricalEvents, gmapMarkerUid, historicalFiles]
   );
 
   const handleEditSelectedEvent = () => {
@@ -741,7 +738,6 @@ const RouteEditForm: FC<any> = (props) => {
                                         }
                                       >
                                         {historical.event_title}
-                                        {logger.debug(historical.event_title.length)}
                                       </AccordionValue>
                                       <EditEventTextField
                                         sx={{

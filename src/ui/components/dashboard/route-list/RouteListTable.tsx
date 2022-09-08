@@ -413,7 +413,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                   </TableRow>
                 )}
 
-                {paginatedNormalRoutes.map((normalRoute) => {
+                {paginatedNormalRoutes.map((normalRoute: Route) => {
                   const isNormalRouteselected = selectedNormalRoutes.includes(normalRoute.id);
                   return (
                     <StyledTableRow hover key={normalRoute.id} selected={isNormalRouteselected}>
@@ -447,7 +447,7 @@ const RouteListTable: FC<RouteListTableProps> = (props) => {
                       </TableCellStyled>
                       <TableCellStyled>
                         <CenteredBox>
-                          <Typography400>{formatDate(normalRoute.created_date)}</Typography400>
+                          <Typography400>{formatDate(normalRoute.createdDate)}</Typography400>
                         </CenteredBox>
                       </TableCellStyled>
                       <TableCellStyled>
