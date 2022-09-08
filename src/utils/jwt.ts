@@ -1,5 +1,5 @@
 /* eslint-disable no-bitwise */
-export const JWT_SECRET = "nexxus-top-secret-key";
+export const JWT_SECRET = 'nexxus-top-secret-key';
 export const JWT_EXPIRES_IN = 3600 * 24 * 2; // 2 days
 
 // Since we are unable to sign a JWT in a browser
@@ -10,7 +10,7 @@ export const sign = (
   payload: Record<string, any>,
   privateKey: string,
   header: Record<string, any>
-) => {
+): string => {
   const now = new Date();
   header.expiresIn = new Date(now.getTime() + header.expiresIn);
   const encodedHeader = btoa(JSON.stringify(header));
@@ -18,11 +18,9 @@ export const sign = (
   const signature = btoa(
     Array.from(encodedPayload)
       .map((item, key) =>
-        String.fromCharCode(
-          item.charCodeAt(0) ^ privateKey[key % privateKey.length].charCodeAt(0)
-        )
+        String.fromCharCode(item.charCodeAt(0) ^ privateKey[key % privateKey.length].charCodeAt(0))
       )
-      .join("")
+      .join('')
   );
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -31,57 +29,50 @@ export const sign = (
 // Since we create a fake signed token, we have to implement a fake jwt decode
 // platform to simulate "jwt-decode" library.
 export const decode = (token: string): any => {
-  const [encodedHeader, encodedPayload, signature] = token.split(".");
+  const [encodedHeader, encodedPayload, signature] = token.split('.');
   const header = JSON.parse(atob(encodedHeader));
   const payload = JSON.parse(atob(encodedPayload));
   const now = new Date();
 
   if (now < header.expiresIn) {
-    throw new Error("Expired token");
+    throw new Error('Expired token');
   }
 
   const verifiedSignature = btoa(
     Array.from(encodedPayload)
       .map((item, key) =>
-        String.fromCharCode(
-          item.charCodeAt(0) ^ JWT_SECRET[key % JWT_SECRET.length].charCodeAt(0)
-        )
+        String.fromCharCode(item.charCodeAt(0) ^ JWT_SECRET[key % JWT_SECRET.length].charCodeAt(0))
       )
-      .join("")
+      .join('')
   );
 
   if (verifiedSignature !== signature) {
-    throw new Error("Invalid signature");
+    throw new Error('Invalid signature');
   }
 
   return payload;
 };
 
-export const verify = (
-  token: string,
-  privateKey: string
-): Record<string, any> => {
-  const [encodedHeader, encodedPayload, signature] = token.split(".");
+export const verify = (token: string, privateKey: string): Record<string, any> => {
+  const [encodedHeader, encodedPayload, signature] = token.split('.');
   const header = JSON.parse(atob(encodedHeader));
   const payload = JSON.parse(atob(encodedPayload));
   const now = new Date();
 
   if (now < header.expiresIn) {
-    throw new Error("Expired token");
+    throw new Error('Expired token');
   }
 
   const verifiedSignature = btoa(
     Array.from(encodedPayload)
       .map((item, key) =>
-        String.fromCharCode(
-          item.charCodeAt(0) ^ privateKey[key % privateKey.length].charCodeAt(0)
-        )
+        String.fromCharCode(item.charCodeAt(0) ^ privateKey[key % privateKey.length].charCodeAt(0))
       )
-      .join("")
+      .join('')
   );
 
   if (verifiedSignature !== signature) {
-    throw new Error("Invalid signature");
+    throw new Error('Invalid signature');
   }
 
   return payload;

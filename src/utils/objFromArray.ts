@@ -1,9 +1,7 @@
-const objFromArray = (arr: any[], key = 'id'): {} => arr.reduce((
-  accumulator,
-  current
-) => {
-  accumulator[current[key]] = current;
-  return accumulator;
-}, {});
+const objFromArray = (arr: any[], key = 'id'): Record<string, any> =>
+  arr.reduce((accumulator, current) => {
+    accumulator[current[key]] = current;
+    return accumulator;
+  }, {});
 
 export default objFromArray;

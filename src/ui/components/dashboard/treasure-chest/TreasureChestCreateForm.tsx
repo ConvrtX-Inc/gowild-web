@@ -1,0 +1,310 @@
+import * as Yup from 'yup';
+import { useAuth } from '../../../../lib/hooks/use-auth';
+import { useUploadImgFile } from '../../../../lib/hooks/use-upload';
+import SponsorList, { SponsorState } from './SponsorList';
+import TMap from './TreasureChestMap';
+import UploadImage from './UploadImage';
+import { Box, CircularProgress, Grid } from '@mui/material';
+import axios from 'axios';
+import { Formik } from 'formik';
+import { FC, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { TreasureChest } from 'src/types/treasurechest';
+import { DashboardButton, StyledTextField, TextFieldLabel } from 'src/ui/style/dashboard';
+import { getLogger } from 'src/utils/loggin';
+import styled from 'styled-components';
+
+const logger = getLogger('TreasureChestCreateForm');
+
+const location = {
+  address: '7 Carlson St, Kitimat, BC V8C 1A9, Canada',
+  lat: 54.06291864840513,
+  lng: -128.6423159788208
+};
+
+const TreasureChestSchema = Yup['object']().shape({
+  title: Yup.string().required('Please enter a title.'),
+  description: Yup.string().required('Please enter a description.'),
+  tLocationLat: Yup.number()
+    .min(-90, 'Valid value range -90 to 90')
+    .max(90, 'Valid value range -90 to 90')
+    .typeError('Must be a number')
+    .required('Please enter a latitude'),
+  tLocationLong: Yup.number()
+    .min(-180, 'Valid value range -180 to 180')
+    .max(180, 'Valid value range -180 to 180')
+    .typeError('Must be a number')
+    .required('Please enter a longitude'),
+  eventDate: Yup.string().required('Please enter the event date'),
+  eventTime: Yup.string().required('Please enter the event time'),
+  numParticipants: Yup.number()
+    .min(1)
+    .typeError('Must be a number')
+    .required('Please enter the number of participants'),
+  thumbnailImage: Yup.mixed().required('Please upload an image.'),
+  augmentImage: Yup.mixed().notRequired() // TODO: Update when AR is supported
+});
+
+type ChestFormObject = Yup.InferType<typeof TreasureChestSchema>;
+
+const initFormObject = {
+  title: '',
+  description: '',
+  tLocationLat: String(location.lat.toFixed(4)),
+  tLocationLong: String(location.lng.toFixed(4)),
+  eventDate: '',
+  eventTime: '',
+  numParticipants: '',
+  thumbnailImage: null,
+  augmentImage: null
+};
+
+const TreasureChestCreateForm: FC = () => {
+  const { token } = useAuth();
+  const navigate = useNavigate();
+  const uploadImgFile = useUploadImgFile();
+
+  const [sponsors, setSponsors] = useState<SponsorState[]>([]);
+
+  const createNewChest = async (values: ChestFormObject): Promise<boolean> => {
+    const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
+    const TREASURE_URL = `${BASE_URL}/treasure-chest`;
+    const SPONSOR_URL = `${BASE_URL}/sponsor`;
+
+    try {
+      const fbThumbnailLink = await uploadImgFile(values.thumbnailImage);
+      const DATA: TreasureChest = {
+        title: values.title,
+        description: values.description,
+        location_long: values.tLocationLong,
+        location_lat: values.tLocationLat,
+        event_date: values.eventDate,
+        event_time: values.eventTime,
+        no_of_participants: values.numParticipants,
+        thumbnail_img: '',
+        img_url: fbThumbnailLink.path,
+        a_r: '' // TODO: Update AR image upload when supported.
+      };
+      const CONFIG = {
+        headers: {
+          Authorization: `Bearer ${token?.accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      };
+
+      const chestAPIResponse = await axios.post(TREASURE_URL, DATA, CONFIG);
+      const treasureChestId = chestAPIResponse.data.id;
+
+      if (sponsors.length > 0) {
+        await Promise.all(
+          sponsors.map(async (sponsor) => {
+            if (sponsor.imageFile) {
+              const fbImageLink = await uploadImgFile(sponsor.imageFile);
+              await axios.post(
+                SPONSOR_URL,
+                {
+                  treasure_chest_id: treasureChestId,
+                  img: '',
+                  link: sponsor.link,
+                  img_url: fbImageLink.path
+                },
+                CONFIG
+              );
+            }
+          })
+        );
+      }
+      return true;
+    } catch (err) {
+      logger.error(err);
+      return false;
+    }
+  };
+
+  return (
+    <Formik
+      initialValues={initFormObject}
+      validationSchema={TreasureChestSchema}
+      onSubmit={async (values, { setSubmitting }) => {
+        setSubmitting(true);
+        const created = await createNewChest(values as any);
+        setSubmitting(false);
+        if (created) navigate('/dashboard/treasure-chest-list');
+      }}
+      validateOnBlur={false}
+      validateOnChange={false}
+    >
+      {({ values, errors, handleChange, handleSubmit, isSubmitting, setFieldValue }) => (
+        <form noValidate onSubmit={handleSubmit}>
+          <FormContainer>
+            <ColumnLeft mr={2}>
+              <TextFieldLabel>Title</TextFieldLabel>
+              <StyledTextField
+                onChange={handleChange}
+                name='title'
+                value={values.title}
+                error={Boolean(errors.title)}
+                helperText={errors.title}
+              />
+              <TextFieldLabel>Description</TextFieldLabel>
+              <StyledTextField
+                multiline
+                onChange={handleChange}
+                name='description'
+                value={values.description}
+                error={Boolean(errors.description)}
+                helperText={errors.description}
+              />
+              <TextFieldLabel>Treasure Location</TextFieldLabel>
+              <StyledTextField
+                onChange={handleChange}
+                name='tLocationLat'
+                value={values.tLocationLat}
+                error={Boolean(errors.tLocationLat)}
+                helperText={errors.tLocationLat}
+              />
+              <StyledTextField
+                onChange={handleChange}
+                name='tLocationLong'
+                value={values.tLocationLong}
+                error={Boolean(errors.tLocationLong)}
+                helperText={errors.tLocationLong}
+              />
+              <TextFieldLabel>Sponsors</TextFieldLabel>
+              <SponsorList sponsors={sponsors} setSponsors={setSponsors} />
+            </ColumnLeft>
+            <ColumnRight>
+              <Box sx={{ height: '539px', width: '100%' }} mb={1}>
+                <TMap
+                  handleChestLoc={(lat, long) => {
+                    setFieldValue('tLocationLat', lat.toFixed(4));
+                    setFieldValue('tLocationLong', long.toFixed(4));
+                  }}
+                  defaultLocation={location}
+                  lat={Number(values.tLocationLat)}
+                  lng={Number(values.tLocationLong)}
+                />
+              </Box>
+              <Box>
+                <Grid container spacing={2}>
+                  <Grid container item xs={6} direction='column'>
+                    <TextFieldLabel>Event Date</TextFieldLabel>
+                    <StyledTextField
+                      type='date'
+                      onChange={handleChange}
+                      name='eventDate'
+                      value={values.eventDate}
+                      error={Boolean(errors.eventDate)}
+                      helperText={errors.eventDate}
+                      inputProps={{
+                        min: new Date().toISOString().split('T')[0]
+                      }}
+                    />
+
+                    <TextFieldLabel>Time</TextFieldLabel>
+                    <StyledTextField
+                      type='time'
+                      onChange={handleChange}
+                      name='eventTime'
+                      value={values.eventTime}
+                      error={Boolean(errors.eventTime)}
+                      helperText={errors.eventTime}
+                    />
+
+                    <TextFieldLabel>Number of Participants</TextFieldLabel>
+                    <StyledTextField
+                      onChange={handleChange}
+                      name='numParticipants'
+                      value={values.numParticipants}
+                      error={Boolean(errors.numParticipants)}
+                      helperText={errors.numParticipants}
+                    />
+                    {isSubmitting ? (
+                      <SubmitLoadingBox>
+                        <CircularProgress />
+                      </SubmitLoadingBox>
+                    ) : (
+                      <SubmitButton type='submit' disabled={isSubmitting}>
+                        Submit
+                      </SubmitButton>
+                    )}
+                  </Grid>
+                  <Grid container item xs={6} direction='column'>
+                    {/* <UploadImage
+                      label="Upload Augmented Reality"
+                      onImgUpload={(file) =>
+                        setFieldValue("augmentImage", file)
+                      }
+                      disable={true}
+                      imageFile={values.augmentImage}
+                      error={errors.augmentImage}
+                    /> */}
+                    <UploadImage
+                      label='Upload Thumbnail'
+                      onImgUpload={(file) => setFieldValue('thumbnailImage', file)}
+                      imageFile={values.thumbnailImage}
+                      error={errors.thumbnailImage}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+            </ColumnRight>
+          </FormContainer>
+        </form>
+      )}
+    </Formik>
+  );
+};
+
+export default TreasureChestCreateForm;
+
+const SubmitLoadingBox = styled(Box)`
+  && {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    && .MuiCircularProgress-svg {
+      color: #2995a8;
+    }
+  }
+`;
+
+const SubmitButton = styled(DashboardButton)`
+  && {
+    height: 60px;
+    width: 100%;
+    background-size: contain;
+  }
+`;
+
+const FormContainer = styled(Box)`
+  && {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+    font-family: 'Gilroy SemiBold', 'Gilroy Bold';
+  }
+`;
+const ColumnLeft = styled(Box)`
+  && {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+`;
+const ColumnRight = styled(Box)`
+  && {
+    display: flex;
+    flex-direction: column;
+    flex: 3;
+  }
+`;
+
+export const StyledElements = {
+  SubmitLoadingBox,
+  SubmitButton,
+  FormContainer,
+  ColumnLeft,
+  ColumnRight
+};

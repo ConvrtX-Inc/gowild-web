@@ -15,7 +15,7 @@ export interface NormalRoute {
   pageCount?: 0;
 }
 
-//GET ONE ROUTE
+// GET ONE ROUTE
 export interface SingleRoute {
   created_date?: string;
   description: string;

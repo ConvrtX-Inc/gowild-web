@@ -1,43 +1,31 @@
-import { useEffect } from "react";
-import type { FC } from "react";
-import { useRoutes } from "react-router-dom";
-import { CssBaseline, ThemeProvider } from "@material-ui/core";
-import "./i18n";
-import RTL from "./components/RTL";
-// import SettingsDrawer from './components/SettingsDrawer';
-import SplashScreen from "./components/SplashScreen";
-import { gtmConfig } from "./config";
-import useAuth from "./hooks/useAuth";
-import useScrollReset from "./hooks/useScrollReset";
-import useSettings from "./hooks/useSettings";
-import gtm from "./lib/gtm";
-import routes from "./routes";
-import { createCustomTheme } from "./theme";
+import { appRoutes } from './app.routes';
+import './i18n';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import type { FC } from 'react';
+import { useRoutes } from 'react-router-dom';
+import useScrollReset from 'src/lib/hooks/use-scroll-reset';
+import useSettings from 'src/lib/hooks/use-settings';
+import RTL from 'src/ui/components/RTL';
+import { createCustomTheme } from 'src/ui/theme';
 
 const App: FC = () => {
-  const content = useRoutes(routes);
+  const content = useRoutes(appRoutes);
   const { settings } = useSettings();
-  const auth = useAuth();
 
   useScrollReset();
-
-  useEffect(() => {
-    gtm.initialize(gtmConfig);
-  }, []);
 
   const theme = createCustomTheme({
     direction: settings.direction,
     responsiveFontSizes: settings.responsiveFontSizes,
     roundedCorners: settings.roundedCorners,
-    theme: settings.theme,
+    theme: settings.theme
   });
 
   return (
     <ThemeProvider theme={theme}>
       <RTL direction={settings.direction}>
         <CssBaseline />
-        {/* <SettingsDrawer /> */}
-        {auth.isInitialized ? content : <SplashScreen />}
+        {content}
       </RTL>
     </ThemeProvider>
   );
