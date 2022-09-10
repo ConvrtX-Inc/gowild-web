@@ -103,6 +103,10 @@ const RouteEditForm: FC<any> = (props) => {
   const handleDrop = (newFiles: any): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const file = newFiles.find((f) => f);
+    logger.debug('Simple Drop ', file);
+    if (!file) {
+      return;
+    }
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -127,6 +131,9 @@ const RouteEditForm: FC<any> = (props) => {
     setHistoricalFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const file = newFiles.find((f) => f);
     logger.debug('Historical Img Drop ', file);
+    if (!file) {
+      return;
+    }
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -440,7 +447,7 @@ const RouteEditForm: FC<any> = (props) => {
                           </Box>
                         ) : (
                           <FileDropzone
-                            accept={['image/png', '.jpg', 'image/gif']}
+                            accept={['image/*']}
                             maxFiles={1}
                             files={files}
                             onDrop={handleDrop}

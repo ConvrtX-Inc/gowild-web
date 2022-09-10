@@ -4,6 +4,10 @@ export const imageFileToB64 = (file: File): Promise<string | ArrayBuffer> => {
   const imageLogger = getLogger('imageUtils');
 
   return new Promise<string | ArrayBuffer>((resolve, reject) => {
+    if (!file) {
+      reject('no file provided');
+      return;
+    }
     const reader = new FileReader();
     try {
       reader.readAsDataURL(file);

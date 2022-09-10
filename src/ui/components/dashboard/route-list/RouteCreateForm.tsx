@@ -27,6 +27,7 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { DropEvent, FileRejection } from 'react-dropzone';
 import toast from 'react-hot-toast';
 import { errorMessage } from 'src/utils/formik.utils';
 import { getLogger } from 'src/utils/loggin';
@@ -66,9 +67,16 @@ const RouteCreateForm: FC = (props) => {
     scrollRef.current.scrollIntoView();
   };
 
-  const handleDrop = (newFiles: any): void => {
+  const handleDrop = (
+    newFiles: File[],
+    fileRejections: FileRejection[],
+    event: DropEvent
+  ): void => {
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    const file = newFiles.find((f) => f);
+    const [file] = newFiles;
+    if (!file) {
+      return;
+    }
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -92,6 +100,10 @@ const RouteCreateForm: FC = (props) => {
   const handleHistoricalDrop = (newFiles: any): void => {
     setHistoricalFiles((prevFiles) => [...prevFiles, ...newFiles]);
     const file = newFiles.find((f) => f);
+    logger.debug('Historical Img Drop ', file);
+    if (!file) {
+      return;
+    }
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -371,7 +383,7 @@ const RouteCreateForm: FC = (props) => {
                         }}
                       >
                         <FileDropzone
-                          accept={['image/png', '.jpg', 'image/gif']}
+                          accept={['image/*']}
                           maxFiles={1}
                           files={files}
                           onDrop={handleDrop}
