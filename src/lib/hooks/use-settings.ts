@@ -9,12 +9,9 @@ export interface SettingsContextValue {
 export const useSettings = (): SettingsContextValue => {
   const prefs = useAppSelector((state) => state.preference);
   const dispatch = useAppDispatch();
-  const saveSettings = (newPrefs) => dispatch(setPrefs(newPrefs));
 
   return {
     settings: prefs,
-    saveSettings: saveSettings
+    saveSettings: (newPrefs) => dispatch(setPrefs(newPrefs))
   };
 };
-
-export default useSettings;

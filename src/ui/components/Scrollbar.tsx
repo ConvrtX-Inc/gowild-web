@@ -7,7 +7,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 
 type ScrollbarProps = PerfectScrollbarProps;
 
-const Scrollbar = forwardRef<HTMLDivElement, ScrollbarProps>((props, ref) => {
+export const Scrollbar = forwardRef<HTMLDivElement, ScrollbarProps>((props, ref) => {
   const { children, ...other } = props;
 
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -34,5 +34,3 @@ Scrollbar.displayName = 'Scrollbar';
 Scrollbar.propTypes = {
   children: PropTypes.node
 };
-
-export default Scrollbar;

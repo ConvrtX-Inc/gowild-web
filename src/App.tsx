@@ -1,34 +1,33 @@
-import { appRoutes } from './app.routes';
-import './i18n';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import type { FC } from 'react';
-import { useRoutes } from 'react-router-dom';
-import useScrollReset from 'src/lib/hooks/use-scroll-reset';
-import useSettings from 'src/lib/hooks/use-settings';
-import RTL from 'src/ui/components/RTL';
-import { createCustomTheme } from 'src/ui/theme';
+import {CssBaseline, ThemeProvider} from '@mui/material';
+import {useRoutes} from 'react-router-dom';
+import {useScrollReset} from "./lib/hooks/use-scroll-reset";
+import {useSettings} from "./lib/hooks/use-settings";
+import {Rtl} from "./ui/components/rtl";
+import {createCustomTheme} from "./ui/common/theme";
+import {useMemo} from "react";
+import {appRoutes} from "./ui/app-routes";
 
-const App: FC = () => {
-  const content = useRoutes(appRoutes);
-  const { settings } = useSettings();
+function App() {
+    const content = useRoutes(appRoutes);
+    const {settings} = useSettings();
 
-  useScrollReset();
+    useScrollReset();
 
-  const theme = createCustomTheme({
-    direction: settings.direction,
-    responsiveFontSizes: settings.responsiveFontSizes,
-    roundedCorners: settings.roundedCorners,
-    theme: settings.theme
-  });
+    const theme = useMemo(() => createCustomTheme({
+        direction: settings.direction,
+        responsiveFontSizes: settings.responsiveFontSizes,
+        roundedCorners: settings.roundedCorners,
+        theme: settings.theme
+    }), [settings]);
 
-  return (
-    <ThemeProvider theme={theme}>
-      <RTL direction={settings.direction}>
-        <CssBaseline />
-        {content}
-      </RTL>
-    </ThemeProvider>
-  );
-};
+    return (
+        <ThemeProvider theme={theme}>
+            <Rtl direction={settings.direction!}>
+                <CssBaseline/>
+                {content}
+            </Rtl>
+        </ThemeProvider>
+    );
+}
 
 export default App;

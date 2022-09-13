@@ -19,7 +19,7 @@ type AxiosBaseParams = { baseUrl: string };
 
 export const axiosBaseQuery =
   ({ baseUrl }: AxiosBaseParams = { baseUrl: '' }) =>
-  async <R = unknown, DefinitionExtraOptions = {}>(
+  async <R = unknown>(
     { url, method, body, params }: FetchArgs,
     api: BaseQueryApi
   ): Promise<QueryReturnValue<R, ApiBaseError>> => {
@@ -36,7 +36,7 @@ export const axiosBaseQuery =
       const err = axiosError as AxiosError;
       return {
         error: {
-          status: err.response?.status,
+          status: err.response?.status ?? 500,
           data: err.response?.data || err.message
         }
       };

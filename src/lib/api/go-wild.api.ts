@@ -1,46 +1,65 @@
-import { emptySplitApi as api } from './empty.api';
-
+import { emptySplitApi as api } from "./empty.api";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
-    smsControllerSend: build.mutation<SmsControllerSendApiResponse, SmsControllerSendApiArg>({
-      query: (queryArg) => ({ url: `/api/v1/sms/send`, method: 'POST', body: queryArg.smsDto })
-    }),
-    deleteOneBaseUsersControllerUser: build.mutation<
-      DeleteOneBaseUsersControllerUserApiResponse,
-      DeleteOneBaseUsersControllerUserApiArg
+    smsControllerSend: build.mutation<
+      SmsControllerSendApiResponse,
+      SmsControllerSendApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/users/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/sms/send`,
+        method: "POST",
+        body: queryArg.smsDto,
+      }),
     }),
-    getOneBaseUsersControllerUser: build.query<
-      GetOneBaseUsersControllerUserApiResponse,
-      GetOneBaseUsersControllerUserApiArg
+    deleteOneBaseUsersControllerUserEntity: build.mutation<
+      DeleteOneBaseUsersControllerUserEntityApiResponse,
+      DeleteOneBaseUsersControllerUserEntityApiArg
     >({
       query: (queryArg) => ({
         url: `/api/v1/users/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        method: "DELETE",
+      }),
     }),
-    updateOneBaseUsersControllerUser: build.mutation<
-      UpdateOneBaseUsersControllerUserApiResponse,
-      UpdateOneBaseUsersControllerUserApiArg
+    getOneBaseUsersControllerUserEntity: build.query<
+      GetOneBaseUsersControllerUserEntityApiResponse,
+      GetOneBaseUsersControllerUserEntityApiArg
     >({
       query: (queryArg) => ({
         url: `/api/v1/users/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.user
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
+    }),
+    updateOneBaseUsersControllerUserEntity: build.mutation<
+      UpdateOneBaseUsersControllerUserEntityApiResponse,
+      UpdateOneBaseUsersControllerUserEntityApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/v1/users/${queryArg.id}`,
+        method: "PATCH",
+        body: queryArg.userEntity,
+      }),
     }),
     usersControllerApproveUser: build.mutation<
       UsersControllerApproveUserApiResponse,
       UsersControllerApproveUserApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/users/${queryArg.id}/approve`, method: 'POST' })
+      query: (queryArg) => ({
+        url: `/api/v1/users/${queryArg.id}/approve`,
+        method: "POST",
+      }),
     }),
     usersControllerRejectUser: build.mutation<
       UsersControllerRejectUserApiResponse,
       UsersControllerRejectUserApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/users/${queryArg.id}/reject`, method: 'POST' })
+      query: (queryArg) => ({
+        url: `/api/v1/users/${queryArg.id}/reject`,
+        method: "POST",
+      }),
     }),
     usersControllerUpdateAvatar: build.mutation<
       UsersControllerUpdateAvatarApiResponse,
@@ -48,13 +67,13 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/users/${queryArg.id}/update-avatar`,
-        method: 'POST',
-        body: queryArg.pictureUpdateDto
-      })
+        method: "POST",
+        body: queryArg.imageUpdateDto,
+      }),
     }),
-    getManyBaseUsersControllerUser: build.query<
-      GetManyBaseUsersControllerUserApiResponse,
-      GetManyBaseUsersControllerUserApiArg
+    getManyBaseUsersControllerUserEntity: build.query<
+      GetManyBaseUsersControllerUserEntityApiResponse,
+      GetManyBaseUsersControllerUserEntityApiArg
     >({
       query: (queryArg) => ({
         url: `/api/v1/users`,
@@ -68,15 +87,19 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
-    createOneBaseUsersControllerUser: build.mutation<
-      CreateOneBaseUsersControllerUserApiResponse,
-      CreateOneBaseUsersControllerUserApiArg
+    createOneBaseUsersControllerUserEntity: build.mutation<
+      CreateOneBaseUsersControllerUserEntityApiResponse,
+      CreateOneBaseUsersControllerUserEntityApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/users`, method: 'POST', body: queryArg.user })
+      query: (queryArg) => ({
+        url: `/api/v1/users`,
+        method: "POST",
+        body: queryArg.userEntity,
+      }),
     }),
     getOneBaseStatusControllerStatus: build.query<
       GetOneBaseStatusControllerStatusApiResponse,
@@ -84,8 +107,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/statuses/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseStatusControllerStatus: build.mutation<
       UpdateOneBaseStatusControllerStatusApiResponse,
@@ -93,15 +120,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/statuses/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.status
-      })
+        method: "PATCH",
+        body: queryArg.status,
+      }),
     }),
     deleteOneBaseStatusControllerStatus: build.mutation<
       DeleteOneBaseStatusControllerStatusApiResponse,
       DeleteOneBaseStatusControllerStatusApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/statuses/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/statuses/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseStatusControllerStatus: build.query<
       GetManyBaseStatusControllerStatusApiResponse,
@@ -119,27 +149,35 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseStatusControllerStatus: build.mutation<
       CreateOneBaseStatusControllerStatusApiResponse,
       CreateOneBaseStatusControllerStatusApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/statuses`, method: 'POST', body: queryArg.status })
+      query: (queryArg) => ({
+        url: `/api/v1/statuses`,
+        method: "POST",
+        body: queryArg.status,
+      }),
     }),
     filesControllerUploadFile: build.mutation<
       FilesControllerUploadFileApiResponse,
       FilesControllerUploadFileApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/files/upload`, method: 'POST', body: queryArg.body })
+      query: (queryArg) => ({
+        url: `/api/v1/files/upload`,
+        method: "POST",
+        body: queryArg.body,
+      }),
     }),
     filesControllerDownload: build.query<
       FilesControllerDownloadApiResponse,
       FilesControllerDownloadApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/files/${queryArg.path}` })
+      query: (queryArg) => ({ url: `/api/v1/files/${queryArg.path}` }),
     }),
     getOneBaseNotificationControllerNotification: build.query<
       GetOneBaseNotificationControllerNotificationApiResponse,
@@ -147,8 +185,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/notifications/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseNotificationControllerNotification: build.mutation<
       UpdateOneBaseNotificationControllerNotificationApiResponse,
@@ -156,15 +198,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/notifications/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.notification
-      })
+        method: "PATCH",
+        body: queryArg.notification,
+      }),
     }),
     deleteOneBaseNotificationControllerNotification: build.mutation<
       DeleteOneBaseNotificationControllerNotificationApiResponse,
       DeleteOneBaseNotificationControllerNotificationApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/notifications/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/notifications/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseNotificationControllerNotification: build.query<
       GetManyBaseNotificationControllerNotificationApiResponse,
@@ -182,9 +227,9 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseNotificationControllerNotification: build.mutation<
       CreateOneBaseNotificationControllerNotificationApiResponse,
@@ -192,16 +237,19 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/notifications`,
-        method: 'POST',
-        body: queryArg.notification
-      })
+        method: "POST",
+        body: queryArg.notification,
+      }),
     }),
-    authControllerLogin: build.mutation<AuthControllerLoginApiResponse, AuthControllerLoginApiArg>({
+    authControllerLogin: build.mutation<
+      AuthControllerLoginApiResponse,
+      AuthControllerLoginApiArg
+    >({
       query: (queryArg) => ({
         url: `/api/v1/auth/login`,
-        method: 'POST',
-        body: queryArg.authEmailLoginDto
-      })
+        method: "POST",
+        body: queryArg.authEmailLoginDto,
+      }),
     }),
     authControllerRegister: build.mutation<
       AuthControllerRegisterApiResponse,
@@ -209,9 +257,9 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/auth/register`,
-        method: 'POST',
-        body: queryArg.authRegisterLoginDto
-      })
+        method: "POST",
+        body: queryArg.authRegisterLoginDto,
+      }),
     }),
     authControllerForgotPassword: build.mutation<
       AuthControllerForgotPasswordApiResponse,
@@ -219,9 +267,9 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/auth/forgot/password`,
-        method: 'POST',
-        body: queryArg.authForgotPasswordDto
-      })
+        method: "POST",
+        body: queryArg.authForgotPasswordDto,
+      }),
     }),
     authControllerResetPassword: build.mutation<
       AuthControllerResetPasswordApiResponse,
@@ -229,15 +277,15 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/auth/reset/password`,
-        method: 'POST',
-        body: queryArg.authResetPasswordDto
-      })
+        method: "POST",
+        body: queryArg.authResetPasswordDto,
+      }),
     }),
     authControllerGenerateAdmin: build.query<
       AuthControllerGenerateAdminApiResponse,
       AuthControllerGenerateAdminApiArg
     >({
-      query: () => ({ url: `/api/v1/auth/generate-admin` })
+      query: () => ({ url: `/api/v1/auth/generate-admin` }),
     }),
     authControllerResetAdminPassword: build.mutation<
       AuthControllerResetAdminPasswordApiResponse,
@@ -245,15 +293,21 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/auth/reset-admin-password`,
-        method: 'POST',
-        body: queryArg.authResetPasswordAdminDto
-      })
+        method: "POST",
+        body: queryArg.authResetPasswordAdminDto,
+      }),
     }),
-    authControllerMe: build.query<AuthControllerMeApiResponse, AuthControllerMeApiArg>({
-      query: () => ({ url: `/api/v1/auth/me` })
+    authControllerMe: build.query<
+      AuthControllerMeApiResponse,
+      AuthControllerMeApiArg
+    >({
+      query: () => ({ url: `/api/v1/auth/me` }),
     }),
-    authControllerLogout: build.query<AuthControllerLogoutApiResponse, AuthControllerLogoutApiArg>({
-      query: () => ({ url: `/api/v1/auth/logout` })
+    authControllerLogout: build.query<
+      AuthControllerLogoutApiResponse,
+      AuthControllerLogoutApiArg
+    >({
+      query: () => ({ url: `/api/v1/auth/logout` }),
     }),
     authControllerRefreshToken: build.mutation<
       AuthControllerRefreshTokenApiResponse,
@@ -261,9 +315,9 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/auth/refresh-token`,
-        method: 'POST',
-        body: queryArg.authRefreshTokenDto
-      })
+        method: "POST",
+        body: queryArg.authRefreshTokenDto,
+      }),
     }),
     authFacebookControllerLogin: build.mutation<
       AuthFacebookControllerLoginApiResponse,
@@ -271,9 +325,9 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/auth/facebook/login`,
-        method: 'POST',
-        body: queryArg.authFacebookLoginDto
-      })
+        method: "POST",
+        body: queryArg.authFacebookLoginDto,
+      }),
     }),
     authGoogleControllerLogin: build.mutation<
       AuthGoogleControllerLoginApiResponse,
@@ -281,15 +335,15 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/auth/google/login`,
-        method: 'POST',
-        body: queryArg.authGoogleLoginDto
-      })
+        method: "POST",
+        body: queryArg.authGoogleLoginDto,
+      }),
     }),
     homeControllerAppInfo: build.query<
       HomeControllerAppInfoApiResponse,
       HomeControllerAppInfoApiArg
     >({
-      query: () => ({ url: `/api/v1/dashboard` })
+      query: () => ({ url: `/api/v1/dashboard` }),
     }),
     getOneBaseCurrencyControllerCurrency: build.query<
       GetOneBaseCurrencyControllerCurrencyApiResponse,
@@ -297,8 +351,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/currencies/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     getManyBaseCurrencyControllerCurrency: build.query<
       GetManyBaseCurrencyControllerCurrencyApiResponse,
@@ -316,9 +374,9 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     verifyControllerSendPhoneVerificationToken: build.mutation<
       VerifyControllerSendPhoneVerificationTokenApiResponse,
@@ -326,9 +384,9 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/verify/mobile/send`,
-        method: 'POST',
-        body: queryArg.sendVerificationTokenDto
-      })
+        method: "POST",
+        body: queryArg.sendVerificationTokenDto,
+      }),
     }),
     verifyControllerCheckMobileVerificationToken: build.mutation<
       VerifyControllerCheckMobileVerificationTokenApiResponse,
@@ -336,9 +394,9 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/verify/mobile/check`,
-        method: 'POST',
-        body: queryArg.checkVerificationTokenDto
-      })
+        method: "POST",
+        body: queryArg.checkVerificationTokenDto,
+      }),
     }),
     getOneBaseRoomControllerRoom: build.query<
       GetOneBaseRoomControllerRoomApiResponse,
@@ -346,8 +404,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/room/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseRoomControllerRoom: build.mutation<
       UpdateOneBaseRoomControllerRoomApiResponse,
@@ -355,15 +417,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/room/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.room
-      })
+        method: "PATCH",
+        body: queryArg.room,
+      }),
     }),
     deleteOneBaseRoomControllerRoom: build.mutation<
       DeleteOneBaseRoomControllerRoomApiResponse,
       DeleteOneBaseRoomControllerRoomApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/room/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/room/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseRoomControllerRoom: build.query<
       GetManyBaseRoomControllerRoomApiResponse,
@@ -381,15 +446,19 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseRoomControllerRoom: build.mutation<
       CreateOneBaseRoomControllerRoomApiResponse,
       CreateOneBaseRoomControllerRoomApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/room`, method: 'POST', body: queryArg.room })
+      query: (queryArg) => ({
+        url: `/api/v1/room`,
+        method: "POST",
+        body: queryArg.room,
+      }),
     }),
     getOneBaseParticipantControllerParticipant: build.query<
       GetOneBaseParticipantControllerParticipantApiResponse,
@@ -397,8 +466,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/participants/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseParticipantControllerParticipant: build.mutation<
       UpdateOneBaseParticipantControllerParticipantApiResponse,
@@ -406,15 +479,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/participants/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.participant
-      })
+        method: "PATCH",
+        body: queryArg.participant,
+      }),
     }),
     deleteOneBaseParticipantControllerParticipant: build.mutation<
       DeleteOneBaseParticipantControllerParticipantApiResponse,
       DeleteOneBaseParticipantControllerParticipantApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/participants/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/participants/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseParticipantControllerParticipant: build.query<
       GetManyBaseParticipantControllerParticipantApiResponse,
@@ -432,9 +508,9 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseParticipantControllerParticipant: build.mutation<
       CreateOneBaseParticipantControllerParticipantApiResponse,
@@ -442,15 +518,17 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/participants`,
-        method: 'POST',
-        body: queryArg.participant
-      })
+        method: "POST",
+        body: queryArg.participant,
+      }),
     }),
     friendsControllerGetSuggestedFriends: build.query<
       FriendsControllerGetSuggestedFriendsApiResponse,
       FriendsControllerGetSuggestedFriendsApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/friends/suggested-friends/${queryArg.userId}` })
+      query: (queryArg) => ({
+        url: `/api/v1/friends/suggested-friends/${queryArg.userId}`,
+      }),
     }),
     getOneBaseFriendsControllerFriends: build.query<
       GetOneBaseFriendsControllerFriendsApiResponse,
@@ -458,8 +536,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/friends/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseFriendsControllerFriends: build.mutation<
       UpdateOneBaseFriendsControllerFriendsApiResponse,
@@ -467,15 +549,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/friends/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.friends
-      })
+        method: "PATCH",
+        body: queryArg.friends,
+      }),
     }),
     deleteOneBaseFriendsControllerFriends: build.mutation<
       DeleteOneBaseFriendsControllerFriendsApiResponse,
       DeleteOneBaseFriendsControllerFriendsApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/friends/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/friends/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseFriendsControllerFriends: build.query<
       GetManyBaseFriendsControllerFriendsApiResponse,
@@ -493,15 +578,29 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseFriendsControllerFriends: build.mutation<
       CreateOneBaseFriendsControllerFriendsApiResponse,
       CreateOneBaseFriendsControllerFriendsApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/friends`, method: 'POST', body: queryArg.friends })
+      query: (queryArg) => ({
+        url: `/api/v1/friends`,
+        method: "POST",
+        body: queryArg.friends,
+      }),
+    }),
+    routeControllerUpdatePicture: build.mutation<
+      RouteControllerUpdatePictureApiResponse,
+      RouteControllerUpdatePictureApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/v1/route/${queryArg.id}/update-picture`,
+        method: "POST",
+        body: queryArg.imageUpdateDto,
+      }),
     }),
     getOneBaseRouteControllerRoute: build.query<
       GetOneBaseRouteControllerRouteApiResponse,
@@ -509,8 +608,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/route/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseRouteControllerRoute: build.mutation<
       UpdateOneBaseRouteControllerRouteApiResponse,
@@ -518,15 +621,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/route/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.route
-      })
+        method: "PATCH",
+        body: queryArg.route,
+      }),
     }),
     deleteOneBaseRouteControllerRoute: build.mutation<
       DeleteOneBaseRouteControllerRouteApiResponse,
       DeleteOneBaseRouteControllerRouteApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/route/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/route/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseRouteControllerRoute: build.query<
       GetManyBaseRouteControllerRouteApiResponse,
@@ -544,21 +650,37 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseRouteControllerRoute: build.mutation<
       CreateOneBaseRouteControllerRouteApiResponse,
       CreateOneBaseRouteControllerRouteApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/route`, method: 'POST', body: queryArg.route })
+      query: (queryArg) => ({
+        url: `/api/v1/route`,
+        method: "POST",
+        body: queryArg.route,
+      }),
     }),
     routeCluesControllerGetAllClues: build.query<
       RouteCluesControllerGetAllCluesApiResponse,
       RouteCluesControllerGetAllCluesApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/route-clues/all-clues/${queryArg.routeId}` })
+      query: (queryArg) => ({
+        url: `/api/v1/route-clues/all-clues/${queryArg.routeId}`,
+      }),
+    }),
+    routeCluesControllerUpdateMedias: build.mutation<
+      RouteCluesControllerUpdateMediasApiResponse,
+      RouteCluesControllerUpdateMediasApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/v1/route-clues/${queryArg.id}/medias`,
+        method: "POST",
+        body: queryArg.body,
+      }),
     }),
     getOneBaseRouteCluesControllerRouteClue: build.query<
       GetOneBaseRouteCluesControllerRouteClueApiResponse,
@@ -566,8 +688,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/route-clues/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseRouteCluesControllerRouteClue: build.mutation<
       UpdateOneBaseRouteCluesControllerRouteClueApiResponse,
@@ -575,15 +701,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/route-clues/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.routeClue
-      })
+        method: "PATCH",
+        body: queryArg.routeClue,
+      }),
     }),
     deleteOneBaseRouteCluesControllerRouteClue: build.mutation<
       DeleteOneBaseRouteCluesControllerRouteClueApiResponse,
       DeleteOneBaseRouteCluesControllerRouteClueApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/route-clues/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/route-clues/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseRouteCluesControllerRouteClue: build.query<
       GetManyBaseRouteCluesControllerRouteClueApiResponse,
@@ -601,9 +730,9 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseRouteCluesControllerRouteClue: build.mutation<
       CreateOneBaseRouteCluesControllerRouteClueApiResponse,
@@ -611,21 +740,25 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/route-clues`,
-        method: 'POST',
-        body: queryArg.routeClue
-      })
+        method: "POST",
+        body: queryArg.routeClue,
+      }),
     }),
     postFeedControllerGetFriendsPost: build.query<
       PostFeedControllerGetFriendsPostApiResponse,
       PostFeedControllerGetFriendsPostApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/post-feed/friends-post/${queryArg.userId}` })
+      query: (queryArg) => ({
+        url: `/api/v1/post-feed/friends-post/${queryArg.userId}`,
+      }),
     }),
     postFeedControllerGetPostsFromOtherUsers: build.query<
       PostFeedControllerGetPostsFromOtherUsersApiResponse,
       PostFeedControllerGetPostsFromOtherUsersApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/post-feed/other-users-posts/${queryArg.userId}` })
+      query: (queryArg) => ({
+        url: `/api/v1/post-feed/other-users-posts/${queryArg.userId}`,
+      }),
     }),
     getOneBasePostFeedControllerPostFeed: build.query<
       GetOneBasePostFeedControllerPostFeedApiResponse,
@@ -633,8 +766,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/post-feed/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBasePostFeedControllerPostFeed: build.mutation<
       UpdateOneBasePostFeedControllerPostFeedApiResponse,
@@ -642,15 +779,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/post-feed/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.postFeed
-      })
+        method: "PATCH",
+        body: queryArg.postFeed,
+      }),
     }),
     deleteOneBasePostFeedControllerPostFeed: build.mutation<
       DeleteOneBasePostFeedControllerPostFeedApiResponse,
       DeleteOneBasePostFeedControllerPostFeedApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/post-feed/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/post-feed/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBasePostFeedControllerPostFeed: build.query<
       GetManyBasePostFeedControllerPostFeedApiResponse,
@@ -668,15 +808,19 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBasePostFeedControllerPostFeed: build.mutation<
       CreateOneBasePostFeedControllerPostFeedApiResponse,
       CreateOneBasePostFeedControllerPostFeedApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/post-feed`, method: 'POST', body: queryArg.postFeed })
+      query: (queryArg) => ({
+        url: `/api/v1/post-feed`,
+        method: "POST",
+        body: queryArg.postFeed,
+      }),
     }),
     getOneBaseLikeControllerLike: build.query<
       GetOneBaseLikeControllerLikeApiResponse,
@@ -684,8 +828,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/like/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseLikeControllerLike: build.mutation<
       UpdateOneBaseLikeControllerLikeApiResponse,
@@ -693,15 +841,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/like/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.like
-      })
+        method: "PATCH",
+        body: queryArg.like,
+      }),
     }),
     deleteOneBaseLikeControllerLike: build.mutation<
       DeleteOneBaseLikeControllerLikeApiResponse,
       DeleteOneBaseLikeControllerLikeApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/like/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/like/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseLikeControllerLike: build.query<
       GetManyBaseLikeControllerLikeApiResponse,
@@ -719,15 +870,19 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseLikeControllerLike: build.mutation<
       CreateOneBaseLikeControllerLikeApiResponse,
       CreateOneBaseLikeControllerLikeApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/like`, method: 'POST', body: queryArg.like })
+      query: (queryArg) => ({
+        url: `/api/v1/like`,
+        method: "POST",
+        body: queryArg.like,
+      }),
     }),
     getOneBaseShareControllerShare: build.query<
       GetOneBaseShareControllerShareApiResponse,
@@ -735,8 +890,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/share/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseShareControllerShare: build.mutation<
       UpdateOneBaseShareControllerShareApiResponse,
@@ -744,15 +903,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/share/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.share
-      })
+        method: "PATCH",
+        body: queryArg.share,
+      }),
     }),
     deleteOneBaseShareControllerShare: build.mutation<
       DeleteOneBaseShareControllerShareApiResponse,
       DeleteOneBaseShareControllerShareApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/share/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/share/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseShareControllerShare: build.query<
       GetManyBaseShareControllerShareApiResponse,
@@ -770,15 +932,19 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseShareControllerShare: build.mutation<
       CreateOneBaseShareControllerShareApiResponse,
       CreateOneBaseShareControllerShareApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/share`, method: 'POST', body: queryArg.share })
+      query: (queryArg) => ({
+        url: `/api/v1/share`,
+        method: "POST",
+        body: queryArg.share,
+      }),
     }),
     getOneBaseCommentControllerComment: build.query<
       GetOneBaseCommentControllerCommentApiResponse,
@@ -786,8 +952,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/comment/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseCommentControllerComment: build.mutation<
       UpdateOneBaseCommentControllerCommentApiResponse,
@@ -795,15 +965,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/comment/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.comment
-      })
+        method: "PATCH",
+        body: queryArg.comment,
+      }),
     }),
     deleteOneBaseCommentControllerComment: build.mutation<
       DeleteOneBaseCommentControllerCommentApiResponse,
       DeleteOneBaseCommentControllerCommentApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/comment/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/comment/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseCommentControllerComment: build.query<
       GetManyBaseCommentControllerCommentApiResponse,
@@ -821,15 +994,19 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseCommentControllerComment: build.mutation<
       CreateOneBaseCommentControllerCommentApiResponse,
       CreateOneBaseCommentControllerCommentApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/comment`, method: 'POST', body: queryArg.comment })
+      query: (queryArg) => ({
+        url: `/api/v1/comment`,
+        method: "POST",
+        body: queryArg.comment,
+      }),
     }),
     getOneBaseTreasureChestControllerTreasureChest: build.query<
       GetOneBaseTreasureChestControllerTreasureChestApiResponse,
@@ -837,8 +1014,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/treasure-chest/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseTreasureChestControllerTreasureChest: build.mutation<
       UpdateOneBaseTreasureChestControllerTreasureChestApiResponse,
@@ -846,15 +1027,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/treasure-chest/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.treasureChest
-      })
+        method: "PATCH",
+        body: queryArg.treasureChest,
+      }),
     }),
     deleteOneBaseTreasureChestControllerTreasureChest: build.mutation<
       DeleteOneBaseTreasureChestControllerTreasureChestApiResponse,
       DeleteOneBaseTreasureChestControllerTreasureChestApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/treasure-chest/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/treasure-chest/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseTreasureChestControllerTreasureChest: build.query<
       GetManyBaseTreasureChestControllerTreasureChestApiResponse,
@@ -872,9 +1056,9 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseTreasureChestControllerTreasureChest: build.mutation<
       CreateOneBaseTreasureChestControllerTreasureChestApiResponse,
@@ -882,9 +1066,9 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/treasure-chest`,
-        method: 'POST',
-        body: queryArg.treasureChest
-      })
+        method: "POST",
+        body: queryArg.treasureChest,
+      }),
     }),
     getOneBaseSponsorControllerSponsor: build.query<
       GetOneBaseSponsorControllerSponsorApiResponse,
@@ -892,8 +1076,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/sponsor/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseSponsorControllerSponsor: build.mutation<
       UpdateOneBaseSponsorControllerSponsorApiResponse,
@@ -901,15 +1089,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/sponsor/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.sponsor
-      })
+        method: "PATCH",
+        body: queryArg.sponsor,
+      }),
     }),
     deleteOneBaseSponsorControllerSponsor: build.mutation<
       DeleteOneBaseSponsorControllerSponsorApiResponse,
       DeleteOneBaseSponsorControllerSponsorApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/sponsor/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/sponsor/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseSponsorControllerSponsor: build.query<
       GetManyBaseSponsorControllerSponsorApiResponse,
@@ -927,21 +1118,29 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseSponsorControllerSponsor: build.mutation<
       CreateOneBaseSponsorControllerSponsorApiResponse,
       CreateOneBaseSponsorControllerSponsorApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/sponsor`, method: 'POST', body: queryArg.sponsor })
+      query: (queryArg) => ({
+        url: `/api/v1/sponsor`,
+        method: "POST",
+        body: queryArg.sponsor,
+      }),
     }),
     createOneBaseGuidelinesControllerGuideline: build.mutation<
       CreateOneBaseGuidelinesControllerGuidelineApiResponse,
       CreateOneBaseGuidelinesControllerGuidelineApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/guidelines`, method: 'POST', body: queryArg.guideline })
+      query: (queryArg) => ({
+        url: `/api/v1/guidelines`,
+        method: "POST",
+        body: queryArg.guideline,
+      }),
     }),
     getManyBaseGuidelinesControllerGuideline: build.query<
       GetManyBaseGuidelinesControllerGuidelineApiResponse,
@@ -959,9 +1158,9 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseGuidelinesControllerGuideline: build.mutation<
       UpdateOneBaseGuidelinesControllerGuidelineApiResponse,
@@ -969,9 +1168,9 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/guidelines/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.guideline
-      })
+        method: "PATCH",
+        body: queryArg.guideline,
+      }),
     }),
     getOneBaseGuidelinesControllerGuideline: build.query<
       GetOneBaseGuidelinesControllerGuidelineApiResponse,
@@ -979,20 +1178,27 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/guidelines/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     deleteOneBaseGuidelinesControllerGuideline: build.mutation<
       DeleteOneBaseGuidelinesControllerGuidelineApiResponse,
       DeleteOneBaseGuidelinesControllerGuidelineApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/guidelines/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/guidelines/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     guidelinesControllerGetTermsByType: build.query<
       GuidelinesControllerGetTermsByTypeApiResponse,
       GuidelinesControllerGetTermsByTypeApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/guidelines/${queryArg['type']}` })
+      query: (queryArg) => ({ url: `/api/v1/guidelines/${queryArg["type"]}` }),
     }),
     getOneBaseGuidelineLogsControllerGuidelineLog: build.query<
       GetOneBaseGuidelineLogsControllerGuidelineLogApiResponse,
@@ -1000,8 +1206,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/guideline-logs/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseGuidelineLogsControllerGuidelineLog: build.mutation<
       UpdateOneBaseGuidelineLogsControllerGuidelineLogApiResponse,
@@ -1009,15 +1219,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/guideline-logs/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.guidelineLog
-      })
+        method: "PATCH",
+        body: queryArg.guidelineLog,
+      }),
     }),
     deleteOneBaseGuidelineLogsControllerGuidelineLog: build.mutation<
       DeleteOneBaseGuidelineLogsControllerGuidelineLogApiResponse,
       DeleteOneBaseGuidelineLogsControllerGuidelineLogApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/guideline-logs/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/guideline-logs/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseGuidelineLogsControllerGuidelineLog: build.query<
       GetManyBaseGuidelineLogsControllerGuidelineLogApiResponse,
@@ -1035,9 +1248,9 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseGuidelineLogsControllerGuidelineLog: build.mutation<
       CreateOneBaseGuidelineLogsControllerGuidelineLogApiResponse,
@@ -1045,9 +1258,29 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/guideline-logs`,
-        method: 'POST',
-        body: queryArg.guidelineLog
-      })
+        method: "POST",
+        body: queryArg.guidelineLog,
+      }),
+    }),
+    routeHistoricalEventsControllerUpdatePicture: build.mutation<
+      RouteHistoricalEventsControllerUpdatePictureApiResponse,
+      RouteHistoricalEventsControllerUpdatePictureApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/v1/route-historical-events/${queryArg.id}/update-picture`,
+        method: "POST",
+        body: queryArg.imageUpdateDto,
+      }),
+    }),
+    routeHistoricalEventsControllerUpdateMedias: build.mutation<
+      RouteHistoricalEventsControllerUpdateMediasApiResponse,
+      RouteHistoricalEventsControllerUpdateMediasApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/v1/route-historical-events/${queryArg.id}/medias`,
+        method: "POST",
+        body: queryArg.body,
+      }),
     }),
     getOneBaseRouteHistoricalEventsControllerRouteHistoricalEvent: build.query<
       GetOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse,
@@ -1055,28 +1288,34 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/route-historical-events/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
-    updateOneBaseRouteHistoricalEventsControllerRouteHistoricalEvent: build.mutation<
-      UpdateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse,
-      UpdateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/v1/route-historical-events/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.routeHistoricalEvent
-      })
-    }),
-    deleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEvent: build.mutation<
-      DeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse,
-      DeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/v1/route-historical-events/${queryArg.id}`,
-        method: 'DELETE'
-      })
-    }),
+    updateOneBaseRouteHistoricalEventsControllerRouteHistoricalEvent:
+      build.mutation<
+        UpdateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse,
+        UpdateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/v1/route-historical-events/${queryArg.id}`,
+          method: "PATCH",
+          body: queryArg.routeHistoricalEvent,
+        }),
+      }),
+    deleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEvent:
+      build.mutation<
+        DeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse,
+        DeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/v1/route-historical-events/${queryArg.id}`,
+          method: "DELETE",
+        }),
+      }),
     getManyBaseRouteHistoricalEventsControllerRouteHistoricalEvent: build.query<
       GetManyBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse,
       GetManyBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg
@@ -1093,86 +1332,33 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
-    createOneBaseRouteHistoricalEventsControllerRouteHistoricalEvent: build.mutation<
-      CreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse,
-      CreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/v1/route-historical-events`,
-        method: 'POST',
-        body: queryArg.routeHistoricalEvent
-      })
-    }),
-    getOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhoto: build.query<
-      GetOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse,
-      GetOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/v1/route-historical-event-photo/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
-    }),
-    updateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhoto: build.mutation<
-      UpdateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse,
-      UpdateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/v1/route-historical-event-photo/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.routeHistoricalEventPhoto
-      })
-    }),
-    deleteOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhoto: build.mutation<
-      DeleteOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse,
-      DeleteOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/v1/route-historical-event-photo/${queryArg.id}`,
-        method: 'DELETE'
-      })
-    }),
-    getManyBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhoto: build.query<
-      GetManyBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse,
-      GetManyBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/v1/route-historical-event-photo`,
-        params: {
-          fields: queryArg.fields,
-          s: queryArg.s,
-          filter: queryArg.filter,
-          or: queryArg.or,
-          sort: queryArg.sort,
-          join: queryArg.join,
-          limit: queryArg.limit,
-          offset: queryArg.offset,
-          page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
-    }),
-    createOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhoto: build.mutation<
-      CreateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse,
-      CreateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/v1/route-historical-event-photo`,
-        method: 'POST',
-        body: queryArg.routeHistoricalEventPhoto
-      })
-    }),
+    createOneBaseRouteHistoricalEventsControllerRouteHistoricalEvent:
+      build.mutation<
+        CreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse,
+        CreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/v1/route-historical-events`,
+          method: "POST",
+          body: queryArg.routeHistoricalEvent,
+        }),
+      }),
     getOneBaseTicketControllerTicket: build.query<
       GetOneBaseTicketControllerTicketApiResponse,
       GetOneBaseTicketControllerTicketApiArg
     >({
       query: (queryArg) => ({
         url: `/api/v1/ticket/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseTicketControllerTicket: build.mutation<
       UpdateOneBaseTicketControllerTicketApiResponse,
@@ -1180,15 +1366,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/ticket/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.ticket
-      })
+        method: "PATCH",
+        body: queryArg.ticket,
+      }),
     }),
     deleteOneBaseTicketControllerTicket: build.mutation<
       DeleteOneBaseTicketControllerTicketApiResponse,
       DeleteOneBaseTicketControllerTicketApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/ticket/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/ticket/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseTicketControllerTicket: build.query<
       GetManyBaseTicketControllerTicketApiResponse,
@@ -1206,15 +1395,19 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseTicketControllerTicket: build.mutation<
       CreateOneBaseTicketControllerTicketApiResponse,
       CreateOneBaseTicketControllerTicketApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/ticket`, method: 'POST', body: queryArg.ticket })
+      query: (queryArg) => ({
+        url: `/api/v1/ticket`,
+        method: "POST",
+        body: queryArg.ticket,
+      }),
     }),
     getOneBaseTicketMessagesControllerTicketMessage: build.query<
       GetOneBaseTicketMessagesControllerTicketMessageApiResponse,
@@ -1222,8 +1415,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/ticket-messages/${queryArg.id}`,
-        params: { fields: queryArg.fields, join: queryArg.join, cache: queryArg.cache }
-      })
+        params: {
+          fields: queryArg.fields,
+          join: queryArg.join,
+          cache: queryArg.cache,
+        },
+      }),
     }),
     updateOneBaseTicketMessagesControllerTicketMessage: build.mutation<
       UpdateOneBaseTicketMessagesControllerTicketMessageApiResponse,
@@ -1231,15 +1428,18 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/ticket-messages/${queryArg.id}`,
-        method: 'PATCH',
-        body: queryArg.ticketMessage
-      })
+        method: "PATCH",
+        body: queryArg.ticketMessage,
+      }),
     }),
     deleteOneBaseTicketMessagesControllerTicketMessage: build.mutation<
       DeleteOneBaseTicketMessagesControllerTicketMessageApiResponse,
       DeleteOneBaseTicketMessagesControllerTicketMessageApiArg
     >({
-      query: (queryArg) => ({ url: `/api/v1/ticket-messages/${queryArg.id}`, method: 'DELETE' })
+      query: (queryArg) => ({
+        url: `/api/v1/ticket-messages/${queryArg.id}`,
+        method: "DELETE",
+      }),
     }),
     getManyBaseTicketMessagesControllerTicketMessage: build.query<
       GetManyBaseTicketMessagesControllerTicketMessageApiResponse,
@@ -1257,9 +1457,9 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
           page: queryArg.page,
-          cache: queryArg.cache
-        }
-      })
+          cache: queryArg.cache,
+        },
+      }),
     }),
     createOneBaseTicketMessagesControllerTicketMessage: build.mutation<
       CreateOneBaseTicketMessagesControllerTicketMessageApiResponse,
@@ -1267,30 +1467,31 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/ticket-messages`,
-        method: 'POST',
-        body: queryArg.ticketMessage
-      })
+        method: "POST",
+        body: queryArg.ticketMessage,
+      }),
     }),
     healthControllerCheck: build.query<
       HealthControllerCheckApiResponse,
       HealthControllerCheckApiArg
     >({
-      query: () => ({ url: `/api/health` })
-    })
+      query: () => ({ url: `/api/health` }),
+    }),
   }),
-  overrideExisting: false
+  overrideExisting: false,
 });
 export { injectedRtkApi as goWildApi };
 export type SmsControllerSendApiResponse = unknown;
 export type SmsControllerSendApiArg = {
   smsDto: SmsDto;
 };
-export type DeleteOneBaseUsersControllerUserApiResponse = unknown;
-export type DeleteOneBaseUsersControllerUserApiArg = {
+export type DeleteOneBaseUsersControllerUserEntityApiResponse = unknown;
+export type DeleteOneBaseUsersControllerUserEntityApiArg = {
   id: string;
 };
-export type GetOneBaseUsersControllerUserApiResponse = /** status 200 Get one base response */ User;
-export type GetOneBaseUsersControllerUserApiArg = {
+export type GetOneBaseUsersControllerUserEntityApiResponse =
+  /** status 200 Get one base response */ UserEntity;
+export type GetOneBaseUsersControllerUserEntityApiArg = {
   id: string;
   /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
   fields?: string[];
@@ -1299,10 +1500,11 @@ export type GetOneBaseUsersControllerUserApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseUsersControllerUserApiResponse = /** status 200 Response */ User;
-export type UpdateOneBaseUsersControllerUserApiArg = {
+export type UpdateOneBaseUsersControllerUserEntityApiResponse =
+  /** status 200 Response */ UserEntity;
+export type UpdateOneBaseUsersControllerUserEntityApiArg = {
   id: string;
-  user: User;
+  userEntity: UserEntity;
 };
 export type UsersControllerApproveUserApiResponse = unknown;
 export type UsersControllerApproveUserApiArg = {
@@ -1315,11 +1517,11 @@ export type UsersControllerRejectUserApiArg = {
 export type UsersControllerUpdateAvatarApiResponse = unknown;
 export type UsersControllerUpdateAvatarApiArg = {
   id: string;
-  pictureUpdateDto: PictureUpdateDto;
+  imageUpdateDto: ImageUpdateDto;
 };
-export type GetManyBaseUsersControllerUserApiResponse =
-  /** status 200 Get paginated response */ GetManyUserResponseDto;
-export type GetManyBaseUsersControllerUserApiArg = {
+export type GetManyBaseUsersControllerUserEntityApiResponse =
+  /** status 200 Get paginated response */ GetManyUserEntityResponseDto;
+export type GetManyBaseUsersControllerUserEntityApiArg = {
   /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
   fields?: string[];
   /** Adds search condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#search" target="_blank">Docs</a> */
@@ -1341,10 +1543,10 @@ export type GetManyBaseUsersControllerUserApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type CreateOneBaseUsersControllerUserApiResponse =
-  /** status 201 Get create one base response */ User;
-export type CreateOneBaseUsersControllerUserApiArg = {
-  user: User;
+export type CreateOneBaseUsersControllerUserEntityApiResponse =
+  /** status 201 Get create one base response */ UserEntity;
+export type CreateOneBaseUsersControllerUserEntityApiArg = {
+  userEntity: UserEntity;
 };
 export type GetOneBaseStatusControllerStatusApiResponse =
   /** status 200 Get one base response */ Status;
@@ -1357,7 +1559,8 @@ export type GetOneBaseStatusControllerStatusApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseStatusControllerStatusApiResponse = /** status 200 Response */ Status;
+export type UpdateOneBaseStatusControllerStatusApiResponse =
+  /** status 200 Response */ Status;
 export type UpdateOneBaseStatusControllerStatusApiArg = {
   id: string;
   status: Status;
@@ -1422,7 +1625,8 @@ export type UpdateOneBaseNotificationControllerNotificationApiArg = {
   id: string;
   notification: Notification;
 };
-export type DeleteOneBaseNotificationControllerNotificationApiResponse = unknown;
+export type DeleteOneBaseNotificationControllerNotificationApiResponse =
+  unknown;
 export type DeleteOneBaseNotificationControllerNotificationApiArg = {
   id: string;
 };
@@ -1538,7 +1742,8 @@ export type VerifyControllerCheckMobileVerificationTokenApiResponse = unknown;
 export type VerifyControllerCheckMobileVerificationTokenApiArg = {
   checkVerificationTokenDto: CheckVerificationTokenDto;
 };
-export type GetOneBaseRoomControllerRoomApiResponse = /** status 200 Get one base response */ Room;
+export type GetOneBaseRoomControllerRoomApiResponse =
+  /** status 200 Get one base response */ Room;
 export type GetOneBaseRoomControllerRoomApiArg = {
   id: string;
   /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
@@ -1548,7 +1753,8 @@ export type GetOneBaseRoomControllerRoomApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseRoomControllerRoomApiResponse = /** status 200 Response */ Room;
+export type UpdateOneBaseRoomControllerRoomApiResponse =
+  /** status 200 Response */ Room;
 export type UpdateOneBaseRoomControllerRoomApiArg = {
   id: string;
   room: Room;
@@ -1651,7 +1857,8 @@ export type GetOneBaseFriendsControllerFriendsApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseFriendsControllerFriendsApiResponse = /** status 200 Response */ Friends;
+export type UpdateOneBaseFriendsControllerFriendsApiResponse =
+  /** status 200 Response */ Friends;
 export type UpdateOneBaseFriendsControllerFriendsApiArg = {
   id: string;
   friends: Friends;
@@ -1689,6 +1896,11 @@ export type CreateOneBaseFriendsControllerFriendsApiResponse =
 export type CreateOneBaseFriendsControllerFriendsApiArg = {
   friends: Friends;
 };
+export type RouteControllerUpdatePictureApiResponse = unknown;
+export type RouteControllerUpdatePictureApiArg = {
+  id: string;
+  imageUpdateDto: ImageUpdateDto;
+};
 export type GetOneBaseRouteControllerRouteApiResponse =
   /** status 200 Get one base response */ Route;
 export type GetOneBaseRouteControllerRouteApiArg = {
@@ -1700,7 +1912,8 @@ export type GetOneBaseRouteControllerRouteApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseRouteControllerRouteApiResponse = /** status 200 Response */ Route;
+export type UpdateOneBaseRouteControllerRouteApiResponse =
+  /** status 200 Response */ Route;
 export type UpdateOneBaseRouteControllerRouteApiArg = {
   id: string;
   route: Route;
@@ -1741,6 +1954,11 @@ export type CreateOneBaseRouteControllerRouteApiArg = {
 export type RouteCluesControllerGetAllCluesApiResponse = unknown;
 export type RouteCluesControllerGetAllCluesApiArg = {
   routeId: string;
+};
+export type RouteCluesControllerUpdateMediasApiResponse = unknown;
+export type RouteCluesControllerUpdateMediasApiArg = {
+  id: string;
+  body: ImageUpdateDto[];
 };
 export type GetOneBaseRouteCluesControllerRouteClueApiResponse =
   /** status 200 Get one base response */ RouteClue;
@@ -1850,7 +2068,8 @@ export type CreateOneBasePostFeedControllerPostFeedApiResponse =
 export type CreateOneBasePostFeedControllerPostFeedApiArg = {
   postFeed: PostFeed;
 };
-export type GetOneBaseLikeControllerLikeApiResponse = /** status 200 Get one base response */ Like;
+export type GetOneBaseLikeControllerLikeApiResponse =
+  /** status 200 Get one base response */ Like;
 export type GetOneBaseLikeControllerLikeApiArg = {
   id: string;
   /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
@@ -1860,7 +2079,8 @@ export type GetOneBaseLikeControllerLikeApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseLikeControllerLikeApiResponse = /** status 200 Response */ Like;
+export type UpdateOneBaseLikeControllerLikeApiResponse =
+  /** status 200 Response */ Like;
 export type UpdateOneBaseLikeControllerLikeApiArg = {
   id: string;
   like: Like;
@@ -1909,7 +2129,8 @@ export type GetOneBaseShareControllerShareApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseShareControllerShareApiResponse = /** status 200 Response */ Share;
+export type UpdateOneBaseShareControllerShareApiResponse =
+  /** status 200 Response */ Share;
 export type UpdateOneBaseShareControllerShareApiArg = {
   id: string;
   share: Share;
@@ -1958,7 +2179,8 @@ export type GetOneBaseCommentControllerCommentApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseCommentControllerCommentApiResponse = /** status 200 Response */ Comment;
+export type UpdateOneBaseCommentControllerCommentApiResponse =
+  /** status 200 Response */ Comment;
 export type UpdateOneBaseCommentControllerCommentApiArg = {
   id: string;
   comment: Comment;
@@ -2013,7 +2235,8 @@ export type UpdateOneBaseTreasureChestControllerTreasureChestApiArg = {
   id: string;
   treasureChest: TreasureChest;
 };
-export type DeleteOneBaseTreasureChestControllerTreasureChestApiResponse = unknown;
+export type DeleteOneBaseTreasureChestControllerTreasureChestApiResponse =
+  unknown;
 export type DeleteOneBaseTreasureChestControllerTreasureChestApiArg = {
   id: string;
 };
@@ -2057,7 +2280,8 @@ export type GetOneBaseSponsorControllerSponsorApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseSponsorControllerSponsorApiResponse = /** status 200 Response */ Sponsor;
+export type UpdateOneBaseSponsorControllerSponsorApiResponse =
+  /** status 200 Response */ Sponsor;
 export type UpdateOneBaseSponsorControllerSponsorApiArg = {
   id: string;
   sponsor: Sponsor;
@@ -2166,7 +2390,8 @@ export type UpdateOneBaseGuidelineLogsControllerGuidelineLogApiArg = {
   id: string;
   guidelineLog: GuidelineLog;
 };
-export type DeleteOneBaseGuidelineLogsControllerGuidelineLogApiResponse = unknown;
+export type DeleteOneBaseGuidelineLogsControllerGuidelineLogApiResponse =
+  unknown;
 export type DeleteOneBaseGuidelineLogsControllerGuidelineLogApiArg = {
   id: string;
 };
@@ -2199,107 +2424,72 @@ export type CreateOneBaseGuidelineLogsControllerGuidelineLogApiResponse =
 export type CreateOneBaseGuidelineLogsControllerGuidelineLogApiArg = {
   guidelineLog: GuidelineLog;
 };
+export type RouteHistoricalEventsControllerUpdatePictureApiResponse = unknown;
+export type RouteHistoricalEventsControllerUpdatePictureApiArg = {
+  id: string;
+  imageUpdateDto: ImageUpdateDto;
+};
+export type RouteHistoricalEventsControllerUpdateMediasApiResponse = unknown;
+export type RouteHistoricalEventsControllerUpdateMediasApiArg = {
+  id: string;
+  body: ImageUpdateDto[];
+};
 export type GetOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse =
   /** status 200 Get one base response */ RouteHistoricalEvent;
-export type GetOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg = {
-  id: string;
-  /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
-  fields?: string[];
-  /** Adds relational resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#join" target="_blank">Docs</a> */
-  join?: string[];
-  /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
-  cache?: number;
-};
+export type GetOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg =
+  {
+    id: string;
+    /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
+    fields?: string[];
+    /** Adds relational resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#join" target="_blank">Docs</a> */
+    join?: string[];
+    /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
+    cache?: number;
+  };
 export type UpdateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse =
   /** status 200 Response */ RouteHistoricalEvent;
-export type UpdateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg = {
-  id: string;
-  routeHistoricalEvent: RouteHistoricalEvent;
-};
-export type DeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse = unknown;
-export type DeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg = {
-  id: string;
-};
+export type UpdateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg =
+  {
+    id: string;
+    routeHistoricalEvent: RouteHistoricalEvent;
+  };
+export type DeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse =
+  unknown;
+export type DeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg =
+  {
+    id: string;
+  };
 export type GetManyBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse =
   /** status 200 Get paginated response */ GetManyRouteHistoricalEventResponseDto;
-export type GetManyBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg = {
-  /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
-  fields?: string[];
-  /** Adds search condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#search" target="_blank">Docs</a> */
-  s?: string;
-  /** Adds filter condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#filter" target="_blank">Docs</a> */
-  filter?: string[];
-  /** Adds OR condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#or" target="_blank">Docs</a> */
-  or?: string[];
-  /** Adds sort by field. <a href="https://github.com/nestjsx/crud/wiki/Requests#sort" target="_blank">Docs</a> */
-  sort?: string[];
-  /** Adds relational resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#join" target="_blank">Docs</a> */
-  join?: string[];
-  /** Limit amount of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#limit" target="_blank">Docs</a> */
-  limit?: number;
-  /** Offset amount of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#offset" target="_blank">Docs</a> */
-  offset?: number;
-  /** Page portion of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#page" target="_blank">Docs</a> */
-  page?: number;
-  /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
-  cache?: number;
-};
+export type GetManyBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg =
+  {
+    /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
+    fields?: string[];
+    /** Adds search condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#search" target="_blank">Docs</a> */
+    s?: string;
+    /** Adds filter condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#filter" target="_blank">Docs</a> */
+    filter?: string[];
+    /** Adds OR condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#or" target="_blank">Docs</a> */
+    or?: string[];
+    /** Adds sort by field. <a href="https://github.com/nestjsx/crud/wiki/Requests#sort" target="_blank">Docs</a> */
+    sort?: string[];
+    /** Adds relational resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#join" target="_blank">Docs</a> */
+    join?: string[];
+    /** Limit amount of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#limit" target="_blank">Docs</a> */
+    limit?: number;
+    /** Offset amount of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#offset" target="_blank">Docs</a> */
+    offset?: number;
+    /** Page portion of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#page" target="_blank">Docs</a> */
+    page?: number;
+    /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
+    cache?: number;
+  };
 export type CreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiResponse =
   /** status 201 Get create one base response */ RouteHistoricalEvent;
-export type CreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg = {
-  routeHistoricalEvent: RouteHistoricalEvent;
-};
-export type GetOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse =
-  /** status 200 Get one base response */ RouteHistoricalEventPhoto;
-export type GetOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg = {
-  id: string;
-  /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
-  fields?: string[];
-  /** Adds relational resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#join" target="_blank">Docs</a> */
-  join?: string[];
-  /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
-  cache?: number;
-};
-export type UpdateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse =
-  /** status 200 Response */ RouteHistoricalEventPhoto;
-export type UpdateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg = {
-  id: string;
-  routeHistoricalEventPhoto: RouteHistoricalEventPhoto;
-};
-export type DeleteOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse =
-  unknown;
-export type DeleteOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg = {
-  id: string;
-};
-export type GetManyBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse =
-  /** status 200 Get paginated response */ GetManyRouteHistoricalEventPhotoResponseDto;
-export type GetManyBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg = {
-  /** Selects resource fields. <a href="https://github.com/nestjsx/crud/wiki/Requests#select" target="_blank">Docs</a> */
-  fields?: string[];
-  /** Adds search condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#search" target="_blank">Docs</a> */
-  s?: string;
-  /** Adds filter condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#filter" target="_blank">Docs</a> */
-  filter?: string[];
-  /** Adds OR condition. <a href="https://github.com/nestjsx/crud/wiki/Requests#or" target="_blank">Docs</a> */
-  or?: string[];
-  /** Adds sort by field. <a href="https://github.com/nestjsx/crud/wiki/Requests#sort" target="_blank">Docs</a> */
-  sort?: string[];
-  /** Adds relational resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#join" target="_blank">Docs</a> */
-  join?: string[];
-  /** Limit amount of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#limit" target="_blank">Docs</a> */
-  limit?: number;
-  /** Offset amount of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#offset" target="_blank">Docs</a> */
-  offset?: number;
-  /** Page portion of resources. <a href="https://github.com/nestjsx/crud/wiki/Requests#page" target="_blank">Docs</a> */
-  page?: number;
-  /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
-  cache?: number;
-};
-export type CreateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiResponse =
-  /** status 201 Get create one base response */ RouteHistoricalEventPhoto;
-export type CreateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoApiArg = {
-  routeHistoricalEventPhoto: RouteHistoricalEventPhoto;
-};
+export type CreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventApiArg =
+  {
+    routeHistoricalEvent: RouteHistoricalEvent;
+  };
 export type GetOneBaseTicketControllerTicketApiResponse =
   /** status 200 Get one base response */ Ticket;
 export type GetOneBaseTicketControllerTicketApiArg = {
@@ -2311,7 +2501,8 @@ export type GetOneBaseTicketControllerTicketApiArg = {
   /** Reset cache (if was enabled). <a href="https://github.com/nestjsx/crud/wiki/Requests#cache" target="_blank">Docs</a> */
   cache?: number;
 };
-export type UpdateOneBaseTicketControllerTicketApiResponse = /** status 200 Response */ Ticket;
+export type UpdateOneBaseTicketControllerTicketApiResponse =
+  /** status 200 Response */ Ticket;
 export type UpdateOneBaseTicketControllerTicketApiArg = {
   id: string;
   ticket: Ticket;
@@ -2366,7 +2557,8 @@ export type UpdateOneBaseTicketMessagesControllerTicketMessageApiArg = {
   id: string;
   ticketMessage: TicketMessage;
 };
-export type DeleteOneBaseTicketMessagesControllerTicketMessageApiResponse = unknown;
+export type DeleteOneBaseTicketMessagesControllerTicketMessageApiResponse =
+  unknown;
 export type DeleteOneBaseTicketMessagesControllerTicketMessageApiArg = {
   id: string;
 };
@@ -2399,38 +2591,39 @@ export type CreateOneBaseTicketMessagesControllerTicketMessageApiResponse =
 export type CreateOneBaseTicketMessagesControllerTicketMessageApiArg = {
   ticketMessage: TicketMessage;
 };
-export type HealthControllerCheckApiResponse = /** status 200 The Health Check is successful */ {
-  status?: string;
-  info?: {
-    [key: string]: {
-      status?: string;
-      [key: string]: string;
-    };
-  } | null;
-  error?: {
-    [key: string]: {
-      status?: string;
-      [key: string]: string;
-    };
-  } | null;
-  details?: {
-    [key: string]: {
-      status?: string;
-      [key: string]: string;
+export type HealthControllerCheckApiResponse =
+  /** status 200 The Health Check is successful */ {
+    status?: string;
+    info?: {
+      [key: string]: {
+        status?: string;
+        [key: string]: string;
+      };
+    } | null;
+    error?: {
+      [key: string]: {
+        status?: string;
+        [key: string]: string;
+      };
+    } | null;
+    details?: {
+      [key: string]: {
+        status?: string;
+        [key: string]: string;
+      };
     };
   };
-};
 export type HealthControllerCheckApiArg = void;
 export type SmsDto = {
   phone_number: string;
   message: string;
 };
-export type GenderEnum = 'male' | 'female' | 'other';
+export type GenderEnum = "male" | "female" | "other";
 export type FileMetaData = {
   encoding: string | null;
 };
 export type FileEntity = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   path: string;
@@ -2440,40 +2633,40 @@ export type FileEntity = {
   metaData: FileMetaData | null;
 };
 export type Status = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   statusName:
-    | 'cancelled'
-    | 'active'
-    | 'disabled'
-    | 'approved'
-    | 'refunded'
-    | 'rejected'
-    | 'completed'
-    | 'pending'
-    | 'inactive';
+    | "cancelled"
+    | "active"
+    | "disabled"
+    | "approved"
+    | "refunded"
+    | "rejected"
+    | "completed"
+    | "pending"
+    | "inactive";
   isActive: boolean;
 };
-export type User = {
-  id: string | null;
+export type UserEntity = {
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   firstName: string | null;
   lastName: string | null;
-  birthDate: string;
+  birthDate: string | null;
   gender: GenderEnum | null;
-  username: string;
+  username: string | null;
   email: string;
   phoneNo: string | null;
   picture: FileEntity | null;
   status: Status | null;
 };
-export type PictureUpdateDto = {
+export type ImageUpdateDto = {
   fileId: string;
 };
-export type GetManyUserResponseDto = {
-  data: User[];
+export type GetManyUserEntityResponseDto = {
+  data: UserEntity[];
   count: number;
   total: number;
   page: number;
@@ -2487,7 +2680,7 @@ export type GetManyStatusResponseDto = {
   pageCount: number;
 };
 export type Notification = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2532,7 +2725,7 @@ export type AuthRefreshTokenDto = {
 };
 export type UserAuthResponse = {
   token: TokenResponse;
-  user: User;
+  user: UserEntity;
 };
 export type AuthFacebookLoginDto = {
   access_token: string;
@@ -2541,7 +2734,7 @@ export type AuthGoogleLoginDto = {
   id_token: string;
 };
 export type Currency = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   code: string;
@@ -2564,7 +2757,7 @@ export type CheckVerificationTokenDto = {
   verify_code: string;
 };
 export type Room = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   name: string;
@@ -2578,7 +2771,7 @@ export type GetManyRoomResponseDto = {
   pageCount: number;
 };
 export type Participant = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2592,7 +2785,7 @@ export type GetManyParticipantResponseDto = {
   pageCount: number;
 };
 export type Friends = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2606,19 +2799,34 @@ export type GetManyFriendsResponseDto = {
   page: number;
   pageCount: number;
 };
-export type Route = {
-  id: string | null;
+export type AppPoint = {
+  type: "Point";
+  coordinates: number[];
+};
+export type RouteHistoricalEvent = {
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
-  user_id: string;
-  route_name: string;
-  route_photo: object;
-  start_point_long: number;
-  start_point_lat: number;
-  stop_point_long: number;
-  stop_point_lat: number;
-  img_url: string;
-  description: string;
+  route: Route | null;
+  closureUid: string | null;
+  point: AppPoint | null;
+  title: string | null;
+  subtitle: string | null;
+  description: string | null;
+  picture: FileEntity | null;
+  medias: FileEntity[] | null;
+};
+export type Route = {
+  id: string;
+  createdDate: string | null;
+  updatedDate: string | null;
+  user: UserEntity | null;
+  title: string | null;
+  start: AppPoint | null;
+  end: AppPoint | null;
+  historicalEvents: RouteHistoricalEvent[] | null;
+  picture: FileEntity | null;
+  description: string | null;
 };
 export type GetManyRouteResponseDto = {
   data: Route[];
@@ -2628,18 +2836,14 @@ export type GetManyRouteResponseDto = {
   pageCount: number;
 };
 export type RouteClue = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   route_id: string;
-  location_point_long: number;
-  location_point_lat: number;
-  clue_point_long: number;
-  clue_point_lat: number;
-  clue_title: string;
+  point: AppPoint;
+  title: string;
   description: string;
-  clue_img: object;
-  video_url: string;
+  medias: FileEntity[] | null;
   ar_clue: string;
 };
 export type GetManyRouteClueResponseDto = {
@@ -2650,7 +2854,7 @@ export type GetManyRouteClueResponseDto = {
   pageCount: number;
 };
 export type PostFeed = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2668,7 +2872,7 @@ export type GetManyPostFeedResponseDto = {
   pageCount: number;
 };
 export type Like = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2682,11 +2886,11 @@ export type GetManyLikeResponseDto = {
   pageCount: number;
 };
 export type Share = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
-  postfeed_id: string;
+  post_feed_id: string;
   url: string;
 };
 export type GetManyShareResponseDto = {
@@ -2697,7 +2901,7 @@ export type GetManyShareResponseDto = {
   pageCount: number;
 };
 export type Comment = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
@@ -2712,18 +2916,16 @@ export type GetManyCommentResponseDto = {
   pageCount: number;
 };
 export type TreasureChest = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   title: string;
   description: string;
-  location_long: number;
-  location_lat: number;
-  eventDate: string;
+  location: AppPoint;
+  event_date: string;
   event_time: string;
   no_of_participants: number;
-  img_url: string;
-  thumbnail_img: object;
+  picture: FileEntity | null;
   a_r: string;
 };
 export type GetManyTreasureChestResponseDto = {
@@ -2734,7 +2936,7 @@ export type GetManyTreasureChestResponseDto = {
   pageCount: number;
 };
 export type Sponsor = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   treasure_chest_id: string;
@@ -2750,7 +2952,7 @@ export type GetManySponsorResponseDto = {
   pageCount: number;
 };
 export type Guideline = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   type: string;
@@ -2765,7 +2967,7 @@ export type GetManyGuidelineResponseDto = {
   pageCount: number;
 };
 export type GuidelineLog = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   userId: string;
@@ -2778,18 +2980,6 @@ export type GetManyGuidelineLogResponseDto = {
   page: number;
   pageCount: number;
 };
-export type RouteHistoricalEvent = {
-  id: string | null;
-  createdDate: string | null;
-  updatedDate: string | null;
-  route_id: string;
-  closure_uid: string;
-  event_long: number;
-  event_lat: number;
-  event_title: string;
-  event_subtitle: string;
-  description: string;
-};
 export type GetManyRouteHistoricalEventResponseDto = {
   data: RouteHistoricalEvent[];
   count: number;
@@ -2797,29 +2987,15 @@ export type GetManyRouteHistoricalEventResponseDto = {
   page: number;
   pageCount: number;
 };
-export type RouteHistoricalEventPhoto = {
-  id: string | null;
-  createdDate: string | null;
-  updatedDate: string | null;
-  route_historical_event_id: string;
-  event_photo_url: string;
-};
-export type GetManyRouteHistoricalEventPhotoResponseDto = {
-  data: RouteHistoricalEventPhoto[];
-  count: number;
-  total: number;
-  page: number;
-  pageCount: number;
-};
 export type Ticket = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   user_id: string;
   subject: string;
   message: string;
   img_url: string;
-  status: number;
+  status: Status;
 };
 export type GetManyTicketResponseDto = {
   data: Ticket[];
@@ -2829,7 +3005,7 @@ export type GetManyTicketResponseDto = {
   pageCount: number;
 };
 export type TicketMessage = {
-  id: string | null;
+  id: string;
   createdDate: string | null;
   updatedDate: string | null;
   ticket_id: string;
@@ -2845,14 +3021,14 @@ export type GetManyTicketMessageResponseDto = {
 };
 export const {
   useSmsControllerSendMutation,
-  useDeleteOneBaseUsersControllerUserMutation,
-  useGetOneBaseUsersControllerUserQuery,
-  useUpdateOneBaseUsersControllerUserMutation,
+  useDeleteOneBaseUsersControllerUserEntityMutation,
+  useGetOneBaseUsersControllerUserEntityQuery,
+  useUpdateOneBaseUsersControllerUserEntityMutation,
   useUsersControllerApproveUserMutation,
   useUsersControllerRejectUserMutation,
   useUsersControllerUpdateAvatarMutation,
-  useGetManyBaseUsersControllerUserQuery,
-  useCreateOneBaseUsersControllerUserMutation,
+  useGetManyBaseUsersControllerUserEntityQuery,
+  useCreateOneBaseUsersControllerUserEntityMutation,
   useGetOneBaseStatusControllerStatusQuery,
   useUpdateOneBaseStatusControllerStatusMutation,
   useDeleteOneBaseStatusControllerStatusMutation,
@@ -2897,12 +3073,14 @@ export const {
   useDeleteOneBaseFriendsControllerFriendsMutation,
   useGetManyBaseFriendsControllerFriendsQuery,
   useCreateOneBaseFriendsControllerFriendsMutation,
+  useRouteControllerUpdatePictureMutation,
   useGetOneBaseRouteControllerRouteQuery,
   useUpdateOneBaseRouteControllerRouteMutation,
   useDeleteOneBaseRouteControllerRouteMutation,
   useGetManyBaseRouteControllerRouteQuery,
   useCreateOneBaseRouteControllerRouteMutation,
   useRouteCluesControllerGetAllCluesQuery,
+  useRouteCluesControllerUpdateMediasMutation,
   useGetOneBaseRouteCluesControllerRouteClueQuery,
   useUpdateOneBaseRouteCluesControllerRouteClueMutation,
   useDeleteOneBaseRouteCluesControllerRouteClueMutation,
@@ -2951,16 +3129,13 @@ export const {
   useDeleteOneBaseGuidelineLogsControllerGuidelineLogMutation,
   useGetManyBaseGuidelineLogsControllerGuidelineLogQuery,
   useCreateOneBaseGuidelineLogsControllerGuidelineLogMutation,
+  useRouteHistoricalEventsControllerUpdatePictureMutation,
+  useRouteHistoricalEventsControllerUpdateMediasMutation,
   useGetOneBaseRouteHistoricalEventsControllerRouteHistoricalEventQuery,
   useUpdateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventMutation,
   useDeleteOneBaseRouteHistoricalEventsControllerRouteHistoricalEventMutation,
   useGetManyBaseRouteHistoricalEventsControllerRouteHistoricalEventQuery,
   useCreateOneBaseRouteHistoricalEventsControllerRouteHistoricalEventMutation,
-  useGetOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoQuery,
-  useUpdateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoMutation,
-  useDeleteOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoMutation,
-  useGetManyBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoQuery,
-  useCreateOneBaseRouteHistoricalEventPhotoControllerRouteHistoricalEventPhotoMutation,
   useGetOneBaseTicketControllerTicketQuery,
   useUpdateOneBaseTicketControllerTicketMutation,
   useDeleteOneBaseTicketControllerTicketMutation,
@@ -2971,5 +3146,5 @@ export const {
   useDeleteOneBaseTicketMessagesControllerTicketMessageMutation,
   useGetManyBaseTicketMessagesControllerTicketMessageQuery,
   useCreateOneBaseTicketMessagesControllerTicketMessageMutation,
-  useHealthControllerCheckQuery
+  useHealthControllerCheckQuery,
 } = injectedRtkApi;
