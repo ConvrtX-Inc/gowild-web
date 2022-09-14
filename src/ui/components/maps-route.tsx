@@ -6,7 +6,7 @@ import Minus from "../icons/Minus";
 import {MapItem} from "./map-items";
 import {MapMarker} from "./map-marker";
 import {routePoles} from "../../utils/route.utils";
-import {checkPoints} from "../../utils/map.utils";
+import {checkPoints, titleFrom} from "../../utils/map.utils";
 import {MapPolyline} from "./map-polyline";
 import {PointMapInfo} from "./map-info";
 import {InfoWindowData, PointerType, RoutePoint} from "../../types/maps";
@@ -49,6 +49,7 @@ export function MapsRoute({allPoints, onPoint, onRemovePoint}: MapsRouteProps) {
     const markers = useMemo(() => allPoints.map((p) => {
         return (
             <MapMarker
+                title={titleFrom(p.type, 'Event')}
                 onClick={() => onMarkerClick(p)}
                 type={p.type}
                 key={p.point.type + '-' + p.point.coordinates.join(',')}

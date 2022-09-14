@@ -26,3 +26,12 @@ export const SubTitleTypography = styled(Typography)(({theme}) => ({
         lineHeight: 3,
     }
 }));
+
+
+export const GilroyMediumTypography = styled(Typography)(() => ({
+    fontFamily: 'Gilroy Medium',
+    fontStyle: 'normal',
+    fontSize: '14px',
+    lineHeight: '16px',
+    letterSpacing: '0.5px',
+}));

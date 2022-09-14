@@ -22,6 +22,17 @@ export function routeTypeToMapsColor(type: "start" | "end" | "middle") {
     }
 }
 
+export function titleFrom(type: "start" | "end" | "middle", title?: string) {
+    switch (type) {
+        case "start":
+            return 'Start'
+        case "end":
+            return 'End';
+        case "middle":
+            return title;
+    }
+}
+
 export function fromAppPoint({coordinates: [lat, lng]}: AppPoint): google.maps.LatLng {
     return new google.maps.LatLng({lng, lat});
 }

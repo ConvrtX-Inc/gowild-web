@@ -3,7 +3,9 @@ import {Route, useGetOneBaseRouteControllerRouteQuery} from "../../../lib/api/go
 import {Loader} from "../loader";
 
 export function RouteFinder({id, OnFound, OnError, OnLoading}: FinderProps<Route>) {
-    const {data, error, isError, isLoading} = useGetOneBaseRouteControllerRouteQuery({id, join: ['picture']});
+    const {data, error, isError, isLoading} = useGetOneBaseRouteControllerRouteQuery({id}, {
+        pollingInterval: 3000,
+    });
 
     if (isLoading) return OnLoading ? <OnLoading/> : <Loader/>;
 

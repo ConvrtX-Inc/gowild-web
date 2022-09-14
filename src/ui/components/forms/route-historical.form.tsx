@@ -1,9 +1,6 @@
 import {Divider, Grid} from "@mui/material";
-import {AppTextField, FieldLabel} from "./text-field";
-import {useField} from "formik";
-import {RouteHistoricalEvent} from "../../lib/api/go-wild.api";
-import {useState} from "react";
-import {CoordEntry} from "./coord.entry";
+import {AppTextField, FieldLabel} from "../text-field";
+import {CoordEntryForm} from "./coord-entry.form";
 import {FileForm} from "./file-form";
 
 export interface RouteHistoricalFormProps {
@@ -11,16 +8,14 @@ export interface RouteHistoricalFormProps {
 }
 
 export function RouteHistoricalForm({name}: RouteHistoricalFormProps) {
-    const [field, meta, {setValue, setTouched}] = useField<RouteHistoricalEvent>(name);
-    const [expanded, setExpanded] = useState(true);
     return (
         <>
-            <Grid mb={4} container spacing={2}>
+            <Grid my={6} container spacing={2}>
                 <Grid item xs={12} md={6}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
                             <Grid container>
-                                <CoordEntry
+                                <CoordEntryForm
                                     name={`${name}.point`}
                                     title='Point'
                                     size='small'
@@ -68,7 +63,7 @@ export function RouteHistoricalForm({name}: RouteHistoricalFormProps) {
                             <FileForm
                                 accept={{'image/*': []}}
                                 maxFiles={1}
-                                name={`${name}.picture`}
+                                name={`${name}.image`}
                             />
                         </Grid>
                     </Grid>

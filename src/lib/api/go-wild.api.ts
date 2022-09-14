@@ -2813,7 +2813,7 @@ export type RouteHistoricalEvent = {
   title: string | null;
   subtitle: string | null;
   description: string | null;
-  picture: FileEntity | null;
+  image: FileEntity | null;
   medias: FileEntity[] | null;
 };
 export type Route = {

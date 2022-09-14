@@ -1,4 +1,4 @@
-import {styled, TextareaAutosize, TextField} from "@mui/material";
+import {styled, TextField} from "@mui/material";
 import {useField} from "formik";
 import {errorToText} from "../../utils/text.utils";
 import {TextFieldProps} from "@mui/material/TextField/TextField";
@@ -116,6 +116,7 @@ export const AppTextField = ({label, ...props}: TextFieldProps) => {
         <TextField
             {...props}
             {...field}
+            sx={{fontFamily: 'Gilroy Medium'}}
             helperText={errorText ? errorText : props.helperText}
             error={!!errorText}
             fullWidth

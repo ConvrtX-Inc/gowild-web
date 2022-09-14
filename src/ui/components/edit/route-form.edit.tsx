@@ -1,7 +1,11 @@
 import {FoundComponent} from "../../../types/finder";
-import {AppPoint, Route, RouteHistoricalEvent} from "../../../lib/api/go-wild.api";
+import {
+    Route,
+    useCreateOneBaseRouteControllerRouteMutation,
+    useUpdateOneBaseRouteControllerRouteMutation
+} from "../../../lib/api/go-wild.api";
 import {Helmet} from "react-helmet-async";
-import {useMemo, useRef, useState} from "react";
+import {useCallback, useMemo} from "react";
 import {
     Box,
     Button,
@@ -16,86 +20,99 @@ import {
     ListItemText,
     Paper
 } from "@mui/material";
-import * as Yup from 'yup';
 import {FieldArray, Form, Formik} from "formik";
-import {MapsRoute} from "../maps-route";
 import {Place} from "@mui/icons-material";
-import {toAppPoint} from "../../../utils/route.utils";
-import {RoutePoint} from "../../../types/maps";
 import {AppTextField, FieldLabel} from "../text-field";
 import {ActionButton} from "../buttons";
-import {CoordEntry} from "../coord.entry";
+import {CoordEntryForm} from "../forms/coord-entry.form";
 import {HistoricalEventsTitle} from "../title";
 import {OrangeBorder} from "../orange-banner";
-import {RouteHistoricalForm} from "../route-historical.form";
-import {FileForm} from "../file-form";
+import {RouteHistoricalForm} from "../forms/route-historical.form";
+import {FileForm} from "../forms/file-form";
+import {RouteMapForm} from "../forms/route-map.form";
+import {routeValidationSchema} from "../../../lib/validation-schemas";
+import {useMounted} from "../../../lib/hooks/use-mounted";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-hot-toast";
+import {FormikHelpers} from "formik/dist/types";
+import {getLogger} from "../../../lib/logging";
+import {useAuth} from "../../../lib/hooks/use-auth";
 
-const appPointValidationSchema = Yup.object().shape({
-    type: Yup.string().oneOf(['Point']).required('This field is required'),
-    coordinates: Yup.array(Yup.number()).required('This field is required'),
-});
-
-const historicalEventsValidationSchema = Yup.object().shape({
-    title: Yup.string().max(80).required('This field is required'),
-    subtitle: Yup.string().max(80).required('This field is required'),
-    description: Yup.string().max(80).required('This field is required'),
-    point: appPointValidationSchema,
-});
-
-const routeValidationSchema = Yup['object']().shape({
-    title: Yup.string().max(80).required('This field is required'),
-    start: appPointValidationSchema,
-    end: appPointValidationSchema,
-    historicalEvents: Yup.array(historicalEventsValidationSchema),
-    description: Yup.string().max(255).required('This field is required'),
-});
+const logger = getLogger('Route-Form');
 
 export function RouteFormEdit({item}: FoundComponent<Route | undefined>) {
-    const isNew = useMemo(() => !!item?.id, [item?.id]);
-    const scrollRef = useRef<HTMLSpanElement>();
-    const scrollToEvents = useRef<HTMLSpanElement>();
-
-    // Point
-    const [start, setStart] = useState<AppPoint | undefined>();
-    const [end, setEnd] = useState<AppPoint | undefined>();
-    const [historicalPoints, setHistoricalPoints] = useState<RouteHistoricalEvent[]>(() => item?.historicalEvents ?? []);
-    const points = useMemo(() => [
-        start ? toAppPoint('start', start) : undefined,
-        ...historicalPoints.map(({point}) => toAppPoint('middle', point)),
-        end ? toAppPoint('end', end) : undefined
-    ].filter(i => !!i), [end, historicalPoints, start]);
+    const isNew = useMemo(() => !item?.id, [item?.id]);
+    const isMounted = useMounted();
+    const navigate = useNavigate();
+    const [createRoute] = useCreateOneBaseRouteControllerRouteMutation();
+    const [updateRoute] = useUpdateOneBaseRouteControllerRouteMutation();
+    const {sub} = useAuth();
 
     // Scrollable
     const scrollToHistoricalEvents = () => {
-        scrollToEvents.current.scrollIntoView();
     };
     const scrollToHistoricalForm = () => {
-        scrollRef.current.scrollIntoView();
     };
+
+    const onSuccess = (route: Route, actions) => {
+        if (isNew) {
+            const {id: routeId} = route;
+            navigate('/dashboard/route-lists/' + routeId);
+        } else {
+            if (isMounted) {
+                actions.setSubmitting(false);
+                toast('Route saved');
+            }
+        }
+    }
+
+    const onError = (err) => {
+        logger.error('Could not save route', err);
+        toast('Could not save route');
+    }
+
+    const onSubmit = useCallback(async (values: Route, actions: FormikHelpers<Route>) => {
+        console.log('isNew', isNew, item?.id);
+        if (isNew) {
+            const result = await createRoute({route: values})
+            if ('data' in result) {
+                onSuccess(result.data, actions);
+            } else {
+                onError(result.error);
+            }
+        } else {
+            const result = await updateRoute({route: values, id: item!.id!});
+            if ('data' in result) {
+                onSuccess(result.data, actions);
+            } else {
+                onError(result.error);
+            }
+        }
+    }, [createRoute, isNew, item, onSuccess, updateRoute]);
 
     return (
         <>
             <Helmet>
-                <title>{isNew ? 'Edit' : 'Create'} | Go Wild</title>
+                <title>{!isNew ? 'Edit' : 'Create'} | Go Wild</title>
             </Helmet>
 
-            <Formik
+            <Formik<Route>
                 validationSchema={routeValidationSchema}
                 initialValues={{
-                    title: item?.title,
-                    start: item?.start,
-                    end: item?.end,
-                    description: item?.description,
-                    historicalEvents: item?.historicalEvents,
+                    id: item?.id,
+                    createdDate: item?.createdDate,
+                    updatedDate: item?.updatedDate,
+                    user: item?.user ?? sub as any,
+                    title: item?.title ?? '',
+                    start: item?.start ?? '' as any,
+                    end: item?.end ?? '' as any,
+                    historicalEvents: item?.historicalEvents ?? [],
+                    picture: item?.picture ?? '' as any,
+                    description: item?.description ?? '',
                 }}
-                onSubmit={(values, actions) => {
-                    setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                        actions.setSubmitting(false);
-                    }, 1000);
-                }}
+                onSubmit={onSubmit}
             >
-                {({isSubmitting, setFieldValue}) => (
+                {({isSubmitting, values}) => (
                     <Container>
                         <Card component={Paper}>
                             <CardContent>
@@ -127,13 +144,13 @@ export function RouteFormEdit({item}: FoundComponent<Route | undefined>) {
 
                                             <Grid item xs={12}>
                                                 <Grid container spacing={3}>
-                                                    <CoordEntry
+                                                    <CoordEntryForm
                                                         title='Starting Point'
                                                         name='start'
                                                         size='small'
                                                     />
 
-                                                    <CoordEntry
+                                                    <CoordEntryForm
                                                         title='End Point'
                                                         name='end'
                                                         size='small'
@@ -176,15 +193,7 @@ export function RouteFormEdit({item}: FoundComponent<Route | undefined>) {
                                                             <ActionButton disabled={isSubmitting} type='submit'
                                                                           variant='contained'>
                                                                 {isSubmitting ? (
-                                                                    <>
-                                                                        <CircularProgress
-                                                                            sx={{
-                                                                                color: '#FBF1DA',
-                                                                                position: 'absolute',
-                                                                                right: '60px'
-                                                                            }}
-                                                                        />
-                                                                    </>
+                                                                    <CircularProgress/>
                                                                 ) : (
                                                                     'Save'
                                                                 )}
@@ -197,49 +206,7 @@ export function RouteFormEdit({item}: FoundComponent<Route | undefined>) {
                                     </Grid>
 
                                     <Grid order={{xs: 1, md: 0, lg: 1}} item lg={9} md={12} minHeight='70vh'>
-                                        <Box
-                                            width='100%'
-                                            height='100%'
-                                            component={MapsRoute}
-                                            allPoints={points}
-                                            onPoint={(a: RoutePoint) => {
-                                                if (!!a) {
-                                                    if (a.type === 'start') {
-                                                        setStart(a.point);
-                                                        setFieldValue('start', a.point);
-                                                    } else if (a.type === 'end') {
-                                                        setEnd(a.point);
-                                                        setFieldValue('end', a.point);
-                                                    } else {
-                                                        const tmp = [...historicalPoints, ({
-                                                            point: a.point,
-                                                        } as any)];
-
-                                                        setHistoricalPoints(tmp);
-                                                        setFieldValue('historicalEvents', tmp);
-                                                    }
-                                                }
-                                            }}
-                                            onRemovePoint={(a) => {
-                                                if (!!a) {
-                                                    if (a.type === 'start') {
-                                                        setStart(undefined);
-                                                        setFieldValue('start', undefined);
-                                                    } else if (a.type === 'end') {
-                                                        setEnd(undefined);
-                                                        setFieldValue('end', undefined);
-                                                    } else {
-                                                        const tmp = points;
-                                                        const idx = points.findIndex(p => p.type === a.type)
-                                                        if (idx >= 0) {
-                                                            tmp.splice(idx, 1);
-                                                            setHistoricalPoints(prev => prev.filter(({point}) => point !== a.point));
-                                                            setFieldValue('historicalEvents', tmp);
-                                                        }
-                                                    }
-                                                }
-                                            }}
-                                        />
+                                        <RouteMapForm/>
                                     </Grid>
 
                                     <Grid order={2} item xs={12}>
@@ -280,7 +247,7 @@ export function RouteFormEdit({item}: FoundComponent<Route | undefined>) {
                                                     name='historicalEvents'
                                                     render={(arrayHelpers) => (
                                                         <Box>
-                                                            {historicalPoints.map((event, index) => (
+                                                            {values.historicalEvents.map((event, index) => (
                                                                 <RouteHistoricalForm
                                                                     key={index}
                                                                     name={`historicalEvents.${index}`}
