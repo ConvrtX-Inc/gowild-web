@@ -87,5 +87,8 @@
     "eslint": "8.22.0",
     "eslint-config-react-app": "^7.0.1",
     "ts-node": "^10.9.1"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
