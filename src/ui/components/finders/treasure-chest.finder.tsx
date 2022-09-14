@@ -1,10 +1,5 @@
 import {FinderProps} from "../../../types/finder";
-import {
-    Route,
-    TreasureChest,
-    useGetOneBaseRouteControllerRouteQuery,
-    useGetOneBaseTreasureChestControllerTreasureChestQuery
-} from "../../../lib/api/go-wild.api";
+import {TreasureChest, useGetOneBaseTreasureChestControllerTreasureChestQuery} from "../../../lib/api/go-wild.api";
 import {Loader} from "../loader";
 
 export function TreasureChestFinder({id, OnFound, OnError, OnLoading}: FinderProps<TreasureChest>) {

@@ -1,5 +1,4 @@
 import React from "react";
-import {GetManyBaseRouteControllerRouteApiArg} from "../lib/api/go-wild.api";
 
 export interface FoundComponent<T> {
     item: T;

@@ -6,13 +6,12 @@ import {formatDate} from "typescript-logging";
 import {StyledPopOver} from "./popover";
 import {Route, useDeleteOneBaseRouteControllerRouteMutation} from "../../lib/api/go-wild.api";
 import ThreeDots from "../icons/ThreeDots";
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useState} from "react";
 import RouteListDelete from "../icons/RouteListDelete";
 import RouteListEdit from "../icons/RouteListEdit";
 import RouteListView from "../icons/RouteListView";
 import {useNavigate} from "react-router-dom";
 import {getLogger} from "../../lib/logging";
-import {routePoles} from "../../utils/route.utils";
 
 const logger = getLogger('route-list-item');
 

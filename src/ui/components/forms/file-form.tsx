@@ -129,7 +129,8 @@ export function FileForm({multiple, name, ...props}: FileFormProps) {
                     <Box sx={{position: 'relative'}}>
                         {first.size > 1000000 ? (
                             <Stack justifyContent='center' alignItems='center'>
-                                <GilroyMediumTypography color='#f44336'>File must be 1MB size or less</GilroyMediumTypography>
+                                <GilroyMediumTypography color='#f44336'>File must be 1MB size or
+                                    less</GilroyMediumTypography>
                                 <Button
                                     sx={{mt: 1, backgroundColor: '#f44336'}}
                                     onClick={() => onRemove && onRemove(first)}

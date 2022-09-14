@@ -12,8 +12,12 @@ import {Link as RouterLink} from 'react-router-dom';
 import {RouteListItem} from "./route-list-item";
 import {PaginationProps} from "../../types/finder";
 
-export function RouteList({params, onPageChange, onLimitChange}: PaginationProps<GetManyBaseRouteControllerRouteApiArg>) {
-    const {data, isLoading} = useGetManyBaseRouteControllerRouteQuery(params, { pollingInterval: 3000 });
+export function RouteList({
+                              params,
+                              onPageChange,
+                              onLimitChange
+                          }: PaginationProps<GetManyBaseRouteControllerRouteApiArg>) {
+    const {data, isLoading} = useGetManyBaseRouteControllerRouteQuery(params, {pollingInterval: 3000});
     const routes: Route[] = data?.data ?? [];
     return (
         <Card component={Paper}>
