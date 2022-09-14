@@ -7,14 +7,18 @@ export interface MapInfoProps {
     lng: number;
     onRemoveClick?: () => void;
     onCloseClick?: () => void;
+    view?: boolean;
 }
 
-export function PointMapInfo({lat, lng, text, onCloseClick, onRemoveClick}: MapInfoProps) {
+export function PointMapInfo({lat, lng, text, onCloseClick, onRemoveClick, view}: MapInfoProps) {
     return (
         <InfoWindow onCloseClick={onCloseClick} position={{lat, lng}}>
             <Stack direction='column'>
                 <Typography variant='body1'>{text}</Typography>
-                <Button onClick={onRemoveClick} fullWidth variant='outlined'>Remove</Button>
+
+                {view && (
+                    <Button onClick={onRemoveClick} fullWidth variant='outlined'>Remove</Button>
+                )}
             </Stack>
         </InfoWindow>
     );

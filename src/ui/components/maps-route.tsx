@@ -12,20 +12,25 @@ import {PointMapInfo} from "./map-info";
 import {InfoWindowData, PointerType, RoutePoint} from "../../types/maps";
 
 export interface MapsRouteProps {
-    onRemovePoint: (point: RoutePoint) => void;
-    onPoint: (point: RoutePoint) => void;
+    onRemovePoint?: (point: RoutePoint) => void;
+    onPoint?: (point: RoutePoint) => void;
     allPoints: RoutePoint[];
+    view?: boolean;
 }
 
-export function MapsRoute({allPoints, onPoint, onRemovePoint}: MapsRouteProps) {
+export function MapsRoute({allPoints, onPoint, onRemovePoint, view}: MapsRouteProps) {
     const [pointType, selectPointType] = useState<PointerType | undefined>();
     const [infoWindow, setInfoWindow] = useState<InfoWindowData | undefined>();
     const onMarkerClick = useCallback((e: RoutePoint) => {
+        if (view) {
+            return;
+        }
+
         setInfoWindow({
             point: e,
             text: 'Click to remove point'
         });
-    }, []);
+    }, [view]);
 
     const infoWindows = useMemo(() => {
         if (!infoWindow) {
@@ -34,17 +39,18 @@ export function MapsRoute({allPoints, onPoint, onRemovePoint}: MapsRouteProps) {
 
         return (
             <PointMapInfo
+                view={view}
                 text={infoWindow.text}
                 lat={infoWindow.point.point.coordinates[0]}
                 lng={infoWindow.point.point.coordinates[1]}
                 onCloseClick={() => setInfoWindow(undefined)}
                 onRemoveClick={() => {
                     setInfoWindow(undefined);
-                    onRemovePoint(infoWindow.point);
+                    onRemovePoint && onRemovePoint(infoWindow.point);
                 }}
             />
         );
-    }, [infoWindow, onRemovePoint]);
+    }, [view, infoWindow, onRemovePoint]);
 
     const markers = useMemo(() => allPoints.map((p) => {
         return (
@@ -77,7 +83,7 @@ export function MapsRoute({allPoints, onPoint, onRemovePoint}: MapsRouteProps) {
             return;
         }
 
-        !!onPoint && onPoint({
+        onPoint && onPoint({
             point: {
                 type: 'Point',
                 coordinates: [latLng.lat(), latLng.lng()]

@@ -54,7 +54,7 @@ export function RouteFormEdit({item}: FoundComponent<Route | undefined>) {
     const scrollToHistoricalForm = () => {
     };
 
-    const onSuccess = (route: Route, actions) => {
+    const onSuccess = useCallback((route: Route, actions) => {
         if (isNew) {
             const {id: routeId} = route;
             navigate('/dashboard/route-lists/' + routeId);
@@ -64,7 +64,7 @@ export function RouteFormEdit({item}: FoundComponent<Route | undefined>) {
                 toast('Route saved');
             }
         }
-    }
+    }, [isMounted, isNew, navigate])
 
     const onError = (err) => {
         logger.error('Could not save route', err);
@@ -93,7 +93,7 @@ export function RouteFormEdit({item}: FoundComponent<Route | undefined>) {
     return (
         <>
             <Helmet>
-                <title>{!isNew ? 'Edit' : 'Create'} | Go Wild</title>
+                <title>{item?.title} | Route | Go Wild</title>
             </Helmet>
 
             <Formik<Route>
