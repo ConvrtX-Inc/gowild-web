@@ -10,7 +10,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {BrowserRouter} from "react-router-dom";
 import {HelmetProvider} from "react-helmet-async";
-import {App} from './app';
+import {Entry} from './entry';
 
 // TODO Enable Strict mode
 const container = document.getElementById('root');
@@ -23,7 +23,7 @@ root.render(
                     <StyledEngineProvider injectFirst>
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <BrowserRouter>
-                                <App/>
+                                <Entry/>
                             </BrowserRouter>
                         </LocalizationProvider>
                     </StyledEngineProvider>

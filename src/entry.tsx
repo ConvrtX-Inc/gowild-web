@@ -7,7 +7,7 @@ import {createCustomTheme} from "./ui/common/theme";
 import {useMemo} from "react";
 import {appRoutes} from "./ui/app-routes";
 
-export function App() {
+export function Entry() {
     const content = useRoutes(appRoutes);
     const {settings} = useSettings();
 
