@@ -1,7 +1,5 @@
-import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {App} from './app';
 import reportWebVitals from './reportWebVitals';
 import {Provider as ReduxProvider} from "react-redux/es/exports";
 import {persistor, store} from "./lib/store";
@@ -12,6 +10,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {BrowserRouter} from "react-router-dom";
 import {HelmetProvider} from "react-helmet-async";
+import {App} from './app';
 
 // TODO Enable Strict mode
 const container = document.getElementById('root');
