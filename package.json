@@ -49,7 +49,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "openapi-gen": "rtk-query-codegen-openapi openapi-config.ts"
+    "openapi-gen": "rtk-query-codegen-openapi openapi-config.ts",
+    "docker:build": "docker build -t ssegning-convrtx-web .",
+    "docker:run": "docker run -p 3000:80 ssegning-convrtx-web"
   },
   "eslintConfig": {
     "extends": [
