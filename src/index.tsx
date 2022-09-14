@@ -1,7 +1,7 @@
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './app';
+import {App} from './app';
 import reportWebVitals from './reportWebVitals';
 import {Provider as ReduxProvider} from "react-redux/es/exports";
 import {persistor, store} from "./lib/store";
@@ -14,9 +14,8 @@ import {BrowserRouter} from "react-router-dom";
 import {HelmetProvider} from "react-helmet-async";
 
 // TODO Enable Strict mode
-const root = ReactDOM.createRoot(
-    document.getElementById('root') as HTMLElement
-);
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
 root.render(
     <>
         <HelmetProvider>

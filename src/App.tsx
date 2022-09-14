@@ -7,7 +7,7 @@ import {createCustomTheme} from "./ui/common/theme";
 import {useMemo} from "react";
 import {appRoutes} from "./ui/app-routes";
 
-function App() {
+export function App() {
     const content = useRoutes(appRoutes);
     const {settings} = useSettings();
 
@@ -29,5 +29,3 @@ function App() {
         </ThemeProvider>
     );
 }
-
-export default App;
