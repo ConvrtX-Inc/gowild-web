@@ -37,7 +37,7 @@ export function ViewRoute({ item }: FoundComponent<Route>) {
   return (
     <>
       <Helmet>
-        <title>{item.title} | Route | Go Wild</title>
+        <title>Route | Go Wild</title>
       </Helmet>
 
       <Container>

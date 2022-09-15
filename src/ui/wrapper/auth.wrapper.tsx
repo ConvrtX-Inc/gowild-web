@@ -21,6 +21,7 @@ export function AuthWrapper() {
       <Helmet>
         <title>Auth | Go Wild</title>
       </Helmet>
+
       <BackgroundImg3rdLayer>
         <BackgroundGradient>
           <BackgroundImg2ndLayer>

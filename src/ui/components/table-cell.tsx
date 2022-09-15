@@ -26,4 +26,5 @@ export interface StyledTablePaginationProps extends TablePaginationBaseProps {
   component: any;
 }
 
-export const StyledTablePagination = styled(TablePagination)<StyledTablePaginationProps>();
+export const StyledTablePagination = styled(TablePagination)<StyledTablePaginationProps>(() => ({}));
+

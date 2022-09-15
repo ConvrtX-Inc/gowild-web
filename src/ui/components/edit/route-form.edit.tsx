@@ -40,7 +40,7 @@ import { useNavigate } from 'react-router-dom';
 
 const logger = getLogger('Route-Form');
 
-export function RouteFormEdit({ item }: FoundComponent<Route | undefined>) {
+export function RouteFormEdit({ item }: Partial<FoundComponent<Route>>) {
   const isNew = useMemo(() => !item?.id, [item?.id]);
   const isMounted = useMounted();
   const navigate = useNavigate();
@@ -49,8 +49,10 @@ export function RouteFormEdit({ item }: FoundComponent<Route | undefined>) {
   const { sub } = useAuth();
 
   // Scrollable
-  const scrollToHistoricalEvents = () => {};
-  const scrollToHistoricalForm = () => {};
+  const scrollToHistoricalEvents = () => {
+  };
+  const scrollToHistoricalForm = () => {
+  };
 
   const onSuccess = useCallback(
     (route: Route, actions) => {
@@ -96,9 +98,17 @@ export function RouteFormEdit({ item }: FoundComponent<Route | undefined>) {
 
   return (
     <>
-      <Helmet>
-        <title>{item?.title} | Route | Go Wild</title>
-      </Helmet>
+      {!isNew && (
+        <Helmet>
+          <title>Update Route | Go Wild</title>
+        </Helmet>
+      )}
+
+      {isNew && (
+        <Helmet>
+          <title>Create Route | Go Wild</title>
+        </Helmet>
+      )}
 
       <Formik<Route>
         validationSchema={routeValidationSchema}
