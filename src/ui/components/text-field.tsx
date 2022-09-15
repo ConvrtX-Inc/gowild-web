@@ -1,17 +1,17 @@
-import {styled, TextField} from "@mui/material";
-import {useField} from "formik";
-import {errorToText} from "../../utils/text.utils";
-import {TextFieldProps} from "@mui/material/TextField/TextField";
-import {useMemo} from "react";
+import { errorToText } from '../../utils/text.utils';
+import { TextField, styled } from '@mui/material';
+import { TextFieldProps } from '@mui/material/TextField/TextField';
+import { useField } from 'formik';
+import { useMemo } from 'react';
 
 export const FieldLabel = styled('label')(() => ({
-    fontFamily: 'DM Sans',
-    fontStyle: 'normal',
-    fontWeight: 500,
-    fontSize: '0.875rem',
-    lineHeight: '99.33%',
-    letterSpacing: '-0.025em',
-    marginBottom: '24px',
+  fontFamily: 'DM Sans',
+  fontStyle: 'normal',
+  fontWeight: 500,
+  fontSize: '0.875rem',
+  lineHeight: '99.33%',
+  letterSpacing: '-0.025em',
+  marginBottom: '24px'
 }));
 
 export const StyledTextField = styled(TextField)`
@@ -109,18 +109,21 @@ export const StyledMultiTextField = styled(TextField)`
   }
 `;
 
-export const AppTextField = ({label, ...props}: TextFieldProps) => {
-    const [field, meta] = useField(props as any);
-    const errorText = useMemo(() => errorToText(meta.touched && meta.error), [meta.error, meta.touched]);
-    return (
-        <TextField
-            {...props}
-            {...field}
-            sx={{fontFamily: 'Gilroy Medium'}}
-            helperText={errorText ? errorText : props.helperText}
-            error={!!errorText}
-            fullWidth
-            variant='outlined'
-        />
-    );
+export const AppTextField = ({ label, ...props }: TextFieldProps) => {
+  const [field, meta] = useField(props as any);
+  const errorText = useMemo(
+    () => errorToText(meta.touched && meta.error),
+    [meta.error, meta.touched]
+  );
+  return (
+    <TextField
+      {...props}
+      {...field}
+      sx={{ fontFamily: 'Gilroy Medium' }}
+      helperText={errorText ? errorText : props.helperText}
+      error={!!errorText}
+      fullWidth
+      variant='outlined'
+    />
+  );
 };

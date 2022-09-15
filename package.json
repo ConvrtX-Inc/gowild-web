@@ -45,6 +45,8 @@
     "yup": "^0.32.11"
   },
   "scripts": {
+    "lint": "eslint ./src",
+    "lint-fix": "eslint --fix ./src",
     "dev": "BROWSER=none react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -60,7 +62,12 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module",
+      "project": "./tsconfig.eslint.json"
+    }
   },
   "browserslist": {
     "production": [
@@ -79,6 +86,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@trivago/prettier-plugin-sort-imports": "^3.3.0",
     "@types/jest": "^27.0.1",
     "@types/jwt-decode": "^3.1.0",
     "@types/node": "^16.7.13",
@@ -90,10 +98,14 @@
     "eslint": "8.22.0",
     "eslint-config-react-app": "^7.0.1",
     "husky": "^8.0.1",
-    "prettier": "^2.7.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "2.7.1",
     "ts-node": "^10.9.1"
   },
   "engines": {
     "node": "16.x"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write"
   }
 }

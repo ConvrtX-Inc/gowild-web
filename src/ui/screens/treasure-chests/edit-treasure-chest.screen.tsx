@@ -1,7 +1,3 @@
 export function EditTreasureChestScreen() {
-    return (
-        <>
-            Coming soon
-        </>
-    );
+  return <>Coming soon</>;
 }

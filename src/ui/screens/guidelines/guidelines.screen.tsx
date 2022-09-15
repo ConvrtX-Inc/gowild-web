@@ -1,7 +1,3 @@
 export function GuidelinesScreen() {
-    return (
-        <>
-            Coming soon
-        </>
-    )
+  return <>Coming soon</>;
 }

@@ -1,38 +1,38 @@
-import {AppPoint} from "../lib/api/go-wild.api";
-import {RoutePoint} from "../types/maps";
+import { AppPoint } from '../lib/api/go-wild.api';
+import { RoutePoint } from '../types/maps';
 
 export function checkPoints(points: RoutePoint[]): boolean {
-    if (points.findIndex(({type}) => type === 'start') === -1) {
-        return false;
-    }
-    if (points.findIndex(({type}) => type === 'end') === -1) {
-        return false;
-    }
-    return true;
+  if (points.findIndex(({ type }) => type === 'start') === -1) {
+    return false;
+  }
+  if (points.findIndex(({ type }) => type === 'end') === -1) {
+    return false;
+  }
+  return true;
 }
 
-export function routeTypeToMapsColor(type: "start" | "end" | "middle") {
-    switch (type) {
-        case "start":
-            return '/static/route-list/control-start-pt.png';
-        case "end":
-            return '/static/route-list/control-end-pt.png';
-        case "middle":
-            return '/static/route-list/control-event-pt.png';
-    }
+export function routeTypeToMapsColor(type: 'start' | 'end' | 'middle') {
+  switch (type) {
+    case 'start':
+      return '/static/route-list/control-start-pt.png';
+    case 'end':
+      return '/static/route-list/control-end-pt.png';
+    case 'middle':
+      return '/static/route-list/control-event-pt.png';
+  }
 }
 
-export function titleFrom(type: "start" | "end" | "middle", title?: string) {
-    switch (type) {
-        case "start":
-            return 'Start'
-        case "end":
-            return 'End';
-        case "middle":
-            return title;
-    }
+export function titleFrom(type: 'start' | 'end' | 'middle', title?: string) {
+  switch (type) {
+    case 'start':
+      return 'Start';
+    case 'end':
+      return 'End';
+    case 'middle':
+      return title;
+  }
 }
 
-export function fromAppPoint({coordinates: [lat, lng]}: AppPoint): google.maps.LatLng {
-    return new google.maps.LatLng({lng, lat});
+export function fromAppPoint({ coordinates: [lat, lng] }: AppPoint): google.maps.LatLng {
+  return new google.maps.LatLng({ lng, lat });
 }

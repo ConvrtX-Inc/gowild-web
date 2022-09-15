@@ -1,7 +1,2 @@
-build
-coverage
-node_modules
-public
-.vscodes
-.git
-*.log
+*
+!src/**/*.tsx

@@ -1,14 +1,14 @@
-import {Helmet} from "react-helmet-async";
-import {Typography} from "@mui/material";
+import { Typography } from '@mui/material';
+import { Helmet } from 'react-helmet-async';
 
 export function RegisterScreen() {
-    return (
-        <>
-            <Helmet>
-                <title>Register | Go Wild</title>
-            </Helmet>
+  return (
+    <>
+      <Helmet>
+        <title>Register | Go Wild</title>
+      </Helmet>
 
-            <Typography>Coming soon</Typography>
-        </>
-    )
+      <Typography>Coming soon</Typography>
+    </>
+  );
 }

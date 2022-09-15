@@ -1,13 +1,13 @@
-import {AppPoint} from "../lib/api/go-wild.api";
+import { AppPoint } from '../lib/api/go-wild.api';
 
 export interface RoutePoint {
-    point: AppPoint;
-    type: PointerType;
+  point: AppPoint;
+  type: PointerType;
 }
 
 export type PointerType = 'start' | 'end' | 'middle';
 
 export type InfoWindowData = {
-    point: RoutePoint;
-    text: string;
-}
+  point: RoutePoint;
+  text: string;
+};

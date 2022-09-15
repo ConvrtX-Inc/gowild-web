@@ -1,14 +1,14 @@
-import {memo} from "react";
-import {Box, Paper, ToggleButton, ToggleButtonProps} from "@mui/material";
+import { Box, Paper, ToggleButton, ToggleButtonProps } from '@mui/material';
+import { memo } from 'react';
 
 export interface MapItemProps extends Omit<ToggleButtonProps, 'color'> {
-    color: string;
+  color: string;
 }
 
-export const MapItem = memo(({children, color, ...props}: MapItemProps) => (
-    <Box bgcolor={props.value ? '#cdcdcd' : 'grey'} component={Paper} elevation={0}>
-        <ToggleButton size="small" sx={{color}} {...props}>
-            {children}
-        </ToggleButton>
-    </Box>
+export const MapItem = memo(({ children, color, ...props }: MapItemProps) => (
+  <Box bgcolor={props.value ? '#cdcdcd' : 'grey'} component={Paper} elevation={0}>
+    <ToggleButton size='small' sx={{ color }} {...props}>
+      {children}
+    </ToggleButton>
+  </Box>
 ));

@@ -1,37 +1,37 @@
-import {Box, CardMedia, IconButton, styled} from '@mui/material';
+import CloseToaster from '../../icons/CloseToaster';
+import { Box, CardMedia, IconButton, styled } from '@mui/material';
 import React from 'react';
-import CloseToaster from "../../icons/CloseToaster";
 
 export const PopOverToast = (props: any) => {
-    const {customClick} = props;
+  const { customClick } = props;
 
-    const handleClose = () => {
-        customClick();
-    };
+  const handleClose = () => {
+    customClick();
+  };
 
-    return (
-        <StyledBox sx={{background: 'white'}}>
-            <FlexiBox>
-                <Box>
-                    <XWrapper>
-                        <IconButton onClick={handleClose}>
-                            <CloseToaster fontSize='small'/>
-                        </IconButton>
-                    </XWrapper>
-                    <CardMedia
-                        sx={{
-                            height: '83px',
-                            width: '98px',
-                            mb: '15px',
-                            backgroundSize: 'auto'
-                        }}
-                        image='/static/login/password-recovery/EmailSent.svg'
-                    />
-                </Box>
-                <ToastTypography>Your reset password link has been sent to your email.</ToastTypography>
-            </FlexiBox>
-        </StyledBox>
-    );
+  return (
+    <StyledBox sx={{ background: 'white' }}>
+      <FlexiBox>
+        <Box>
+          <XWrapper>
+            <IconButton onClick={handleClose}>
+              <CloseToaster fontSize='small' />
+            </IconButton>
+          </XWrapper>
+          <CardMedia
+            sx={{
+              height: '83px',
+              width: '98px',
+              mb: '15px',
+              backgroundSize: 'auto'
+            }}
+            image='/static/login/password-recovery/EmailSent.svg'
+          />
+        </Box>
+        <ToastTypography>Your reset password link has been sent to your email.</ToastTypography>
+      </FlexiBox>
+    </StyledBox>
+  );
 };
 
 export default PopOverToast;

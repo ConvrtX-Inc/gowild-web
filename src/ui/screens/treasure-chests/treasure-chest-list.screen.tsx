@@ -1,7 +1,3 @@
 export function TreasureChestListScreen() {
-    return (
-        <>
-            Coming soon
-        </>
-    );
+  return <>Coming soon</>;
 }

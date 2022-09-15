@@ -1,5 +1,5 @@
-import {Box, Container, Link, styled} from "@mui/material";
-import {Link as RouterLink} from 'react-router-dom';
+import { Box, Container, Link, styled } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
 export const Background1stLineWave = styled(Box)`
   && {
@@ -145,7 +145,6 @@ export const SubTitle = styled(Box)`
     color: #ffffff;
   }
 `;
-
 
 export const StyledForm = styled('form')`
   && {

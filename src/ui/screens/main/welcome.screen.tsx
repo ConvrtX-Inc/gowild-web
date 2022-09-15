@@ -1,13 +1,12 @@
-import {Helmet} from "react-helmet-async";
+import { Helmet } from 'react-helmet-async';
 
 export function WelcomeScreen() {
-    return (
-        <>
-            <Helmet>
-                <title>Dashboard: Overview | Go Wild</title>
-            </Helmet>
-
-            Welcome: Coming soon
-        </>
-    );
+  return (
+    <>
+      <Helmet>
+        <title>Dashboard: Overview | Go Wild</title>
+      </Helmet>
+      Welcome: Coming soon
+    </>
+  );
 }
