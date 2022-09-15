@@ -106,6 +106,6 @@
     "node": "16.x"
   },
   "lint-staged": {
-    "**/*": "prettier --write"
+    "**/*": "prettier --write --ignore-unknown"
   }
 }
