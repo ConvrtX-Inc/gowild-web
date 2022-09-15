@@ -1,2 +1,2 @@
 *
-!**/*.{js,jsx,vue}
+!src/**/*.{js,jsx}
