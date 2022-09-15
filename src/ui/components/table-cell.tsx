@@ -6,7 +6,7 @@ export const TableCellStyled = styled(TableCell)(({ theme }) => ({
   py: 24
 }));
 
-export const ToolbarBox = styled(Box)(({}) => ({
+export const ToolbarBox = styled(Box)(() => ({
   width: '100%',
   display: 'flex',
   flexDirection: 'row',
@@ -26,6 +26,4 @@ export interface StyledTablePaginationProps extends TablePaginationBaseProps {
   component: any;
 }
 
-export const StyledTablePagination = styled(TablePagination)(
-  ({}: StyledTablePaginationProps) => ({})
-);
+export const StyledTablePagination = styled(TablePagination)();

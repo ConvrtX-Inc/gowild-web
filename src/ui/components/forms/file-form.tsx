@@ -29,7 +29,7 @@ export interface FileFormProps {
  * @constructor
  */
 export function FileForm({ multiple, name, ...props }: FileFormProps) {
-  const [field, meta, helper] = useField(name);
+  const [field, , helper] = useField(name);
   const uploadImgFile = useUploadImgFile();
   const isMounted = useMounted();
 
@@ -68,11 +68,6 @@ export function FileForm({ multiple, name, ...props }: FileFormProps) {
     },
     [files, helper, multiple]
   );
-  const onRemoveAll = useCallback(() => {
-    setFiles(multiple ? [] : undefined);
-    helper.setValue(undefined);
-  }, [helper, multiple]);
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     ...props,
     onDrop: handleDrop
