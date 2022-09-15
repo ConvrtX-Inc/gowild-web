@@ -1,8 +1,9 @@
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useGeolocated } from 'react-geolocated';
 
-const center = { lat: 49.438293, lng: 11.079267 };
-const zoom = 15;
+const defaultCenter = { lat: 0, lng: 0 };
+const defaultZoom = 15;
 
 const googleApiKey: string = process.env.REACT_APP_GOOGLE_KEY!;
 
@@ -11,15 +12,35 @@ interface MapProps {
   infoWindows?: JSX.Element[] | JSX.Element;
   markers?: JSX.Element[] | JSX.Element;
   polylines?: JSX.Element[] | JSX.Element;
+  view: boolean;
+  onLoad?: (map: google.maps.Map) => void | Promise<void>;
 }
 
-export function AppMap({ onClick, markers, polylines, infoWindows }: MapProps) {
+export function AppMap({ onClick, markers, polylines, infoWindows, view, onLoad }: MapProps) {
+  const [center, setCenter] = useState<google.maps.LatLngLiteral>(defaultCenter);
+  const { coords } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: false
+    },
+    userDecisionTimeout: 5000
+  });
+
+  useEffect(() => {
+    if (coords && !view) {
+      setCenter({
+        lat: coords.latitude,
+        lng: coords.longitude
+      });
+    }
+  }, [view, coords]);
+
   return (
     <LoadScript googleMapsApiKey={googleApiKey}>
       <GoogleMap
         center={center}
-        zoom={zoom}
+        zoom={defaultZoom}
         onClick={onClick}
+        onLoad={onLoad}
         options={{
           scrollwheel: true,
           fullscreenControl: false,

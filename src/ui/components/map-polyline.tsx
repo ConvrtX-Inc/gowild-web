@@ -1,16 +1,16 @@
-import { RoutePoint } from '../../types/maps';
 import { fromAppPoint } from '../../utils/map.utils';
 import { DirectionsService, Polyline } from '@react-google-maps/api';
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { AppPoint } from '../../lib/api/go-wild.api';
 
 export interface MapPolylineProps {
-  origin: RoutePoint;
-  destination: RoutePoint;
-  waypoints: RoutePoint[];
+  origin: AppPoint;
+  destination: AppPoint;
+  waypoints: AppPoint[];
   options?: google.maps.PolygonOptions | undefined;
 }
 
-export function MapPolyline({ origin, destination, waypoints, options }: MapPolylineProps) {
+export const MapPolyline = memo(({ origin, destination, waypoints, options }: MapPolylineProps) => {
   const [show, setShow] = useState(false);
   const [paths, setPath] = useState<google.maps.MVCArray<google.maps.LatLng>>();
   const onFound = useCallback(
@@ -33,10 +33,10 @@ export function MapPolyline({ origin, destination, waypoints, options }: MapPoly
         <DirectionsService
           callback={onFound}
           options={{
-            origin: fromAppPoint(origin.point),
-            destination: fromAppPoint(destination.point),
+            origin: fromAppPoint(origin),
+            destination: fromAppPoint(destination),
             waypoints: waypoints.map((v) => ({
-              location: fromAppPoint(v.point)
+              location: fromAppPoint(v)
             })),
             travelMode: google.maps.TravelMode.WALKING,
             optimizeWaypoints: false,
@@ -47,4 +47,5 @@ export function MapPolyline({ origin, destination, waypoints, options }: MapPoly
       {show && <Polyline path={paths} options={options} />}
     </>
   );
-}
+});
+MapPolyline.displayName = 'MapPolyline';

@@ -1,10 +1,7 @@
-import { AppPoint } from '../../../lib/api/go-wild.api';
-import { FieldLabel } from '../text-field';
-import { Grid, TextField } from '@mui/material';
+import { AppTextField, FieldLabel } from '../text-field';
+import { Grid } from '@mui/material';
 import { TextFieldPropsSizeOverrides } from '@mui/material/TextField/TextField';
 import { OverridableStringUnion } from '@mui/types';
-import { useField } from 'formik';
-import { useMemo } from 'react';
 
 export interface CoordEntryProps {
   name: string;
@@ -14,43 +11,25 @@ export interface CoordEntryProps {
 }
 
 export function CoordEntryForm({ title, name, size, prefix }: CoordEntryProps) {
-  const [field, , { setTouched }] = useField<AppPoint | undefined>(name);
-
-  const { lat, lng } = useMemo(() => {
-    if (!field.value) {
-      return { lat: undefined, lng: undefined };
-    } else {
-      return { lat: field.value.coordinates[0], lng: field.value.coordinates[1] };
-    }
-  }, [field.value]);
-
   return (
     <Grid xs={12} item>
-      <FieldLabel>{title}</FieldLabel>
-      <TextField
+      <FieldLabel htmlFor={`${name}.coordinates.1`}>{title}</FieldLabel>
+      <AppTextField
         sx={{ mb: 3 }}
         size={size}
         autoComplete='off'
         placeholder={(prefix ?? '') + 'Longitude'}
+        name={`${name}.coordinates.1`}
+        id={`${name}.coordinates.1`}
         type='number'
-        onTouchEnd={() => setTouched(true)}
-        value={lng}
-        fullWidth
-        InputProps={{
-          readOnly: true
-        }}
       />
-      <TextField
+      <AppTextField
         autoComplete='off'
         placeholder={(prefix ?? '') + 'Latitude'}
+        name={`${name}.coordinates.0`}
+        id={`${name}.coordinates.0`}
         size={size}
-        value={lat}
         type='number'
-        onTouchEnd={() => setTouched(true)}
-        fullWidth
-        InputProps={{
-          readOnly: true
-        }}
       />
     </Grid>
   );

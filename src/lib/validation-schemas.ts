@@ -19,7 +19,7 @@ export const historicalEventsValidationSchema = Yup.object().shape({
   title: Yup.string().max(255).required('This field is required'),
   subtitle: Yup.string().required('This field is required'),
   description: Yup.string().required('This field is required'),
-  picture: pictureValidationSchema.nullable(),
+  image: pictureValidationSchema.nullable(),
   medias: Yup.array(pictureValidationSchema).nullable()
 });
 

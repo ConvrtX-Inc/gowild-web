@@ -119,7 +119,7 @@ export const AppTextField = ({ label, ...props }: TextFieldProps) => {
     <TextField
       {...props}
       {...field}
-      sx={{ fontFamily: 'Gilroy Medium' }}
+      sx={{ fontFamily: 'Gilroy Medium', ...(props.sx ?? {}) }}
       helperText={errorText ? errorText : props.helperText}
       error={!!errorText}
       fullWidth

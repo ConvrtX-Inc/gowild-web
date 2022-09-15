@@ -6,7 +6,11 @@ import { Box } from '@mui/material';
 import { useField } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 
-export function RouteMapForm() {
+export interface RouteMapFormProps {
+  isNew?: boolean;
+}
+
+export function RouteMapForm({isNew}: RouteMapFormProps) {
   const [fStart, , hStart] = useField<AppPoint | undefined>('start');
   const [fEnd, , hEnd] = useField<AppPoint | undefined>('end');
   const [fH, , hH] = useField<RouteHistoricalEvent[] | undefined>('historicalEvents');
@@ -30,12 +34,20 @@ export function RouteMapForm() {
     setHistoricalPoints(fH.value);
   }, [fH.value]);
 
+  useEffect(() => {
+    setStart(fStart.value);
+  }, [fStart]);
+
+  useEffect(() => {
+    setEnd(fEnd.value);
+  }, [fEnd]);
+
   return (
     <Box
       width='100%'
       height='100%'
       component={MapsRoute}
-      view={false}
+      view={!isNew}
       allPoints={points}
       onPoint={(a: RoutePoint) => {
         if (!!a) {

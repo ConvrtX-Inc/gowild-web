@@ -1,5 +1,6 @@
 import { AppPoint } from '../lib/api/go-wild.api';
 import { RoutePoint } from '../types/maps';
+import { getBoundingBox } from 'geolocation-utils';
 
 export function checkPoints(points: RoutePoint[]): boolean {
   if (points.findIndex(({ type }) => type === 'start') === -1) {
@@ -20,6 +21,24 @@ export function routeTypeToMapsColor(type: 'start' | 'end' | 'middle') {
     case 'middle':
       return '/static/route-list/control-event-pt.png';
   }
+}
+
+
+export function findBounds(allPoints: RoutePoint[]): google.maps.LatLngBoundsLiteral | undefined {
+  const {
+    topLeft,
+    bottomRight
+  }: any = getBoundingBox(allPoints.map(({ point: { coordinates: [lat, lng] } }) => ({ lng, lat })), 500);
+  if (!topLeft || !bottomRight) {
+    return undefined;
+  }
+
+  return {
+    east: bottomRight.lng,
+    north: topLeft.lat,
+    south: bottomRight.lat,
+    west: topLeft.lng
+  };
 }
 
 export function titleFrom(type: 'start' | 'end' | 'middle', title?: string) {

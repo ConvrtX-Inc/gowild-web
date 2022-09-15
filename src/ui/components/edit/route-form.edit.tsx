@@ -111,7 +111,7 @@ export function RouteFormEdit({ item }: Partial<FoundComponent<Route>>) {
       )}
 
       <Formik<Route>
-        // validationSchema={routeValidationSchema}
+        validationSchema={routeValidationSchema}
         initialValues={{
           id: item?.id,
           createdDate: item?.createdDate,
@@ -207,7 +207,7 @@ export function RouteFormEdit({ item }: Partial<FoundComponent<Route>>) {
                   </Grid>
 
                   <Grid order={{ xs: 1, md: 0, lg: 1 }} item lg={9} md={12} minHeight='70vh'>
-                    <RouteMapForm />
+                    <RouteMapForm isNew={isNew} />
                   </Grid>
 
                   <Grid order={2} item xs={12}>

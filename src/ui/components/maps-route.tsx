@@ -1,5 +1,5 @@
 import { InfoWindowData, PointerType, RoutePoint } from '../../types/maps';
-import { checkPoints, titleFrom } from '../../utils/map.utils';
+import { checkPoints, findBounds, titleFrom } from '../../utils/map.utils';
 import { routePoles } from '../../utils/route.utils';
 import Minus from '../icons/Minus';
 import { AppMap } from './map';
@@ -75,7 +75,13 @@ export function MapsRoute({ allPoints, onPoint, onRemovePoint, view }: MapsRoute
   const polyline = useMemo(() => {
     if (checkPoints(allPoints)) {
       const { end, waypoints, start } = routePoles(allPoints ?? []);
-      return <MapPolyline origin={start} waypoints={waypoints} destination={end} />;
+      return (
+        <MapPolyline
+          origin={start.point}
+          waypoints={waypoints.map(({ point }) => point)}
+          destination={end.point}
+        />
+      );
     } else return undefined;
   }, [allPoints]);
 
@@ -91,13 +97,13 @@ export function MapsRoute({ allPoints, onPoint, onRemovePoint, view }: MapsRoute
       }
 
       onPoint &&
-        onPoint({
-          point: {
-            type: 'Point',
-            coordinates: [latLng.lat(), latLng.lng()]
-          },
-          type: pointType
-        });
+      onPoint({
+        point: {
+          type: 'Point',
+          coordinates: [latLng.lat(), latLng.lng()]
+        },
+        type: pointType
+      });
     },
     [infoWindow, onPoint, pointType]
   );
@@ -113,9 +119,29 @@ export function MapsRoute({ allPoints, onPoint, onRemovePoint, view }: MapsRoute
     [pointType]
   );
 
+  const onLoad = useCallback((map: google.maps.Map) => {
+    if (!view) {
+      return;
+    }
+
+    const bound = findBounds(allPoints);
+    if (!bound) {
+      return;
+    }
+
+    map.fitBounds(bound);
+  }, [view, allPoints]);
+
   return (
     <Box position='relative' width='100%' height='100%'>
-      <AppMap infoWindows={infoWindows} markers={markers} onClick={onClick} polylines={polyline} />
+      <AppMap
+        onLoad={onLoad}
+        view={view}
+        infoWindows={infoWindows}
+        markers={markers}
+        onClick={onClick}
+        polylines={polyline}
+      />
       <Stack position='absolute' right={8} top={8} spacing={0.5} direction='column'>
         <MapItem value={false} color='black'>
           <Add />
