@@ -16,7 +16,7 @@ export function PointMapInfo({ lat, lng, text, onCloseClick, onRemoveClick, view
       <Stack direction='column'>
         <Typography variant='body1'>{text}</Typography>
 
-        {view && (
+        {!view && (
           <Button onClick={onRemoveClick} fullWidth variant='outlined'>
             Remove
           </Button>

@@ -35,6 +35,7 @@ export function RouteMapForm() {
       width='100%'
       height='100%'
       component={MapsRoute}
+      view={false}
       allPoints={points}
       onPoint={(a: RoutePoint) => {
         if (!!a) {

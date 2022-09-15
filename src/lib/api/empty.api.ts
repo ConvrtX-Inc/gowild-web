@@ -9,5 +9,5 @@ export const emptySplitApi = createApi({
       return action.payload[reducerPath];
     }
   },
-  endpoints: () => ({})
+  endpoints: () => ({}),
 });

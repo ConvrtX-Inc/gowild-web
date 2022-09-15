@@ -101,7 +101,7 @@ export function ViewRoute({ item }: FoundComponent<Route>) {
               </Grid>
 
               <Grid order={{ xs: 1, md: 0, lg: 1 }} item lg={9} md={12} minHeight='70vh'>
-                <Box width='100%' height='100%' component={MapsRoute} allPoints={points} />
+                <Box width='100%' height='100%' component={MapsRoute} allPoints={points} view />
               </Grid>
 
               <Grid order={2} item xs={12}>
